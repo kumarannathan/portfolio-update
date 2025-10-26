@@ -18,12 +18,14 @@ const Projects: React.FC = () => {
       year: "2025",
       description: "Computer vision-powered focus tracking application using MediaPipe face mesh detection to monitor user attention and detect distractions in real-time. Features hand gesture controls for hands-free session management (fist, open palm, peace sign, thumbs up/down), real-time focus score calculation based on eye tracking, and comprehensive distraction detection with categorized interruption analysis. Includes Pomodoro timer integration and session analytics with smooth animations.",
       technologies: ["React", "TypeScript", "MediaPipe", "Computer Vision", "Hand Gesture Recognition", "Focus Detection", "Framer Motion", "Tailwind CSS"],
+      video: "/videos/focus.mp4"
     },
     {
       title: "Test Generation Platform",
       year: "2025",
       description: "Deployed a full-stack web application using Gemini API to generate unit tests for numerous languages, reducing manual testing writing time by 85%, with real sandboxed pytest coverage analytics with 95% coverage. Engineered custom code complexity analysis engine that detects algorithmic inefficiencies (O(n²) nested loops, redundant operations, cyclomatic complexity).",
       technologies: ["React", "TypeScript", "Node.js", "Python", "Gemini API"],
+      video: "/videos/test.mp4"
     },
     {
       title: "Social Platform Database",
