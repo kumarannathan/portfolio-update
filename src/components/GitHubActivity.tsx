@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface GitHubActivityProps {
   username: "kumarannathan";
@@ -16,78 +16,11 @@ interface ContributionWeek {
 
 const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
   const [contributions, setContributions] = useState<ContributionWeek[]>([]);
-  const [totalContributions, setTotalContributions] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchContributions = async () => {
-      try {
-        setLoading(true);
-        
-        // Try multiple API endpoints for better reliability
-        const apis = [
-          `https://github-contributions-api.vercel.app/api/v1/${username}`,
-          `https://github-contributions-api.vercel.app/api/v1/${username}?format=nested`,
-          `https://api.github.com/users/${username}/events?per_page=100`
-        ];
-        
-        let data = null;
-        let lastError = null;
-        
-        for (const apiUrl of apis) {
-          try {
-            const response = await fetch(apiUrl);
-            if (response.ok) {
-              data = await response.json();
-              break;
-            }
-          } catch (err) {
-            lastError = err;
-            continue;
-          }
-        }
-        
-        if (!data) {
-          throw new Error('All GitHub APIs are currently unavailable');
-        }
-        
-        // Handle different API response formats
-        if (data.contributions) {
-          // Standard contributions API format
-          setContributions(data.contributions);
-          setTotalContributions(data.totalContributions || 0);
-        } else if (Array.isArray(data)) {
-          // GitHub events API - create mock contribution data
-          const mockContributions = generateMockContributions();
-          setContributions(mockContributions);
-          setTotalContributions(data.length);
-        } else {
-          throw new Error('Unexpected API response format');
-        }
-        
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch contributions');
-        console.error('GitHub Contributions API Error:', err);
-        
-        // Fallback to mock data if all APIs fail
-        const mockContributions = generateMockContributions();
-        setContributions(mockContributions);
-        setTotalContributions(365); // Mock total
-        setError('Using sample data - GitHub API unavailable');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (username) {
-      fetchContributions();
-    }
-  }, [username]);
-
   // Generate mock contribution data for fallback
-  const generateMockContributions = () => {
+  const generateMockContributions = useCallback(() => {
     const weeks = [];
     const today = new Date();
     const startDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
@@ -119,7 +52,7 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
     }
     
     return weeks;
-  };
+  }, []);
 
   const getContributionLevel = (count: number) => {
     if (count === 0) return 0;
@@ -128,6 +61,67 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
     if (count <= 9) return 3;
     return 4;
   };
+
+  useEffect(() => {
+    const fetchContributions = async () => {
+      try {
+        setLoading(true);
+        
+        // Try multiple API endpoints for better reliability
+        const apis = [
+          `https://github-contributions-api.vercel.app/api/v1/${username}`,
+          `https://github-contributions-api.vercel.app/api/v1/${username}?format=nested`,
+          `https://api.github.com/users/${username}/events?per_page=100`
+        ];
+        
+        let data = null;
+        
+        for (const apiUrl of apis) {
+          try {
+            const response = await fetch(apiUrl);
+            if (response.ok) {
+              data = await response.json();
+              break;
+            }
+          } catch (err) {
+            continue;
+          }
+        }
+        
+        if (!data) {
+          throw new Error('All GitHub APIs are currently unavailable');
+        }
+        
+        // Handle different API response formats
+        if (data.contributions) {
+          // Standard contributions API format
+          setContributions(data.contributions);
+        } else if (Array.isArray(data)) {
+          // GitHub events API - create mock contribution data
+          const mockContributions = generateMockContributions();
+          setContributions(mockContributions);
+        } else {
+          throw new Error('Unexpected API response format');
+        }
+        
+        setError(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch contributions');
+        console.error('GitHub Contributions API Error:', err);
+        
+        // Fallback to mock data if all APIs fail
+        const mockContributions = generateMockContributions();
+        setContributions(mockContributions);
+        setError('Using sample data - GitHub API unavailable');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (username) {
+      fetchContributions();
+    }
+  }, [username, generateMockContributions]);
 
   const getContributionColor = (level: number) => {
     switch (level) {

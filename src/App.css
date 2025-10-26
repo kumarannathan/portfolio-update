@@ -1558,42 +1558,312 @@ section {
 }
 
 @media (max-width: 768px) {
+  /* Mobile Navigation & Layout */
+  .sidebar {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .logo h1 {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+
+  .logo p {
+    font-size: 12px;
+  }
+
   .main-content {
-    padding: 30px 20px;
+    padding: 20px 15px;
   }
 
   section {
-    padding: 40px 0;
+    padding: 30px 0;
+  }
+
+  /* Mobile Typography */
+  .section-title {
+    font-size: 10px;
+    margin-bottom: 30px;
+  }
+
+  .projects-section-title {
+    font-size: 10px;
+    margin-bottom: 30px;
+  }
+
+  .experience-section-title {
+    font-size: 10px;
+    margin-bottom: 30px;
+  }
+
+  .skills-section-title {
+    font-size: 10px;
+    margin-bottom: 30px;
+  }
+
+  /* Mobile Projects */
+  .projects-tabs {
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .projects-tab {
+    font-size: 10px;
   }
 
   .project {
-    margin-bottom: 40px;
-    padding-bottom: 40px;
+    margin-bottom: 35px;
+    padding-bottom: 35px;
   }
 
   .project h3 {
-    font-size: 24px;
+    font-size: 22px;
+    line-height: 1.2;
   }
 
   .project-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    margin-bottom: 16px;
   }
 
+  .project-year {
+    font-size: 12px;
+  }
+
+  .project-description-new {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .project-tags {
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .tag {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  /* Mobile Video */
+  .project-video-container {
+    margin: 20px 0;
+    max-width: 100%;
+    border-radius: 8px;
+  }
+
+  .project-video {
+    max-width: 100%;
+    border-radius: 6px;
+  }
+
+  /* Mobile Experience */
   .experience-item {
-    margin-bottom: 35px;
-    padding-bottom: 35px;
+    margin-bottom: 30px;
+    padding-bottom: 30px;
+  }
+
+  .experience-item h3 {
+    font-size: 18px;
   }
 
   .experience-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+    margin-bottom: 10px;
   }
 
-  .project-video {
+  .experience-date {
+    font-size: 12px;
+  }
+
+  .experience-role {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .experience-description {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  /* Mobile Skills */
+  .skill-category h4 {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .skill-category li {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  /* Mobile Personal Panel */
+  .personal-panel {
+    padding: 20px 15px;
+  }
+
+  .personal-title {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .personal-section-title {
+    font-size: 10px;
+  }
+
+  .personal-list li {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Mobile GitHub Activity */
+  .github-activity h3 {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .contribution-day {
+    width: 8px;
+    height: 8px;
+  }
+
+  .calendar-legend {
+    font-size: 9px;
+  }
+
+  .legend-square {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Mobile Spotify */
+  .spotify-sidebar {
+    margin: 30px 0;
+    padding: 15px 0;
+  }
+
+  .spotify-sidebar-title {
+    font-size: 10px;
+    margin-bottom: 12px;
+  }
+
+  .spotify-sidebar-art {
+    width: 40px;
+    height: 40px;
+  }
+
+  .spotify-sidebar-track {
+    font-size: 12px;
+  }
+
+  .spotify-sidebar-artist {
+    font-size: 10px;
+  }
+
+  .spotify-sidebar-time {
+    font-size: 9px;
+  }
+
+  /* Mobile Terminal */
+  .terminal-container {
     max-width: 100%;
+  }
+
+  .terminal-body {
+    font-size: 12px;
+    padding: 12px;
+    max-height: 250px;
+  }
+
+  .terminal-input {
+    font-size: 12px;
+  }
+
+  /* Mobile Intro */
+  .intro-section {
+    min-height: 30vh;
+    padding-top: 3vh;
+    padding-bottom: 30px;
+    gap: 30px;
+  }
+
+  .intro-text p {
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  /* Mobile Tool Logos */
+  .tool-logos {
+    gap: 15px;
+  }
+
+  .tool-logo {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra Small Mobile */
+  .sidebar {
+    padding: 15px;
+  }
+
+  .main-content {
+    padding: 15px 10px;
+  }
+
+  .logo h1 {
+    font-size: 20px;
+  }
+
+  .project h3 {
+    font-size: 20px;
+  }
+
+  .project-description-new {
+    font-size: 13px;
+  }
+
+  .tag {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .experience-item h3 {
+    font-size: 16px;
+  }
+
+  .experience-description {
+    font-size: 12px;
+  }
+
+  .personal-panel {
+    padding: 15px 10px;
+  }
+
+  .terminal-body {
+    font-size: 11px;
+    padding: 10px;
+  }
+
+  .intro-text p {
+    font-size: 13px;
+  }
+
+  .projects-tabs {
+    gap: 15px;
+  }
+
+  .projects-tab {
+    font-size: 9px;
   }
 }
 
