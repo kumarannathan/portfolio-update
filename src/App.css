@@ -1812,11 +1812,12 @@ section {
     transform: translateX(0);
   }
 
-  /* Adjust main content for mobile */
+  /* Adjust main content for mobile - Sarah Dayan style */
   .main-content {
     margin-left: 0;
     width: 100%;
-    padding: 80px 20px 20px; /* Add top padding for mobile header */
+    padding: 80px 24px 40px; /* More generous padding like Sarah's design */
+    max-width: none;
   }
 
   /* Mobile Navigation & Layout */
@@ -1859,58 +1860,87 @@ section {
     margin-bottom: 30px;
   }
 
-  /* Mobile Projects */
-  .projects-tabs {
-    gap: 20px;
-    margin-bottom: 30px;
+  /* Mobile Projects - Sarah Dayan Style */
+  .projects-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 32px;
+    color: rgba(255, 255, 255, 1);
   }
 
-  .projects-tab {
-    font-size: 10px;
+  .projects-tabs {
+    display: none; /* Hide tabs on mobile for cleaner look */
   }
 
   .project {
-    margin-bottom: 35px;
-    padding-bottom: 35px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    transition: all 0.3s ease;
   }
 
-  .project h3 {
-    font-size: 22px;
-    line-height: 1.2;
+  .project:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
   }
 
   .project-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: 8px;
     margin-bottom: 16px;
   }
 
+  .project h3 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+    color: rgba(255, 255, 255, 1);
+  }
+
   .project-year {
-    font-size: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
   }
 
   .project-description-new {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.6;
     margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.8);
   }
 
   .project-tags {
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
 
   .tag {
     font-size: 11px;
-    padding: 5px 10px;
+    font-weight: 500;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px;
+    color: rgba(255, 255, 255, 0.7);
   }
 
-  /* Mobile Video */
+  /* Mobile Video - Card Style */
   .project-video-container {
     margin: 20px 0;
     max-width: 100%;
     border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .project-video {
@@ -1918,11 +1948,13 @@ section {
     border-radius: 6px;
   }
 
-  /* Mobile Widget */
+  /* Mobile Widget - Card Style */
   .project-widget-container {
     margin: 20px 0;
     height: 300px;
     max-width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .widget-fullscreen-btn {
@@ -2054,18 +2086,28 @@ section {
     font-size: 12px;
   }
 
-  /* Mobile Intro */
+  /* Mobile Intro - Sarah Dayan Style */
   .intro-section {
-    min-height: 30vh;
-    padding-top: 3vh;
-    padding-bottom: 30px;
-    gap: 30px;
+    min-height: 40vh;
+    padding-top: 0;
+    padding-bottom: 48px;
+    gap: 0;
+  }
+
+  .intro-text h1 {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 24px;
+    color: rgba(255, 255, 255, 1);
   }
 
   .intro-text p {
-    font-size: 14px;
-    line-height: 1.7;
-    margin-bottom: 12px;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: none;
   }
 
   /* Mobile Tool Logos */
