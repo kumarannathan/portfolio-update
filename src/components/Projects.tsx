@@ -44,7 +44,7 @@ const Projects: React.FC = () => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [loadedVideos, activeTab]);
+  }, [loadedVideos, activeTab, videoLoadTimeouts]);
 
   // Intersection Observer for video autoplay only
   useEffect(() => {

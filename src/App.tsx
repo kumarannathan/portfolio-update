@@ -12,6 +12,7 @@ import GitHubActivity from './components/GitHubActivity';
 function App() {
   const [stage, setStage] = useState<'loading' | 'main'>('loading');
   const [isCreativeView, setIsCreativeView] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   if (stage === 'loading') {
     return <LoadingScreen onComplete={() => setStage('main')} />;
@@ -27,18 +28,43 @@ function App() {
       {/* Main Portfolio Page */}
       <div className="portfolio-page-wrapper">
         <div className={`portfolio-page ${isCreativeView ? 'slide-left' : ''}`}>
+          {/* Mobile Header */}
+          <div className="mobile-header">
+            <button 
+              className="mobile-menu-btn"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              <span className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}>
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </button>
+            <div className="mobile-logo">
+              <h1>Kumaran Nathan</h1>
+            </div>
+          </div>
+
+          {/* Mobile Overlay */}
+          {isMobileMenuOpen && (
+            <div 
+              className="mobile-overlay"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+          )}
+
           <div className="container">
             {/* Sidebar */}
-            <aside className="sidebar">
+            <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
               <div className="logo">
                 <h1>Kumaran Nathan</h1>
                 <p>Software Engineer</p>
               </div>
               <nav>
                 <ul>
-                  <li><a href="#projects">Projects</a></li>
-                  <li><a href="#experience">Experience</a></li>
-                  <li><a href="#skills">Skills</a></li>
+                  <li><a href="#projects" onClick={() => setIsMobileMenuOpen(false)}>Projects</a></li>
+                  <li><a href="#experience" onClick={() => setIsMobileMenuOpen(false)}>Experience</a></li>
+                  <li><a href="#skills" onClick={() => setIsMobileMenuOpen(false)}>Skills</a></li>
                 </ul>
               </nav>
               
