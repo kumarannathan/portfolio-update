@@ -6,13 +6,15 @@ import Experience from './components/Experience';
 import Projects from './components/Projects';
 import Skills from './components/Skills';
 import CreativePage from './components/CreativePage';
-import SpotifyNowPlaying from './components/SpotifyNowPlaying';
+// import SpotifyNowPlaying from './components/SpotifyNowPlaying';
 import GitHubActivity from './components/GitHubActivity';
+// import EyeNavBeta from './components/EyeNavBeta';
 
 function App() {
   const [stage, setStage] = useState<'loading' | 'main'>('loading');
   const [isCreativeView, setIsCreativeView] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // const [isEyeNavOpen, setIsEyeNavOpen] = useState(false);
 
   if (stage === 'loading') {
     return <LoadingScreen onComplete={() => setStage('main')} />;
@@ -57,7 +59,9 @@ function App() {
             {/* Sidebar */}
             <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
               <div className="logo">
-                <h1>Kumaran Nathan</h1>
+                <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                  <h1 style={{ margin: 0 }}>Kumaran Nathan</h1>
+                </div>
                 <p>Software Engineer</p>
               </div>
               <nav>
@@ -71,8 +75,17 @@ function App() {
               {/* GitHub Activity */}
               <GitHubActivity username="kumarannathan" />
               
+              {/* Eye Navigation Button (hidden for now) */}
+              {false && (
+                <div style={{ marginTop: 12 }}>
+                  <button className="project-link-button" onClick={() => {/* setIsEyeNavOpen(true) */}}>
+                    <span>Try Eye Navigation (Beta)</span>
+                  </button>
+                </div>
+              )}
+              
               {/* Spotify Now Playing */}
-              <SpotifyNowPlaying />
+              {/* <SpotifyNowPlaying /> */}
               
               <div className="sidebar-footer-text">
                 Ann Arbor, MI
@@ -103,10 +116,26 @@ function App() {
         </div>
       </div>
 
+      {/* Eye Navigation Modal */}
+      {/* Eye Navigation Modal (hidden for now) */}
+      {false && (
+        <div className="global-overlay" onClick={() => {/* setIsEyeNavOpen(false) */}}>
+          <div style={{ maxWidth: 640, width:'100%', padding:'0 16px' }} onClick={(e)=>e.stopPropagation()}>
+            {/* <EyeNavBeta /> */}
+            <div style={{ display:'flex', justifyContent:'flex-end', marginTop: 8 }}>
+              <button className="project-link-button" onClick={() => {/* setIsEyeNavOpen(false) */}}>
+                <span>Close</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Creative Portfolio Page */}
       <div className={`creative-page-wrapper ${isCreativeView ? 'slide-in' : ''}`}>
         <CreativePage onSlideBack={() => setIsCreativeView(false)} />
       </div>
+
     </div>
   );
 }

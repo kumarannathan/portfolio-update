@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import EyeNavBeta from './EyeNavBeta';
 
 interface Project {
   title: string;
@@ -266,28 +267,33 @@ const Projects: React.FC = () => {
               </div>
             )}
             {project.widget && (
-              <div className="project-widget-container">
-                <iframe
-                  src={project.widget}
-                  className="project-widget"
-                  title={`${project.title} Live Demo`}
-                  allow="fullscreen"
-                  loading="lazy"
-                />
-                <div className="widget-overlay">
-                  <a 
-                    href={project.widget} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="widget-fullscreen-btn"
-                  >
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
-                    </svg>
-                    <span>Open Full App</span>
-                  </a>
-                </div>
-              </div>
+              project.title === 'Eye Navigation (Beta)'
+                ? (
+                  <EyeNavBeta />
+                ) : (
+                  <div className="project-widget-container">
+                    <iframe
+                      src={project.widget}
+                      className="project-widget"
+                      title={`${project.title} Live Demo`}
+                      allow="camera; microphone; fullscreen"
+                      loading="lazy"
+                    />
+                    <div className="widget-overlay">
+                      <a 
+                        href={project.widget} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="widget-fullscreen-btn"
+                      >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+                        </svg>
+                        <span>Open Full App</span>
+                      </a>
+                    </div>
+                  </div>
+                )
             )}
             {project.link && (
               <div className="project-link-container">
@@ -297,7 +303,7 @@ const Projects: React.FC = () => {
                   rel="noopener noreferrer"
                   className="project-link-button"
                 >
-                  <span>View Live App</span>
+                  <span>{activeTab === 'gamedev' ? 'Project Link' : 'View Live App'}</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                     <polyline points="15,3 21,3 21,9"></polyline>

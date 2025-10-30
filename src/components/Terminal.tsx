@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useCallback } from 'react';
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error';
@@ -23,7 +22,7 @@ const Terminal: React.FC = () => {
   const [planeRow, setPlaneRow] = useState(2);
   const [obstacles, setObstacles] = useState<{ col: number, row: number }[]>([]);
   const [airplaneScore, setAirplaneScore] = useState(0);
-  const [gameInterval, setGameInterval] = useState<NodeJS.Timeout | null>(null);
+  const gameIntervalRef = useRef<number | null>(null);
   const [gameOver, setGameOver] = useState(false);
 
   const commands: { [key: string]: () => string } = {
@@ -35,6 +34,7 @@ const Terminal: React.FC = () => {
   skills       - View my technical skills
   contact      - Get my contact information
   airplane     - Play a mini ASCII plane game
+  eyenav       - Try eye-based page scrolling (external demo)
   clear        - Clear the terminal
   whoami       - Display current user
   date         - Display current date`,
@@ -52,7 +52,18 @@ teams at WolverineSoft.`,
   • JobSim VR - Unity, C#, VR
 
 Scroll down to see detailed descriptions!`,
-    
+
+    eyenav: () => `Eye Navigation (demo):
+  Scroll a page hands-free using head/eye gestures.
+  Demo: https://scrolling-web-page-with-your-eyes.glitch.me/
+  Repo: https://github.com/Arcady1/Eye-tracker
+
+How to use (on the demo):
+  1) Allow camera access
+  2) Wait for face recognition
+  3) Double-blink to unlock, nod up/down to scroll
+  4) Double-blink again to stop`,
+
     experience: () => `Work Experience:
   • Freelance Developer (Mar 2025 - Present)
     Full Stack Developer
@@ -78,7 +89,7 @@ Scroll down to see detailed descriptions!`,
   LinkedIn: linkedin.com/in/kkumarann
   
 Feel free to reach out!`,
-    
+
     airplane: () => {
       setAirplaneMode(true);
       setPlaneRow(2);
@@ -87,7 +98,7 @@ Feel free to reach out!`,
       setGameOver(false);
       return 'Launching ASCII Airplane Game! Use W/S or arrow keys to move up/down, avoid the | bars! Type "quit" or press Escape to exit.';
     },
-    
+
     clear: () => {
       setHistory([]);
       return '';
@@ -117,10 +128,14 @@ Feel free to reach out!`,
     if (airplaneMode && (trimmedCmd === 'quit' || trimmedCmd === 'exit')) {
       // end game
       setAirplaneMode(false);
-      if (gameInterval) clearInterval(gameInterval);
+      if (gameIntervalRef.current) {
+        clearInterval(gameIntervalRef.current);
+        gameIntervalRef.current = null;
+      }
       setHistory(prev => [...prev, { type: 'output', content: `Game exited. Score: ${airplaneScore}` }]);
       return;
     }
+
     if (commands[trimmedCmd]) {
       const output = commands[trimmedCmd]();
       if (output) {
@@ -168,45 +183,53 @@ Feel free to reach out!`,
     }
   };
 
+  // Game loop
   useEffect(() => {
     if (!airplaneMode) return;
-    if (gameInterval) clearInterval(gameInterval);
-    const interval = setInterval(() => {
+    if (gameIntervalRef.current) {
+      clearInterval(gameIntervalRef.current);
+      gameIntervalRef.current = null;
+    }
+    const interval = window.setInterval(() => {
       setObstacles((prev) => {
-        // Move obstacles left, remove out of bounds
         const moved = prev
           .map(o => ({ ...o, col: o.col - 1 }))
           .filter(o => o.col >= 0);
-        // Possibly add new obstacle
         if (Math.random() < 0.27) {
           moved.push({ col: 19, row: Math.floor(Math.random() * 5) });
         }
         return moved;
       });
     }, 160);
-    setGameInterval(interval);
-    return () => clearInterval(interval);
+    gameIntervalRef.current = interval;
+    return () => {
+      if (gameIntervalRef.current) {
+        clearInterval(gameIntervalRef.current);
+        gameIntervalRef.current = null;
+      }
+    };
   }, [airplaneMode]);
 
-  // Check collision/game over
+  // Collision + scoring
   useEffect(() => {
     if (!airplaneMode) return;
-    // Game over condition: any obstacle where col==1 and row==planeRow
     for (let o of obstacles) {
       if (o.col === 1 && o.row === planeRow) {
         setAirplaneMode(false);
         setGameOver(true);
-        if (gameInterval) clearInterval(gameInterval);
+        if (gameIntervalRef.current) {
+          clearInterval(gameIntervalRef.current);
+          gameIntervalRef.current = null;
+        }
         setHistory(prev => [...prev, { type: 'output', content: `GAME OVER! Plane crashed. Final score: ${airplaneScore}` }]);
         return;
       }
     }
-    // Score: passed obstacles where col==0
-    let points = obstacles.filter(o => o.col === 0).length;
+    const points = obstacles.filter(o => o.col === 0).length;
     if (points) setAirplaneScore(s => s + points);
-  }, [obstacles, planeRow, airplaneMode, gameInterval, airplaneScore]);
+  }, [obstacles, planeRow, airplaneMode, airplaneScore, setHistory]);
 
-  // Capture key events for airplane game
+  // Keyboard for game
   useEffect(() => {
     if (!airplaneMode || gameOver) return;
     const handler = (e: KeyboardEvent) => {
@@ -218,13 +241,16 @@ Feel free to reach out!`,
         e.preventDefault();
       } else if (e.key === 'Escape') {
         setAirplaneMode(false);
-        if (gameInterval) clearInterval(gameInterval);
+        if (gameIntervalRef.current) {
+          clearInterval(gameIntervalRef.current);
+          gameIntervalRef.current = null;
+        }
         setHistory(prev => [...prev, { type: 'output', content: `Game exited. Score: ${airplaneScore}` }]);
       }
     };
     window.addEventListener('keydown', handler, true);
     return () => window.removeEventListener('keydown', handler, true);
-  }, [airplaneMode, gameOver, gameInterval, airplaneScore]);
+  }, [airplaneMode, gameOver, airplaneScore]);
 
   return (
     <div className="terminal-container">
