@@ -92,6 +92,7 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
           throw new Error('All GitHub APIs are currently unavailable');
         }
         
+        
         // Handle different API response formats
         if (data.contributions) {
           // Standard contributions API format
