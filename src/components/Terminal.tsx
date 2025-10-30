@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useCallback } from 'react';
 
 interface TerminalLine {
   type: 'input' | 'output' | 'error';
@@ -17,6 +18,14 @@ const Terminal: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
 
+  // Airplane mini-game state
+  const [airplaneMode, setAirplaneMode] = useState(false);
+  const [planeRow, setPlaneRow] = useState(2);
+  const [obstacles, setObstacles] = useState<{ col: number, row: number }[]>([]);
+  const [airplaneScore, setAirplaneScore] = useState(0);
+  const [gameInterval, setGameInterval] = useState<NodeJS.Timeout | null>(null);
+  const [gameOver, setGameOver] = useState(false);
+
   const commands: { [key: string]: () => string } = {
     help: () => `Available commands:
   help         - Show this help message
@@ -25,6 +34,7 @@ const Terminal: React.FC = () => {
   experience   - View my work experience
   skills       - View my technical skills
   contact      - Get my contact information
+  airplane     - Play a mini ASCII plane game
   clear        - Clear the terminal
   whoami       - Display current user
   date         - Display current date`,
@@ -36,13 +46,11 @@ analytics. I've worked with companies like Snapchat and led development
 teams at WolverineSoft.`,
     
     projects: () => `Recent Projects:
-  • Test Generation Platform - React, TypeScript, Node.js, Python
-  • Social Platform Database - Java, JDBC, Oracle SQL
-  • TennisCV - Computer Vision Pipeline
-  • DanceAR - AR Fitness Platform
-  • SmartReview - AI Chrome Extension
-  • JobSim VR - Corporate Life Simulator
-  
+  • Focus Zone - React, MediaPipe, Computer Vision, Hand Gesture
+  • Smart Meeting Summarizer - React, FastAPI, AssemblyAI, OpenRouter
+  • Test Generation Platform - React, Node.js, Python, Gemini API
+  • JobSim VR - Unity, C#, VR
+
 Scroll down to see detailed descriptions!`,
     
     experience: () => `Work Experience:
@@ -71,6 +79,15 @@ Scroll down to see detailed descriptions!`,
   
 Feel free to reach out!`,
     
+    airplane: () => {
+      setAirplaneMode(true);
+      setPlaneRow(2);
+      setObstacles([]);
+      setAirplaneScore(0);
+      setGameOver(false);
+      return 'Launching ASCII Airplane Game! Use W/S or arrow keys to move up/down, avoid the | bars! Type "quit" or press Escape to exit.';
+    },
+    
     clear: () => {
       setHistory([]);
       return '';
@@ -97,6 +114,13 @@ Feel free to reach out!`,
       return;
     }
 
+    if (airplaneMode && (trimmedCmd === 'quit' || trimmedCmd === 'exit')) {
+      // end game
+      setAirplaneMode(false);
+      if (gameInterval) clearInterval(gameInterval);
+      setHistory(prev => [...prev, { type: 'output', content: `Game exited. Score: ${airplaneScore}` }]);
+      return;
+    }
     if (commands[trimmedCmd]) {
       const output = commands[trimmedCmd]();
       if (output) {
@@ -144,6 +168,64 @@ Feel free to reach out!`,
     }
   };
 
+  useEffect(() => {
+    if (!airplaneMode) return;
+    if (gameInterval) clearInterval(gameInterval);
+    const interval = setInterval(() => {
+      setObstacles((prev) => {
+        // Move obstacles left, remove out of bounds
+        const moved = prev
+          .map(o => ({ ...o, col: o.col - 1 }))
+          .filter(o => o.col >= 0);
+        // Possibly add new obstacle
+        if (Math.random() < 0.27) {
+          moved.push({ col: 19, row: Math.floor(Math.random() * 5) });
+        }
+        return moved;
+      });
+    }, 160);
+    setGameInterval(interval);
+    return () => clearInterval(interval);
+  }, [airplaneMode]);
+
+  // Check collision/game over
+  useEffect(() => {
+    if (!airplaneMode) return;
+    // Game over condition: any obstacle where col==1 and row==planeRow
+    for (let o of obstacles) {
+      if (o.col === 1 && o.row === planeRow) {
+        setAirplaneMode(false);
+        setGameOver(true);
+        if (gameInterval) clearInterval(gameInterval);
+        setHistory(prev => [...prev, { type: 'output', content: `GAME OVER! Plane crashed. Final score: ${airplaneScore}` }]);
+        return;
+      }
+    }
+    // Score: passed obstacles where col==0
+    let points = obstacles.filter(o => o.col === 0).length;
+    if (points) setAirplaneScore(s => s + points);
+  }, [obstacles, planeRow, airplaneMode, gameInterval, airplaneScore]);
+
+  // Capture key events for airplane game
+  useEffect(() => {
+    if (!airplaneMode || gameOver) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'w' || e.key === 'ArrowUp') {
+        setPlaneRow(row => Math.max(0, row - 1));
+        e.preventDefault();
+      } else if (e.key === 's' || e.key === 'ArrowDown') {
+        setPlaneRow(row => Math.min(4, row + 1));
+        e.preventDefault();
+      } else if (e.key === 'Escape') {
+        setAirplaneMode(false);
+        if (gameInterval) clearInterval(gameInterval);
+        setHistory(prev => [...prev, { type: 'output', content: `Game exited. Score: ${airplaneScore}` }]);
+      }
+    };
+    window.addEventListener('keydown', handler, true);
+    return () => window.removeEventListener('keydown', handler, true);
+  }, [airplaneMode, gameOver, gameInterval, airplaneScore]);
+
   return (
     <div className="terminal-container">
       <div className="terminal-header">
@@ -174,6 +256,31 @@ Feel free to reach out!`,
             autoComplete="off"
           />
         </form>
+        {airplaneMode && (
+          <div style={{ margin: '18px 0', width:'100%', display:'flex', justifyContent:'center' }}>
+            <pre className="ascii-airplane-game" style={{ background:'rgba(0,0,0,0.22)', color:'#6EF9FD', fontSize:'16px', lineHeight:'18px', letterSpacing:'1px', borderRadius:'9px', padding:'13px 25px', margin:'0 auto', minWidth:'380px', maxWidth:'99%' }}>
+              {(()=>{
+                  // 5 rows, 20 cols
+                  let rows = [];
+                  for (let r=0; r<5; ++r) {
+                    let rowText = '';
+                    for (let c=0; c<20; ++c) {
+                      const isPlane = (r===planeRow && c===1);
+                      const obsHere = obstacles.find(o => o.row===r && o.col===c);
+                      rowText += isPlane ? '✈️ ' : (obsHere ? '| ' : '  ');
+                    }
+                    rows.push(rowText);
+                  }
+                  return rows.join('\n');
+                })()}
+            </pre>
+            <div style={{ marginLeft:'20px', color:'#fff', fontWeight:'500', fontSize:'15px' }}>
+              <div>Score: {airplaneScore}</div>
+              <div style={{fontSize:'12px',marginTop:'8px', color:'#9ff'}}><kbd style={{background:'#222',padding:'2px 7px',borderRadius:'4px'}}>W / ↑</kbd> up<br/><kbd style={{background:'#222',padding:'2px 7px',borderRadius:'4px'}}>S / ↓</kbd> down</div>
+              <div style={{fontSize:'11px',marginTop:'10px'}}>Type quit or Esc to exit</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
