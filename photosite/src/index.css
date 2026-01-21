@@ -1,0 +1,453 @@
+@import url('https://fonts.googleapis.com/css2?family=Monofett&family=Syne+Mono&family=Syne:wght@400;700;800&display=swap');
+
+:root {
+    --bg-color: #f5f5f5;
+    --text-color: #000000;
+    --accent-color: #000000;
+    --font-primary: 'Syne', sans-serif;
+    --font-mono: 'Syne Mono', monospace;
+    --font-accent: 'Monofett', cursive;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Texture/Grain Overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Typography styles */
+.name-block {
+    font-family: var(--font-primary);
+    font-size: 4.5rem;
+    font-weight: 800;
+    line-height: 0.85;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+}
+
+.project-title {
+    font-size: 1.85rem;
+}
+
+.name-block span {
+    display: block;
+    background: black;
+    color: white;
+    padding: 0.1rem 0.6rem;
+    margin-bottom: 0.4rem;
+    border-radius: 4px;
+    width: fit-content;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Pastel Earthy Colors */
+.bg-sage {
+    background-color: #b4cba4 !important;
+    color: #2d3e2d !important;
+}
+
+.bg-terracotta {
+    background-color: #d79a86 !important;
+    color: #3e2d2d !important;
+}
+
+.bg-ochre {
+    background-color: #d4b483 !important;
+    color: #3e362d !important;
+}
+
+.bg-dusty-blue {
+    background-color: #9bbec8 !important;
+    color: #2d363e !important;
+}
+
+.name-block span:hover {
+    filter: saturate(1.3);
+    transform: translateX(10px);
+}
+
+.carousel-container {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    width: 100%;
+    will-change: height;
+}
+
+.carousel-container.expanded {
+    height: 380px;
+    margin: 1rem 0 2rem 0;
+}
+
+.carousel-scroll {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding: 1rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}
+
+.carousel-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.carousel-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.carousel-item {
+    flex: 0 0 auto;
+    height: 320px;
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transition: transform 0.3s ease;
+}
+
+.carousel-item:hover {
+    transform: scale(1.02);
+}
+
+.carousel-item img {
+    height: 100%;
+    width: auto;
+    max-width: none;
+    /* Allow original aspect ratio */
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.sub-header {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    margin-top: 1.5rem;
+    font-weight: 400;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+}
+
+.sub-header-content {
+    max-width: 440px;
+    /* Roughly the width of the desktop name */
+    width: 100%;
+}
+
+.nav-link {
+    font-family: var(--font-mono);
+    text-decoration: none;
+    color: black;
+    font-weight: 400;
+    font-size: 0.95rem;
+    margin: 0 1.2rem;
+    border-bottom: 1.5px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    border-color: black;
+    transform: translateY(-1px);
+}
+
+/* Hamburger Menu Base Styles */
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.hamburger {
+    width: 30px;
+    height: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: black;
+    transition: all 0.3s ease;
+}
+
+.hamburger.open span:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger.open span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.open span:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+.accent-text {
+    font-family: var(--font-accent);
+    font-size: 1.5rem;
+}
+
+/* Photo Container */
+.photo-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.photo-card {
+    background: white;
+    padding: 14px 14px 45px 14px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    transform: rotate(1.5deg);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.photo-card:hover {
+    transform: rotate(0deg) scale(1.03);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+}
+
+.tape-top {
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1deg);
+    width: 140px;
+    height: 42px;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    clip-path: polygon(2% 0%, 98% 0%, 100 100%, 0% 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.photo-img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    display: block;
+    border-radius: 1px;
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.floating-element {
+    position: absolute;
+    pointer-events: none;
+    transition: transform 0.6s ease-out;
+}
+
+.stars {
+    top: -45px;
+    left: -45px;
+}
+
+/* Button Refinements */
+button {
+    font-family: var(--font-mono);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.mobile-menu-toggle:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Responsive refinements */
+@media (max-width: 768px) {
+    .container {
+        padding: 1.5rem !important;
+    }
+
+    header {
+        flex-wrap: nowrap !important;
+        /* Keep on one line for logo/burger */
+        gap: 1.5rem !important;
+        padding: 1.5rem 0 !important;
+        align-items: center !important;
+    }
+
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    .desktop-nav {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100vh;
+        background: var(--bg-color);
+        padding: 8rem 2rem 2rem;
+        z-index: 999;
+        transform: translateX(100%);
+        transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    .desktop-nav.mobile-open {
+        transform: translateX(0);
+    }
+
+    .nav-link {
+        font-size: 2rem !important;
+        margin: 1.5rem 0 !important;
+    }
+
+    .name-block {
+        font-size: 3rem !important;
+    }
+
+    .project-title {
+        font-size: 1.5rem !important;
+    }
+
+    /* Adjust the inner project title font size */
+    .name-block span {
+        font-size: 1.5rem !important;
+    }
+
+    .carousel-container.expanded {
+        height: 300px !important;
+    }
+
+    .carousel-item {
+        height: 260px !important;
+    }
+
+    main {
+        margin-top: 1rem !important;
+    }
+
+    .sub-header {
+        font-size: 0.9rem !important;
+        margin-top: 1rem !important;
+    }
+
+    .stars {
+        display: none !important;
+    }
+
+    .sub-header-content {
+        max-width: 280px;
+    }
+
+    .work-section {
+        margin-top: 2rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-logo {
+        display: none !important;
+    }
+
+    .name-block {
+        font-size: 2.2rem !important;
+    }
+
+    .project-title {
+        font-size: 1.25rem !important;
+    }
+
+    .name-block span {
+        font-size: 1.25rem !important;
+    }
+
+    .carousel-container.expanded {
+        height: 250px !important;
+    }
+
+    .carousel-item {
+        height: 220px !important;
+    }
+
+    footer {
+        padding: 4rem 0 2rem !important;
+    }
+
+    .sub-header-content {
+        max-width: 200px;
+    }
+}
