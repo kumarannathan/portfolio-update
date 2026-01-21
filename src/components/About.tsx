@@ -6,9 +6,9 @@ const About: React.FC = () => {
     <div className="intro-section">
       <Terminal />
       <div className="intro-text">
-        <p>I'm a Computer Science graduate from the University of Michigan with a passion for full-stack development, UI/UX design, and emerging technologies. My experience spans across web development, AR/VR applications, and data analytics.</p>
-        <p>I've worked with companies like Snapchat and led development teams at WolverineSoft, where I've built everything from financial analytics dashboards to computer vision systems.</p>
-        <p>My technical expertise includes React, TypeScript, Python, and AWS, with a strong focus on creating user-centered solutions that drive measurable business impact. I'm always excited to tackle new challenges and collaborate on innovative projects that push the boundaries of technology.</p>
+        <p>I'm a Computer Science graduate from the University of Michigan with a passion for full-stack engineering, UI/UX design, and creating immersive digital experiences. I love building tools that are not just functional, but also visually engaging and intuitive.</p>
+        <p>Currently, I'm working on modernizing legacy systems and building scalable web applications. My expertise spans React, TypeScript, Python, and cloud infrastructure, finding the sweet spot between technical performance and aesthetic design.</p>
+        <p>When I'm not coding, I'm usually gaming or taking photos. You can check out my <a href="#" onClick={(e) => { e.preventDefault(); document.querySelector('.slide-tab-right')?.dispatchEvent(new MouseEvent('click', { bubbles: true })); }} style={{ color: 'inherit', textDecoration: 'underline' }}>photography here</a>.</p>
       </div>
     </div>
   );

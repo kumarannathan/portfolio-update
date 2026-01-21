@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 // - Estimates head motion and scrolls page up/down based on relative movement
 // - Includes calibration, unlock, sensitivity/deadzone tuning, and overlay
 
-
+type AnyDetector = any;
 
 const EyeNavBeta: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);

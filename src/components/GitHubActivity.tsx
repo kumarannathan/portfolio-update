@@ -24,33 +24,33 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
     const weeks = [];
     const today = new Date();
     const startDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
-    
+
     for (let week = 0; week < 53; week++) {
       const weekStart = new Date(startDate);
       weekStart.setDate(weekStart.getDate() + (week * 7));
-      
+
       const days = [];
       for (let day = 0; day < 7; day++) {
         const dayDate = new Date(weekStart);
         dayDate.setDate(dayDate.getDate() + day);
-        
+
         // Generate random contribution count (more likely to be 0-2, occasionally higher)
         const rand = Math.random();
         let count = 0;
         if (rand > 0.7) count = Math.floor(Math.random() * 3) + 1;
         else if (rand > 0.9) count = Math.floor(Math.random() * 5) + 3;
         else if (rand > 0.95) count = Math.floor(Math.random() * 10) + 8;
-        
+
         days.push({
           date: dayDate.toISOString().split('T')[0],
           count: count,
           level: getContributionLevel(count)
         });
       }
-      
+
       weeks.push({ contributionDays: days });
     }
-    
+
     return weeks;
   }, []);
 
@@ -66,16 +66,16 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
     const fetchContributions = async () => {
       try {
         setLoading(true);
-        
+
         // Try multiple API endpoints for better reliability
         const apis = [
           `https://github-contributions-api.vercel.app/api/v1/${username}`,
           `https://github-contributions-api.vercel.app/api/v1/${username}?format=nested`,
           `https://api.github.com/users/${username}/events?per_page=100`
         ];
-        
+
         let data = null;
-        
+
         for (const apiUrl of apis) {
           try {
             const response = await fetch(apiUrl);
@@ -87,12 +87,12 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
             continue;
           }
         }
-        
+
         if (!data) {
           throw new Error('All GitHub APIs are currently unavailable');
         }
-        
-        
+
+
         // Handle different API response formats
         if (data.contributions) {
           // Standard contributions API format
@@ -104,12 +104,14 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
         } else {
           throw new Error('Unexpected API response format');
         }
-        
+
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch contributions');
-        console.error('GitHub Contributions API Error:', err);
-        
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('GitHub API failed (expected in dev/CORS):', err instanceof Error ? err.message : 'Unknown error');
+        }
+
         // Fallback to mock data if all APIs fail
         const mockContributions = generateMockContributions();
         setContributions(mockContributions);
@@ -175,7 +177,7 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
   return (
     <div className="github-activity">
       <h3>GitHub Activity</h3>
-      
+
       <div className="contribution-calendar">
         <div className="calendar-grid">
           {contributions.map((week, weekIndex) => (
@@ -197,7 +199,7 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
             </div>
           ))}
         </div>
-        
+
         <div className="calendar-legend">
           <span className="legend-text">Less</span>
           <div className="legend-squares">
@@ -212,11 +214,11 @@ const GitHubActivity: React.FC<GitHubActivityProps> = ({ username }) => {
           <span className="legend-text">More</span>
         </div>
       </div>
-      
+
       <div className="github-link">
-        <a 
-          href={`https://github.com/${username}`} 
-          target="_blank" 
+        <a
+          href={`https://github.com/${username}`}
+          target="_blank"
           rel="noopener noreferrer"
           className="view-profile-btn"
         >

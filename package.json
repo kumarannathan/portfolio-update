@@ -33,7 +33,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "npm install --prefix photosite && npm run build --prefix photosite && react-scripts build && mv photosite/dist build/photosite",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

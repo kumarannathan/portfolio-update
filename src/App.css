@@ -79,13 +79,11 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(255, 255, 255, 0.03) 0px,
-    rgba(255, 255, 255, 0.03) 1px,
-    transparent 1px,
-    transparent 3px
-  );
+  background: repeating-linear-gradient(0deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 3px);
   pointer-events: none;
   z-index: 10000;
 }
@@ -169,16 +167,47 @@ body {
 }
 
 @keyframes grain {
-  0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -25%); }
-  40% { transform: translate(-5%, 25%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 10%); }
-  90% { transform: translate(-10%, 5%); }
+
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+
+  10% {
+    transform: translate(-5%, -10%);
+  }
+
+  20% {
+    transform: translate(-15%, 5%);
+  }
+
+  30% {
+    transform: translate(7%, -25%);
+  }
+
+  40% {
+    transform: translate(-5%, 25%);
+  }
+
+  50% {
+    transform: translate(-15%, 10%);
+  }
+
+  60% {
+    transform: translate(15%, 0%);
+  }
+
+  70% {
+    transform: translate(0%, 15%);
+  }
+
+  80% {
+    transform: translate(3%, 10%);
+  }
+
+  90% {
+    transform: translate(-10%, 5%);
+  }
 }
 
 /* LAYOUT */
@@ -504,13 +533,22 @@ nav a:hover {
   animation: loading-bounce 1.4s ease-in-out infinite both;
 }
 
-.loading-dots span:nth-child(1) { animation-delay: -0.32s; }
-.loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+.loading-dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
 
 @keyframes loading-bounce {
-  0%, 80%, 100% {
+
+  0%,
+  80%,
+  100% {
     transform: scale(0);
   }
+
   40% {
     transform: scale(1);
   }
@@ -791,6 +829,7 @@ nav a:hover {
     opacity: 0;
     transform: translateY(-2px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -865,31 +904,9 @@ section {
   font-weight: 500;
 }
 
-.projects-tabs {
-  display: flex;
-  gap: 30px;
-  margin-bottom: 40px;
-}
-
-.projects-tab {
-  background: none;
-  border: none;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: rgba(255, 255, 255, 0.4);
-  font-weight: 500;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.3s ease;
-}
-
-.projects-tab:hover {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.projects-tab.active {
-  color: rgba(255, 255, 255, 1);
+/* Projects Tabs - Now handled inline in component with framer-motion */
+.projects-tabs-container {
+  /* Placeholder for structure if needed, but styling is inline */
 }
 
 .projects-list {
@@ -1039,8 +1056,13 @@ section {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .video-loading-overlay p {
@@ -1425,9 +1447,12 @@ section {
 }
 
 @keyframes wave {
-  0%, 100% {
+
+  0%,
+  100% {
     height: 30%;
   }
+
   50% {
     height: 100%;
   }
@@ -1505,6 +1530,7 @@ section {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1563,6 +1589,7 @@ section {
   position: relative;
   z-index: 1;
 }
+
 .carousel-shell {
   position: relative;
 }
@@ -1585,8 +1612,13 @@ section {
   transition: all 0.2s ease;
 }
 
-.carousel-arrow-overlay.left { left: 6px; }
-.carousel-arrow-overlay.right { right: 6px; }
+.carousel-arrow-overlay.left {
+  left: 6px;
+}
+
+.carousel-arrow-overlay.right {
+  right: 6px;
+}
 
 .carousel-arrow-overlay:hover {
   background: rgba(0, 0, 0, 0.7);
@@ -1878,6 +1910,7 @@ section {
 }
 
 @media (max-width: 768px) {
+
   /* Show mobile header */
   .mobile-header {
     display: flex;
@@ -1911,7 +1944,8 @@ section {
   .main-content {
     margin-left: 0;
     width: 100%;
-    padding: 80px 24px 40px; /* More generous padding like Sarah's design */
+    padding: 80px 24px 40px;
+    /* More generous padding like Sarah's design */
     max-width: none;
   }
 
@@ -1965,7 +1999,8 @@ section {
   }
 
   .projects-tabs {
-    display: none; /* Hide tabs on mobile for cleaner look */
+    display: none;
+    /* Hide tabs on mobile for cleaner look */
   }
 
   .project {
@@ -2228,6 +2263,7 @@ section {
 
 
 @media (max-width: 480px) {
+
   /* Extra Small Mobile */
   .sidebar {
     padding: 15px;
@@ -2351,7 +2387,7 @@ section {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 28px;
   padding: 0;
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -2369,7 +2405,7 @@ section {
   background: rgba(255, 255, 255, 0.2);
   color: rgba(255, 255, 255, 1);
   border-color: rgba(255, 255, 255, 0.35);
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transform: translateY(-50%) scale(1.05);
@@ -2392,7 +2428,8 @@ section {
 
 .slide-tab-left {
   position: fixed;
-  left: 40px; /* Moved much further inward to be clearly within content area */
+  left: 40px;
+  /* Moved much further inward to be clearly within content area */
   border-radius: 0 12px 12px 0;
   border-left: none;
 }
@@ -2419,7 +2456,7 @@ section {
   background: rgba(42, 42, 42, 0.08);
   border-color: rgba(42, 42, 42, 0.15);
   color: rgba(42, 42, 42, 0.8);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
@@ -2428,7 +2465,7 @@ section {
   background: rgba(42, 42, 42, 0.15);
   border-color: rgba(42, 42, 42, 0.25);
   color: rgba(42, 42, 42, 1);
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
@@ -2656,9 +2693,12 @@ html {
 }
 
 @keyframes floatBlock {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-15px);
   }
@@ -2666,7 +2706,8 @@ html {
 
 /* Scrolling Marquee */
 .creative-marquee {
-  display: none; /* Hidden for now */
+  display: none;
+  /* Hidden for now */
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
@@ -2691,6 +2732,7 @@ html {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -2698,7 +2740,8 @@ html {
 
 /* CRT Video Section */
 .crt-wrapper {
-  display: none; /* Hidden for now */
+  display: none;
+  /* Hidden for now */
   justify-content: center;
   margin: 3rem 0;
   perspective: 1000px;
@@ -2742,18 +2785,31 @@ html {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(
-    circle at center,
-    rgba(0, 255, 150, 0.2),
-    transparent 70%
-  );
+  background: radial-gradient(circle at center,
+      rgba(0, 255, 150, 0.2),
+      transparent 70%);
   mix-blend-mode: screen;
 }
 
 /* Soft CRT flicker effect */
 @keyframes flicker {
-  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-  20%, 24%, 55% { opacity: 0.95; }
+
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    opacity: 1;
+  }
+
+  20%,
+  24%,
+  55% {
+    opacity: 0.95;
+  }
 }
 
 .crt-frame::after {
@@ -2770,12 +2826,10 @@ html {
   content: "";
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.12) 0px,
-    rgba(0, 0, 0, 0.12) 2px,
-    transparent 3px
-  );
+  background: repeating-linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.12) 0px,
+      rgba(0, 0, 0, 0.12) 2px,
+      transparent 3px);
   pointer-events: none;
   opacity: 0.5;
 }
@@ -2836,6 +2890,7 @@ html {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -2845,6 +2900,7 @@ html {
   0% {
     transform: translateX(-50%);
   }
+
   100% {
     transform: translateX(0);
   }
@@ -2907,12 +2963,10 @@ html {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.1),
-    transparent
-  );
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent);
   animation: shimmer 2s infinite;
 }
 
@@ -2920,6 +2974,7 @@ html {
   0% {
     left: -100%;
   }
+
   100% {
     left: 100%;
   }
@@ -3172,19 +3227,19 @@ html {
   .creative-name {
     font-size: 48px;
   }
-  
+
   .name-first,
   .name-last {
     font-size: 48px;
   }
-  
+
   .creative-title {
     font-size: 16px;
     padding: 16px 24px;
     max-width: 500px;
   }
-  
-  
+
+
   .creative-3d-visual {
     display: none;
   }
@@ -3196,12 +3251,12 @@ html {
     margin: 2rem 0;
     padding: 0 20px;
   }
-  
+
   .crt-frame {
     width: 280px;
     height: 180px;
   }
-  
+
   .audio-control {
     width: 40px;
     height: 40px;
@@ -3216,58 +3271,58 @@ html {
     grid-template-columns: 1fr;
     padding: 20px;
   }
-  
+
   .creative-nav-center,
   .creative-nav-right {
     display: none;
   }
-  
+
   .creative-name {
     font-size: 36px;
   }
-  
+
   .name-first,
   .name-last {
     font-size: 36px;
   }
-  
+
   .name-container {
     gap: 15px;
   }
-  
+
   .creative-projects-section {
     padding: 60px 20px;
   }
-  
+
   .creative-projects-title {
     font-size: 36px;
   }
-  
+
   .creative-project-card {
     padding: 24px;
   }
-  
+
   .project-title-creative {
     font-size: 24px;
   }
-  
+
   .project-header-creative {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .project-link-creative {
     align-self: flex-start;
   }
-  
+
   .selected-projects-title {
     font-size: 36px;
   }
-  
+
   .hire-me-button {
     left: 20px;
   }
-  
+
   .creative-footer {
     right: 20px;
   }
@@ -3277,9 +3332,9 @@ html {
 .single-image-carousel {
   margin: 24px 0;
   border-radius: 12px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10);
   overflow: hidden;
   max-width: 600px;
   display: flex;
@@ -3305,6 +3360,7 @@ html {
     border-radius: 8px;
     margin: 20px 0;
   }
+
   .single-carousel-image {
     max-width: 100vw;
     max-height: 220px;
@@ -3324,25 +3380,36 @@ html {
   gap: 10px;
   z-index: 2;
 }
+
 .vertical-dot {
   width: 8px;
   height: 8px;
-  background: rgba(255,255,255,0.25);
-  border: 1.5px solid rgba(255,255,255,0.18);
+  background: rgba(255, 255, 255, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
   border-radius: 50%;
   transition: background .18s, border .18s;
 }
+
 .vertical-dot.active {
-  background: rgba(255,255,255,0.92);
-  border-color: rgba(255,255,255,0.9);
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(255, 255, 255, 0.9);
   width: 10px;
   height: 10px;
 }
+
 @media (max-width: 768px) {
   .vertical-carousel-dots {
     right: 7px;
     gap: 7px;
   }
-  .vertical-dot { width: 7px; height: 7px; }
-  .vertical-dot.active { width: 9px; height: 9px; }
+
+  .vertical-dot {
+    width: 7px;
+    height: 7px;
+  }
+
+  .vertical-dot.active {
+    width: 9px;
+    height: 9px;
+  }
 }

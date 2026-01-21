@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import EyeNavBeta from './EyeNavBeta';
 
 interface Project {
@@ -103,7 +104,7 @@ const Projects: React.FC = () => {
         timers[project.title] = window.setInterval(() => {
           setCarouselIndex(prev => {
             const curr = prev[project.title] ?? 0;
-            return { ...prev, [project.title]: (curr+1)%project.images!.length };
+            return { ...prev, [project.title]: (curr + 1) % project.images!.length };
           });
         }, 5000);
       }
@@ -121,7 +122,7 @@ const Projects: React.FC = () => {
             // Load video immediately
             video.load();
             setLoadedVideos(prev => new Set(prev).add(videoId));
-            
+
             // Set timeout to hide loading overlay after 10 seconds
             if (!videoLoadTimeouts.has(videoId)) {
               setTimeout(() => {
@@ -148,12 +149,12 @@ const Projects: React.FC = () => {
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
           const videoId = video.dataset.videoId;
-          
+
           if (!videoId) return;
-          
+
           // Check if we're on desktop (screen width > 768px)
           const isDesktop = window.innerWidth > 768;
-          
+
           if (entry.isIntersecting && entry.intersectionRatio >= 0.4 && isDesktop) {
             // Play when 40% visible on desktop
             video.play().catch(console.error);
@@ -195,21 +196,68 @@ const Projects: React.FC = () => {
 
   return (
     <section className="projects-section">
-      <div className="projects-tabs">
-        <button
-          className={`projects-tab ${activeTab === 'selected' ? 'active' : ''}`}
-          onClick={() => setActiveTab('selected')}
-        >
-          Selected Projects
-        </button>
-        <button
-          className={`projects-tab ${activeTab === 'gamedev' ? 'active' : ''}`}
-          onClick={() => setActiveTab('gamedev')}
-        >
-          Game Dev Projects
-        </button>
+      <div className="projects-tabs-container" style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '40px',
+        position: 'relative',
+        zIndex: 10
+      }}>
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.05)',
+          padding: '6px',
+          borderRadius: '9999px',
+          display: 'flex',
+          gap: '8px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(10px)'
+        }}>
+          {([
+            { id: 'selected', label: 'Selected Projects', font: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },
+            { id: 'gamedev', label: 'Game Dev Projects', font: "'Courier New', monospace" }
+          ] as const).map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                position: 'relative',
+                padding: '8px 20px', // Reduced padding
+                borderRadius: '9999px',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                fontFamily: tab.font,
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                color: activeTab === tab.id ? '#000000' : 'rgba(255, 255, 255, 0.6)',
+                transition: 'color 0.3s ease',
+                zIndex: 1,
+                outline: 'none',
+              }}
+            >
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="project-tab-pill"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: '#4ade80',
+                    borderRadius: '9999px',
+                    zIndex: -1,
+                    boxShadow: '0 0 15px rgba(74, 222, 128, 0.3)'
+                  }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              )}
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
-      
+
       <div className="projects-list">
         {currentProjects.map((project: Project, index: number) => (
           <div key={index} className="project">
@@ -219,7 +267,7 @@ const Projects: React.FC = () => {
             </div>
             <p className="project-description-new">{project.description}</p>
             {project.images && project.images.length > 0 && (
-              <div className="single-image-carousel" style={{ position:'relative' }}>
+              <div className="single-image-carousel" style={{ position: 'relative' }}>
                 <img
                   src={project.images[carouselIndex[project.title] ?? 0]}
                   alt={`${project.title} screenshot`}
@@ -241,7 +289,7 @@ const Projects: React.FC = () => {
             )}
             {project.video && (
               <div className="project-video-container">
-                <video 
+                <video
                   ref={(el) => {
                     if (el) {
                       videoRefs.current[project.video!] = el;
@@ -280,9 +328,9 @@ const Projects: React.FC = () => {
                       loading="lazy"
                     />
                     <div className="widget-overlay">
-                      <a 
-                        href={project.widget} 
-                        target="_blank" 
+                      <a
+                        href={project.widget}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="widget-fullscreen-btn"
                       >
@@ -297,9 +345,9 @@ const Projects: React.FC = () => {
             )}
             {project.link && (
               <div className="project-link-container">
-                <a 
-                  href={project.link} 
-                  target="_blank" 
+                <a
+                  href={project.link}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="project-link-button"
                 >
