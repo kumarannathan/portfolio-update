@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 // - Estimates head motion and scrolls page up/down based on relative movement
 // - Includes calibration, unlock, sensitivity/deadzone tuning, and overlay
 
-type AnyDetector = any;
+
 
 const EyeNavBeta: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -168,8 +168,8 @@ const EyeNavBeta: React.FC = () => {
 
   return (
     <div className="project-widget-container" style={{ maxWidth: 600 }}>
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 12px' }}>
-        <div style={{ color:'rgba(255,255,255,0.8)', fontWeight:600 }}>Eye Navigation (Native Beta)</div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px' }}>
+        <div style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>Eye Navigation (Native Beta)</div>
         {!running ? (
           <button className="widget-fullscreen-btn" onClick={onStart} disabled={loading}>
             {loading ? 'Loading…' : 'Start'}
@@ -178,30 +178,30 @@ const EyeNavBeta: React.FC = () => {
           <button className="widget-fullscreen-btn" onClick={onStop}>Stop</button>
         )}
       </div>
-      {error && <div style={{ color:'#ff9c9c', padding:'0 12px 8px' }}>{error}</div>}
-      <div style={{ padding:'0 12px 0', color:'rgba(255,255,255,0.75)', fontSize:12 }}>
+      {error && <div style={{ color: '#ff9c9c', padding: '0 12px 8px' }}>{error}</div>}
+      <div style={{ padding: '0 12px 0', color: 'rgba(255,255,255,0.75)', fontSize: 12 }}>
         1) Center your face, 2) Press Calibrate, 3) Toggle Unlock, 4) Nod up/down.
       </div>
-      <div style={{ padding:'8px 12px 0', display:'flex', gap:8, flexWrap:'wrap', alignItems:'center' }}>
+      <div style={{ padding: '8px 12px 0', display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <button className="project-link-button" onClick={() => { if (smoothYRef.current != null) baselineYRef.current = smoothYRef.current; }} disabled={!running}>
           <span>Calibrate</span>
         </button>
         <button className="project-link-button" onClick={() => setUnlocked(u => !u)} disabled={!running}>
           <span>{unlocked ? 'Lock' : 'Unlock'}</span>
         </button>
-        <label style={{ fontSize:12, color:'rgba(255,255,255,0.7)' }}>
+        <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
           Sensitivity
-          <input type="range" min={0.4} max={1.4} step={0.1} value={sensitivity} onChange={(e)=>setSensitivity(parseFloat(e.target.value))} style={{ marginLeft:8 }} />
+          <input type="range" min={0.4} max={1.4} step={0.1} value={sensitivity} onChange={(e) => setSensitivity(parseFloat(e.target.value))} style={{ marginLeft: 8 }} />
         </label>
-        <label style={{ fontSize:12, color:'rgba(255,255,255,0.7)' }}>
+        <label style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
           Deadzone
-          <input type="range" min={4} max={20} step={1} value={thresholdPx} onChange={(e)=>setThresholdPx(parseInt(e.target.value))} style={{ marginLeft:8 }} />
+          <input type="range" min={4} max={20} step={1} value={thresholdPx} onChange={(e) => setThresholdPx(parseInt(e.target.value))} style={{ marginLeft: 8 }} />
         </label>
       </div>
-      <div style={{ padding:'0 12px 12px', position:'relative' }}>
-        <video ref={videoRef} playsInline muted style={{ width:'100%', borderRadius:8, background:'#000', opacity: running ? 0.9 : 0.3 }} />
-        <canvas ref={canvasRef} style={{ position:'absolute', inset:0, width:'100%', height:'100%', pointerEvents:'none' }} />
-        <div style={{ position:'absolute', top:8, left:16, color: faceFound ? '#9ff' : '#f99', fontSize:12, background:'rgba(0,0,0,0.35)', padding:'4px 8px', borderRadius:6 }}>
+      <div style={{ padding: '0 12px 12px', position: 'relative' }}>
+        <video ref={videoRef} playsInline muted style={{ width: '100%', borderRadius: 8, background: '#000', opacity: running ? 0.9 : 0.3 }} />
+        <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: 8, left: 16, color: faceFound ? '#9ff' : '#f99', fontSize: 12, background: 'rgba(0,0,0,0.35)', padding: '4px 8px', borderRadius: 6 }}>
           {faceFound ? 'Face mesh: detected' : 'Face mesh: not detected'}
         </div>
       </div>
