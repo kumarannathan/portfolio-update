@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './CreativePageNew.css';
 import logo from '../assets/logo.png';
-import JobSimVR from './JobSimVR';
+// import JobSimVR from './JobSimVR';
 
 const StarsIcon = () => (
     <div className="floating-element stars">
