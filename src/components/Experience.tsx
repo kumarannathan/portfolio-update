@@ -15,10 +15,10 @@ const Experience: React.FC = () => {
       description: "Interactive dashboards and KPI visualization systems boosting operational efficiency by 35%."
     },
     {
-      company: "Snapchat",
-      role: "AR & Digital Developer",
-      period: "Mar. 2024 – May. 2024",
-      description: "AR lenses with 20,000+ views and 13% user retention increase."
+      company: "Snap Inc.",
+      role: "Augmented Reality Development and Digital Storytelling",
+      period: "Feb 2024 – Apr 2024",
+      description: "Conceptualized and designed cutting‑edge AR experiences using Snap’s Lens Studio software and programs. Mastered AR development tools and techniques through projects with professionals to increase user engagement.",
     },
     {
       company: "WolverineSoft",
@@ -31,7 +31,7 @@ const Experience: React.FC = () => {
   return (
     <section className="experience-section">
       <h2 className="experience-section-title">Experience</h2>
-    
+
       <div className="experience-list">
         {experiences.map((exp, index) => (
           <div key={index} className="experience-item">

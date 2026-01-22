@@ -55,13 +55,7 @@ const Projects: React.FC = () => {
       description: "End-to-end computer vision pipeline to detect, track, and analyze player movements, ball speed, court key points, and shot metrics from tennis match videos using custom-trained YOLOv8/V5 and CNN models with real-time analytics dashboard.",
       technologies: ["YOLOv8", "OpenCV", "PyTorch"]
     },
-    {
-      title: "DanceAR",
-      year: "2024",
-      description: "AR-powered fitness platform leveraging Streamlit, OpenCV, and MediaPipe to compare dance moves with benchmark videos in real-time. Features live scoring, performance insights, and secure Firebase authentication with role-based access.",
-      technologies: ["React", "TypeScript", "Firebase", "MediaPipe", "WebRTC"],
-      link: "https://dancear.netlify.app/"
-    },
+
     {
       title: "StudyAI",
       year: "2024",
@@ -72,11 +66,28 @@ const Projects: React.FC = () => {
 
   const gameDevProjects: Project[] = useMemo(() => ([
     {
+      title: "Soul of the Forest",
+      year: "2023",
+      description: "Directed UI/UX department for commercial game development, establishing development timelines using Jira, Confluence, and Git. Led comprehensive playtesting and implemented menu designs using Figma, C# Scripts, and Unity Game Engine.",
+      technologies: ["Unity", "C#", "Figma", "Jira", "Git"],
+      link: "https://store.steampowered.com/app/2880650/Soul_of_the_Forest/",
+      video: "https://www.youtube.com/embed/mSn1kDxI_SU"
+    },
+    {
       title: "JobSim VR",
       year: "2024",
       description: "Corporate life simulator featuring NPCs with dynamic behaviors, head-tracking, movement, and dialogue. Designed 'Severance'-inspired Macrodata Refinement Room with interactable components and immersive VR environment. Featured in UMich Game Design Showcase.",
       technologies: ["Unreal Engine 5", "Blueprints", "C++"],
-      link: "https://github.com/kumarannathan/JobSimVR"
+      link: "https://github.com/kumarannathan/JobSimVR",
+      video: "https://www.youtube.com/embed/kZQmX16voqs"
+    },
+    {
+      title: "DanceAR",
+      year: "2024",
+      description: "AR-powered fitness platform leveraging Streamlit, OpenCV, and MediaPipe to compare dance moves with benchmark videos in real-time. Features live scoring, performance insights, and secure Firebase authentication with role-based access.",
+      technologies: ["React", "TypeScript", "Firebase", "MediaPipe", "WebRTC"],
+      link: "https://umichxr.com/",
+      video: "https://www.youtube.com/embed/F4TN4-9_lTI"
     },
     {
       title: "AnnArborGo",
@@ -84,13 +95,6 @@ const Projects: React.FC = () => {
       description: "Location-based AR game promoting environmental stewardship through virtual tree planting, landmark exploration, and eco-defense mechanics. Features Environmental Achievement Recognition System with eco-medals, GPS landmark navigation, interactive history reveals, and dynamic squirrel encounters requiring strategic acorn-throwing defense.",
       technologies: ["Unreal Engine 5", "AR", "GPS", "Blueprints", "C++"],
       link: "https://github.com/kumarannathan/AnnArborGo"
-    },
-    {
-      title: "Soul of the Forest",
-      year: "2023",
-      description: "Directed UI/UX department for commercial game development, establishing development timelines using Jira, Confluence, and Git. Led comprehensive playtesting and implemented menu designs using Figma, C# Scripts, and Unity Game Engine.",
-      technologies: ["Unity", "C#", "Figma", "Jira", "Git"],
-      link: "https://store.steampowered.com/app/2880650/Soul_of_the_Forest/"
     }
   ]), []);
 
@@ -288,30 +292,15 @@ const Projects: React.FC = () => {
               </div>
             )}
             {project.video && (
-              <div className="project-video-container">
-                <video
-                  ref={(el) => {
-                    if (el) {
-                      videoRefs.current[project.video!] = el;
-                    }
-                  }}
-                  className="project-video"
-                  muted
-                  loop
-                  preload="metadata"
-                  playsInline
-                  data-video-id={project.video}
-                  poster="/focus-zone-poster.jpg"
-                >
-                  <source src={project.video} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-                {!loadedVideos.has(project.video) && !videoLoadTimeouts.has(project.video) && (
-                  <div className="video-loading-overlay">
-                    <div className="video-loading-spinner"></div>
-                    <p>Loading video...</p>
-                  </div>
-                )}
+              <div className={`project-video-container ${activeTab === 'gamedev' ? 'large' : ''}`}>
+                <iframe
+                  src={project.video}
+                  title={`${project.title} video`}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="project-video-iframe"
+                ></iframe>
               </div>
             )}
             {project.widget && (
