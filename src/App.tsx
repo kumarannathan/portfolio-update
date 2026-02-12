@@ -1,121 +1,145 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
+import Navbar, { Section } from './components/Navbar';
 import About from './components/About';
-import Experience from './components/Experience';
 import Projects from './components/Projects';
+import Contact from './components/Contact';
 import Skills from './components/Skills';
-import CreativePageNew from './components/CreativePageNew';
-import NavigationPill from './components/NavigationPill';
-import GitHubActivity from './components/GitHubActivity';
+import Experience from './components/Experience';
+import CustomCursor from './components/CustomCursor';
+
+import { photoProjects } from './data/photos';
+
+const CreativePageNew = React.lazy(() => import('./components/CreativePageNew'));
+const AboutPage = React.lazy(() => import('./components/AboutPage'));
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'engineering' | 'photography'>('engineering');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [currentView, setCurrentView] = useState<Section>('home');
+
+  React.useEffect(() => {
+    // Proactive preloading of photography content
+    photoProjects.forEach(project => {
+      if (project.images.length > 0) {
+        const img = new Image();
+        img.src = project.images[0];
+      }
+    });
+
+    // Global navigation listener for internal links in blurbs
+    const handleNavigationEvent = (e: any) => {
+      handleNavigate(e.detail);
+    };
+    window.addEventListener('navigate', handleNavigationEvent);
+    return () => window.removeEventListener('navigate', handleNavigationEvent);
+  }, []);
+
+  const handleNavigate = (section: Section) => {
+    setCurrentView(section);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const isPhotosView = currentView === 'photos';
 
   return (
-    <div className="App">
-      <NavigationPill
-        activeTab={activeTab}
-        onToggle={setActiveTab}
-      />
-
-      <AnimatePresence mode="wait">
-        {activeTab === 'engineering' ? (
+    <div className={`App ${isPhotosView ? 'light-mode' : ''}`}>
+      <CustomCursor />
+      <AnimatePresence>
+        {isPhotosView && (
           <motion.div
-            key="engineering"
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -100, opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            style={{ width: '100%' }}
-          >
-            {/* Grain Background */}
-            <div className="grain-container">
-              <div className="grain"></div>
-            </div>
-
-            <div className="portfolio-page-wrapper">
-              <div className="portfolio-page">
-                {/* Mobile Header */}
-                <div className="mobile-header">
-                  <button
-                    className="mobile-menu-btn"
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  >
-                    <span className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`}>
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </span>
-                  </button>
-                  <div className="mobile-logo">
-                    <h1>Kumaran Nathan</h1>
-                  </div>
-                </div>
-
-                {/* Mobile Overlay */}
-                {isMobileMenuOpen && (
-                  <div
-                    className="mobile-overlay"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  />
-                )}
-
-                <div className="container">
-                  {/* Sidebar */}
-                  <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-                    <div className="logo">
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <h1 style={{ margin: 0 }}>Kumaran Nathan</h1>
-                      </div>
-                      <p>Software Engineer</p>
-                    </div>
-                    <nav>
-                      <ul>
-                        <li><a href="#projects" onClick={() => setIsMobileMenuOpen(false)}>Projects</a></li>
-                        <li><a href="#experience" onClick={() => setIsMobileMenuOpen(false)}>Experience</a></li>
-                        <li><a href="#skills" onClick={() => setIsMobileMenuOpen(false)}>Skills</a></li>
-                      </ul>
-                    </nav>
-
-                    {/* GitHub Activity */}
-                    <GitHubActivity username="kumarannathan" />
-
-                    <div className="sidebar-footer-text">
-                      Ann Arbor, MI
-                    </div>
-                    <div className="sidebar-footer-photo">
-                      <div className="profile-photo">
-                        <img src="/me.jpg" alt="Kumaran Nathan" />
-                      </div>
-                    </div>
-                  </aside>
-
-                  {/* Main Content */}
-                  <main className="main-content">
-                    <About />
-                    <Projects />
-                    <Experience />
-                    <Skills />
-                  </main>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="photography"
-            initial={{ x: 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 100, opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            style={{ width: '100%', position: 'absolute', top: 0, left: 0, zIndex: 2000 }}
-          >
-            <CreativePageNew onSlideBack={() => setActiveTab('engineering')} />
-          </motion.div>
+            key="white-flash"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: '#f5f5f5',
+              zIndex: 1500,
+              pointerEvents: 'none'
+            }}
+          />
         )}
       </AnimatePresence>
+      <main className="main-layout">
+        <Navbar
+          activeSection={currentView}
+          onNavigate={handleNavigate}
+        />
+        <AnimatePresence mode="wait">
+          <React.Suspense fallback={null}>
+            {currentView === 'home' && (
+              <motion.div
+                key="home"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <About />
+                <div className="home-content-grid">
+                  <motion.div
+                    layout
+                    transition={{ type: "spring", stiffness: 80, damping: 20 }}
+                    className="home-main-col"
+                  >
+                    <Projects />
+                    <motion.div
+                      layout
+                      className="home-skills-wrapper"
+                    >
+                      <Skills />
+                    </motion.div>
+                  </motion.div>
+                  <motion.div layout className="home-side-col">
+                    <Experience />
+                  </motion.div>
+                </div>
+              </motion.div>
+            )}
+
+            {currentView === 'about' && (
+              <motion.div
+                key="about-page"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <AboutPage />
+              </motion.div>
+            )}
+
+            {currentView === 'photos' && (
+              <motion.div
+                key="photos"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <CreativePageNew />
+              </motion.div>
+            )}
+
+            {currentView === 'contact' && (
+              <motion.div
+                key="contact"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <Contact />
+              </motion.div>
+            )}
+          </React.Suspense>
+        </AnimatePresence>
+      </main>
     </div>
   );
 }

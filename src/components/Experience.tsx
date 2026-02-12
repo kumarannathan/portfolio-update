@@ -3,28 +3,22 @@ import React from 'react';
 const Experience: React.FC = () => {
   const experiences = [
     {
-      company: "Freelance Developer",
-      role: "Full Stack Developer",
-      period: "Mar. 2025 – Present",
-      description: "Full-stack development with real-time booking systems and 45% increase in client bookings."
-    },
-    {
-      company: "EinNel Technologies",
-      role: "Frontend Web Developer & Designer",
+      company: "Stealth Startup",
+      role: "Software Engineer Intern",
       period: "Jul. 2024 – Oct. 2024",
-      description: "Interactive dashboards and KPI visualization systems boosting operational efficiency by 35%."
+      description: "Reduced API latency by 20% via profiling/optimization of Python/C++ data paths. Developed a real-time SaaS analytics dashboard using React and D3.js."
     },
     {
-      company: "Snap Inc.",
-      role: "Augmented Reality Development and Digital Storytelling",
-      period: "Feb 2024 – Apr 2024",
-      description: "Conceptualized and designed cutting‑edge AR experiences using Snap’s Lens Studio software and programs. Mastered AR development tools and techniques through projects with professionals to increase user engagement.",
+      company: "Wolverine Soft",
+      role: "QA Lead / Programmer",
+      period: "Sep. 2023 – Sep. 2024",
+      description: "Spearheaded development of UI systems and quest architecture using Unity/C#. Led QA in an Agile environment using Confluence/Jira."
     },
     {
-      company: "WolverineSoft",
-      role: "UI/UX & QA Department Lead",
-      period: "Aug. 2023 – May. 2024",
-      description: "Led 20+ member team for Steam-published game with 15+ modular UI systems."
+      company: "Extern",
+      role: "Snap Lens Developer",
+      period: "Mar. 2024 – May. 2024",
+      description: "Analyzed engagement patterns across 50K+ users using SQL/Python. Identified behavior patterns contributing to a 13% retention increase."
     }
   ];
 

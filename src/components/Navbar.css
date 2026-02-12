@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne+Mono&family=Syne:wght@400;700;800&display=swap');
+
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 40px;
+    background: transparent;
+    z-index: 3000;
+    /* Higher than photos page */
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: auto;
+}
+
+/* Simple Name for Engineering */
+.navbar-name-simple {
+    font-family: 'Lora', 'Georgia', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: #ffffff;
+    margin: 0;
+    cursor: pointer;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.navbar-name-block {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 0.85;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    display: flex;
+    flex-direction: column;
+    color: #000;
+}
+
+.navbar-name-block span {
+    display: block;
+    background: white;
+    color: black;
+    padding: 0.1rem 0.6rem;
+    margin-bottom: 0.4rem;
+    border-radius: 4px;
+    width: fit-content;
+    transition: all 0.3s ease;
+}
+
+.navbar-name-block:hover span {
+    transform: translateX(10px);
+}
+
+/* Center/Right Section - Navigation */
+.navbar-center {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+    margin-left: auto;
+}
+
+.nav-link {
+    font-family: 'Syne Mono', monospace;
+    text-decoration: none;
+    background: none;
+    border: none;
+    color: white;
+    font-weight: 400;
+    font-size: 1rem;
+    padding: 0;
+    margin: 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: fit-content;
+    text-transform: uppercase;
+}
+
+.nav-link:hover {
+    border-color: white;
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    border-color: white;
+    font-weight: 600;
+}
+
+.nav-dot {
+    display: none;
+    /* Removed dot in favor of border bottom */
+}
+
+/* Light Mode Override (for Photos Page) */
+.navbar.is-light .navbar-name-simple {
+    color: #000000;
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+}
+
+.navbar.is-light .nav-link {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.navbar.is-light .nav-link:hover,
+.navbar.is-light .nav-link.active {
+    color: #000000;
+}
+
+.navbar.is-light .nav-link.active::after {
+    background-color: #000000;
+}
+
+/* Hidden elements from previous design */
+.navbar-subtitle,
+.navbar-icon,
+.navbar-right {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1.5rem;
+    }
+
+    .navbar-name-block {
+        font-size: 2rem;
+    }
+
+    .navbar-center {
+        gap: 0.4rem;
+    }
+
+    .nav-link {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-name-block {
+        font-size: 1.6rem;
+    }
+}

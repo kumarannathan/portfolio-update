@@ -1,17 +1,23 @@
 import React from 'react';
-import Terminal from './Terminal';
+import './About.css';
 
 const About: React.FC = () => {
   return (
-    <div className="intro-section">
-      <Terminal />
-      <div className="intro-text">
-        <p>I'm a Computer Science graduate from the University of Michigan with a passion for full-stack engineering, UI/UX design, and creating immersive digital experiences. I love building tools that are not just functional, but also visually engaging and intuitive.</p>
-        <p>Currently, I'm working on modernizing legacy systems and building scalable web applications. My expertise spans React, TypeScript, Python, and cloud infrastructure, finding the sweet spot between technical performance and aesthetic design.</p>
-        <p>When I'm not coding, I'm usually gaming or taking photos. You can check out my <button onClick={(e) => { e.preventDefault(); document.querySelector('.slide-tab-right')?.dispatchEvent(new MouseEvent('click', { bubbles: true })); }} style={{ color: 'inherit', textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}>photography here</button>.</p>
+    <section className="about-section">
+      <div className="about-container">
+        {/* Main Headline */}
+        <h1 className="about-title">Kumaran Nathan</h1>
+
+        {/* Subtext */}
+        <p className="about-intro">
+          Hey, I'm Kumaran Nathan, a software engineer who loves building things that solve real problems. I recently graduated from the University of Michigan and have spent the last few years working across startups and game development, building everything from   analytics dashboards to computer vision systems that analyze tennis matches. My toolbox spans the full stack (React, Python, C++, TypeScript) and I'm happiest when I'm learning something new and shipping something meaningful.
+        </p>
+
+        {/* Decorative Separator */}
+        <div className="about-separator"></div>
       </div>
-    </div>
+    </section>
   );
 };
 
-export default About; 
+export default About;

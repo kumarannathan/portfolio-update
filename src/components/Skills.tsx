@@ -3,29 +3,29 @@ import React from 'react';
 const Skills: React.FC = () => {
   const skillCategories = [
     {
-      category: "Frontend",
-      skills: ["React", "TypeScript", "JavaScript", "HTML/CSS", "Swift"]
+      category: "Languages",
+      skills: ["C++/C#", "Python", "JS/TS", "Go", "SQL"]
     },
     {
-      category: "Backend & Data",
-      skills: ["Node.js", "Python", "SQL", "AWS", "REST APIs", "C++"]
+      category: "Frameworks/Tech",
+      skills: ["React", "FastAPI", "Docker", "PostgreSQL", "MediaPipe"]
     },
     {
-      category: "AI & Computer Vision",
-      skills: ["PyTorch", "OpenCV", "YOLOv8", "MediaPipe", "CNN Models"]
+      category: "AI",
+      skills: ["PyTorch", "OpenCV", "YOLOv8", "MLOps"]
     },
     {
-      category: "Tools & Design",
-      skills: ["Git", "Figma", "VS Code", "Jira", "Agile/Scrum"]
+      category: "Tools & Practices",
+      skills: ["Git/GitHub", "AWS (EC2)", "Jira", "CI/CD", "Agile"]
     }
   ];
 
   return (
     <section className="skills-section">
       <h2 className="skills-section-title">Skills & Technologies</h2>
-      
+
       <div className="skills-grid">
-        {skillCategories.slice(0, 3).map((category, categoryIndex) => (
+        {skillCategories.map((category, categoryIndex) => (
           <div key={categoryIndex} className="skill-category">
             <h4>{category.category}</h4>
             <ul>
@@ -35,7 +35,7 @@ const Skills: React.FC = () => {
             </ul>
           </div>
         ))}
-        
+
         <div className="skill-category">
           <h4>Tools & Design</h4>
           <div className="tool-logos">
@@ -45,7 +45,7 @@ const Skills: React.FC = () => {
             <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jira/jira-original.svg" alt="Jira" className="tool-logo" title="Jira" />
             <div title="Agile/Scrum">
               <svg className="tool-logo" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l7.45 3.73L12 11.63 4.55 7.91 12 4.18zM4 9.47l7 3.5v6.86l-7-3.5V9.47zm9 10.36v-6.86l7-3.5v6.86l-7 3.5z"/>
+                <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.18l7.45 3.73L12 11.63 4.55 7.91 12 4.18zM4 9.47l7 3.5v6.86l-7-3.5V9.47zm9 10.36v-6.86l7-3.5v6.86l-7 3.5z" />
               </svg>
             </div>
           </div>
@@ -55,4 +55,4 @@ const Skills: React.FC = () => {
   );
 };
 
-export default Skills; 
+export default Skills;
