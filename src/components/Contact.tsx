@@ -17,11 +17,6 @@ const Contact: React.FC = () => {
             <p className="contact-label">Phone</p>
             <p className="contact-value">+1 248 635 7735</p>
           </div>
-
-          <div className="contact-item">
-            <p className="contact-label">Instagram</p>
-            <a href="https://instagram.com/kumarannathann" target="_blank" rel="noopener noreferrer" className="contact-link">@kumarannathann</a>
-          </div>
         </div>
       </div>
     </section>
