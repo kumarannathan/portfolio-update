@@ -178,28 +178,62 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-    .item-main {
-        padding: 24px 0;
-        gap: 20px;
-    }
-
-    .item-number {
-        font-size: 24px;
-        min-width: 30px;
-    }
-
+@media (max-width: 1024px) {
     .item-title {
         font-size: 20px;
     }
 
+    .category-btn {
+        font-size: 9px;
+        padding: 7px 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .accordion-item {
+        margin: 0 -8px;
+        padding: 0 8px;
+    }
+
+    .item-main {
+        padding: 18px 0;
+        gap: 12px;
+    }
+
+    .item-title {
+        font-size: 18px;
+    }
+
+    .item-year {
+        font-size: 11px;
+    }
+
     .details-content {
-        padding: 0 0 30px 50px;
+        padding: 0 0 24px 0;
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 20px;
     }
 
     .description {
-        font-size: 15px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .tech-tags {
+        gap: 6px;
+    }
+
+    .tech-tag {
+        font-size: 10px;
+        padding: 4px 10px;
+    }
+
+    .category-btn {
+        font-size: 9px;
+        padding: 6px 12px;
+    }
+
+    .category-tabs {
+        gap: 8px;
     }
 }

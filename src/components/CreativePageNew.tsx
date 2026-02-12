@@ -3,16 +3,6 @@ import './CreativePageNew.css';
 import logo from '../assets/logo.png';
 import { photoProjects, Project } from '../data/photos';
 
-const StarsIcon = () => (
-    <div className="floating-element stars">
-        <svg width="60" height="60" viewBox="0 0 60 60" fill="currentColor">
-            <path d="M10 0L13 7L20 10L13 13L10 20L7 13L0 10L7 7L10 0Z" transform="translate(0, 0) scale(0.5)" />
-            <path d="M10 0L13 7L20 10L13 13L10 20L7 13L0 10L7 7L10 0Z" transform="translate(30, 20) scale(0.3)" />
-            <path d="M10 0L13 7L20 10L13 13L10 20L7 13L0 10L7 7L10 0Z" transform="translate(10, 40) scale(0.2)" />
-        </svg>
-    </div>
-);
-
 const GrainyCircle = () => (
     <div className="floating-element" style={{
         bottom: '0%',

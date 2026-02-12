@@ -62,12 +62,21 @@
 }
 
 @media (max-width: 768px) {
+    .contact-section {
+        padding: 60px 0;
+    }
+
     .contact-title {
         font-size: 28px;
+        margin-bottom: 40px;
     }
 
     .contact-value,
     .contact-link {
         font-size: 16px;
+    }
+
+    .contact-grid {
+        gap: 24px;
     }
 }

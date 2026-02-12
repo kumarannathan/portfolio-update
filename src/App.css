@@ -103,13 +103,35 @@ button {
 /* Responsive */
 @media (max-width: 1024px) {
   .main-layout {
-    padding: 100px 40px 60px;
+    padding: 100px 30px 60px;
+  }
+
+  .home-content-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .home-side-col {
+    position: static;
+    margin-top: 0;
+  }
+
+  .home-skills-wrapper {
+    margin-top: 60px;
   }
 }
 
 @media (max-width: 768px) {
   .main-layout {
-    padding: 90px 30px 50px;
+    padding: 80px 20px 40px;
+  }
+
+  .home-content-grid {
+    gap: 30px;
+  }
+
+  .home-skills-wrapper {
+    margin-top: 40px;
   }
 }
 

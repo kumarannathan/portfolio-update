@@ -1,41 +1,10 @@
-import React, { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import { motion } from 'framer-motion';
+import React from 'react';
 import './About.css';
 import tdVideo from './td.MP4';
 import td1Video from './td1.MP4';
 import td2Video from './td2.MP4';
 
 const AboutPage: React.FC = () => {
-    const [expandedId, setExpandedId] = useState<string | null>(null);
-
-    const explorations = [
-        {
-            id: "depth-analysis",
-            title: "Stereoscopic Depth Analysis",
-            content: `
-During my time at the University of Michigan, I explored **stereoscopic depth mapping** using synchronized dual-camera setups. The goal was to recreate human-like depth perception in real-time environments.
-
-- **Key Achievement:** Reduced point cloud processing latency by 40% using custom CUDA kernels.
-- **Tools:** C++, OpenCV, CUDA.
-            `
-        },
-        {
-            id: "generative-visuals",
-            title: "Generative Visual Systems",
-            content: `
-A case study on bridging the gap between raw data and aesthetic output. I developed a system that translates **real-time biometric data** into generative GLSL shaders.
-
-- **Focus:** Emotional resonance through bio-feedback loops.
-- **Tools:** TouchDesigner, GLSL, Python (MediaPipe).
-            `
-        }
-    ];
-
-    const toggleExpand = (id: string) => {
-        setExpandedId(expandedId === id ? null : id);
-    };
-
     return (
         <div className="about-page-content">
             <div className="bio-section">
