@@ -15,10 +15,6 @@ const GrainyCircle = () => (
     }} />
 );
 
-interface CreativePageNewProps {
-    onSlideBack: () => void;
-}
-
 const LazyImage = ({ src, alt }: { src: string; alt: string }) => {
     const formattedSrc = src.includes(' ') && !src.includes('%20') ? encodeURI(src) : src;
 
