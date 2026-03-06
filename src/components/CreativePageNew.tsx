@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './CreativePageNew.css';
 import logo from '../assets/logo.png';
-import { photoProjects, Project } from '../data/photos';
+import { photoProjects } from '../data/photos';
 
 const GrainyCircle = () => (
     <div className="floating-element" style={{
