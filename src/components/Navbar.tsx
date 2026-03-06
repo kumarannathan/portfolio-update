@@ -1,7 +1,7 @@
 import React from 'react';
 import './Navbar.css';
 
-export type Section = 'home' | 'about' | 'photos' | 'contact';
+export type Section = 'home' | 'about' | 'photos' | 'contact' | 'a16z';
 
 interface NavbarProps {
     activeSection: Section;
@@ -10,19 +10,31 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
     const isLightPage = activeSection === 'photos';
+    const [searchValue, setSearchValue] = React.useState('');
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = e.target.value.toLowerCase();
+        setSearchValue(val);
+        if (val === 'a16z') {
+            onNavigate('a16z');
+            setSearchValue('');
+        }
+    };
 
     return (
         <nav className={`navbar ${isLightPage ? 'is-light' : ''}`}>
             <div className="navbar-container">
                 {/* Left Section - Simple Name */}
-                {activeSection !== 'home' && (
-                    <div
-                        className="navbar-left"
-                        onClick={() => onNavigate('home')}
-                    >
-                        <h1 className="navbar-name-simple">Kumaran Nathan</h1>
-                    </div>
-                )}
+                <div className="navbar-left">
+                    {activeSection !== 'home' && (
+                        <h1
+                            className="navbar-name-simple"
+                            onClick={() => onNavigate('home')}
+                        >
+                            Kumaran Nathan
+                        </h1>
+                    )}
+                </div>
 
                 {/* Right Section - Navigation Links */}
                 <div className="navbar-center">
@@ -59,6 +71,17 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
                     >
                         CONTACT
                     </button>
+                    <div className="secret-search-container">
+                        <input
+                            type="text"
+                            className="secret-input"
+                            placeholder="enter code"
+                            value={searchValue}
+                            onChange={handleSearchChange}
+                            spellCheck={false}
+                            autoComplete="off"
+                        />
+                    </div>
                 </div>
             </div>
         </nav>

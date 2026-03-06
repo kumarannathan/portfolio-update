@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './CreativePageNew.css';
 import logo from '../assets/logo.png';
 import { photoProjects, Project } from '../data/photos';
@@ -15,66 +15,40 @@ const GrainyCircle = () => (
     }} />
 );
 
-const LazyImage = ({ src, alt }: { src: string; alt: string }) => {
-    const formattedSrc = src.includes(' ') && !src.includes('%20') ? encodeURI(src) : src;
-
-    return (
-        <div className="grid-item">
-            <img
-                loading="lazy"
-                src={formattedSrc}
-                alt={alt}
-                draggable={false}
-                onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                }}
-                style={{
-                    width: '100%',
-                    height: 'auto',
-                    display: 'block'
-                }}
-            />
-        </div>
-    );
-};
-
-const ProjectItem = ({
-    project,
-    isExpanded,
-    onToggle
-}: {
-    project: Project;
-    isExpanded: boolean;
-    onToggle: () => void
-}) => {
-    const [hasBeenOpened, setHasBeenOpened] = useState(false);
+const HorizontalCarousel = ({ images, title }: { images: string[]; title: string }) => {
+    const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        if (isExpanded) setHasBeenOpened(true);
-    }, [isExpanded]);
+        const scrollContainer = scrollRef.current;
+        if (!scrollContainer) return;
 
-    const shouldRenderContent = isExpanded || hasBeenOpened;
+        let animationFrameId: number;
+        let scrollPos = 0;
+
+        const animate = () => {
+            scrollPos += 0.8; // Smooth Right-to-Left movement
+            if (scrollPos >= scrollContainer.scrollWidth / 2) {
+                scrollPos = 0;
+            }
+            scrollContainer.scrollLeft = scrollPos;
+            animationFrameId = requestAnimationFrame(animate);
+        };
+
+        animationFrameId = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(animationFrameId);
+    }, []);
+
+    // Double the images for seamless infinite scroll
+    const displayImages = [...images, ...images];
 
     return (
-        <div style={{ marginBottom: '1.5rem', width: '100%' }}>
-            <div className="name-block project-title">
-                <span
-                    className={project.colorClass}
-                    onClick={onToggle}
-                    style={{ borderRadius: '6px' }}
-                >
-                    {project.title}
-                </span>
-            </div>
-
-            <div className={`photo-grid-container ${isExpanded ? 'expanded' : ''}`}>
-                {shouldRenderContent && (
-                    <div className="photo-grid">
-                        {project.images.map((img, idx) => (
-                            <LazyImage key={idx} src={img} alt={`${project.title} ${idx + 1}`} />
-                        ))}
+        <div className="horizontal-carousel-wrapper">
+            <div className="carousel-track" ref={scrollRef}>
+                {displayImages.map((src, idx) => (
+                    <div key={idx} className="carousel-item">
+                        <img src={src} alt={`${title} ${idx}`} loading="lazy" />
                     </div>
-                )}
+                ))}
             </div>
         </div>
     );
@@ -93,20 +67,36 @@ const CreativePageNew: React.FC = () => {
                 <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', marginTop: '0' }}>
                     <section style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
 
+                        <div className="photography-simple-header">
+                            <h2>VISUAL WORKS</h2>
+                        </div>
 
-                        <div className="work-section" style={{ marginTop: '3rem', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                            <p style={{ fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '2.5rem', letterSpacing: '0.15em', fontWeight: 700, fontFamily: 'Syne Mono', opacity: 0.6 }}>photography work:</p>
-
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', width: '100%' }}>
-                                {photoProjects.map(p => (
-                                    <ProjectItem
-                                        key={p.id}
-                                        project={p}
-                                        isExpanded={expandedProjectId === p.id}
-                                        onToggle={() => toggleProject(p.id)}
-                                    />
-                                ))}
+                        <div className={`photography-content-layout ${expandedProjectId ? 'is-expanded' : ''}`}>
+                            <div className="collections-nav-horizontal">
+                                <p className="collections-label">collections:</p>
+                                <div className="titles-row">
+                                    {photoProjects.map(p => (
+                                        <div
+                                            key={p.id}
+                                            className={`horizontal-title-item ${expandedProjectId === p.id ? 'active' : ''}`}
+                                            onClick={() => toggleProject(p.id)}
+                                        >
+                                            <span className={p.colorClass}>{p.title}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
+
+                            {expandedProjectId && (
+                                <div className="carousel-side-container">
+                                    {photoProjects.find(p => p.id === expandedProjectId) && (
+                                        <HorizontalCarousel
+                                            images={photoProjects.find(p => p.id === expandedProjectId)!.images}
+                                            title={photoProjects.find(p => p.id === expandedProjectId)!.title}
+                                        />
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </section>
                 </main>

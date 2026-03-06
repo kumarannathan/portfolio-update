@@ -1,25 +1,27 @@
 .contact-section {
-    padding: 80px 0;
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 40vh;
+    height: 100vh;
 }
 
 .contact-container {
     max-width: 600px;
     width: 100%;
     text-align: center;
+    /* Perfectly centered vertically */
 }
 
 .contact-title {
-    font-family: 'Lora', serif;
-    font-size: 32px;
-    font-weight: 400;
+    font-family: 'Syne', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
     color: #ffffff;
-    margin-bottom: 50px;
+    margin-bottom: 60px;
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
 }
 
 .contact-grid {

@@ -34,6 +34,63 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+body.navbar-sliding .navbar-left {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.secret-search-container {
+    opacity: 0.5;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.secret-search-container:hover,
+.secret-search-container:focus-within {
+    opacity: 1;
+}
+
+.secret-input {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-family: 'Syne Mono', monospace;
+    font-size: 11px;
+    width: 90px;
+    outline: none;
+    transition: all 0.3s ease;
+    padding: 6px 10px;
+    border-radius: 4px;
+    animation: secret-pulse 2s infinite ease-in-out;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+}
+
+.secret-input:focus {
+    width: 110px;
+    border-color: #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    animation: none;
+}
+
+@keyframes secret-pulse {
+
+    0%,
+    100% {
+        border-color: rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0px transparent;
+    }
+
+    50% {
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    }
 }
 
 .navbar-name-block {
@@ -70,6 +127,12 @@
     align-items: flex-end;
     gap: 0.6rem;
     margin-left: auto;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+body.navbar-sliding .navbar-center {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .nav-link {
@@ -104,9 +167,9 @@
     /* Removed dot in favor of border bottom */
 }
 
-/* Light Mode Override (for Photos Page) */
+/* Photography Dark Mode Override (actually dark now) */
 .navbar.is-light .navbar-name-simple {
-    color: #000000;
+    color: #ffffff;
     font-family: 'Syne', sans-serif;
     font-size: 2rem;
     font-weight: 800;
@@ -116,16 +179,16 @@
 }
 
 .navbar.is-light .nav-link {
-    color: rgba(0, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .navbar.is-light .nav-link:hover,
 .navbar.is-light .nav-link.active {
-    color: #000000;
+    color: #ffffff;
 }
 
 .navbar.is-light .nav-link.active::after {
-    background-color: #000000;
+    background-color: #ffffff;
 }
 
 /* Hidden elements from previous design */

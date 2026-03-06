@@ -51,6 +51,7 @@ button {
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
+  will-change: transform;
 }
 
 .App {
@@ -63,6 +64,10 @@ button {
 
 .App.light-mode {
   background-color: #f5f5f5;
+}
+
+.App.alpha-mode {
+  background-color: #000000;
 }
 
 .main-layout {

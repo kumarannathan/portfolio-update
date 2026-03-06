@@ -13,11 +13,18 @@ import { photoProjects } from './data/photos';
 
 const CreativePageNew = React.lazy(() => import('./components/CreativePageNew'));
 const AboutPage = React.lazy(() => import('./components/AboutPage'));
+const A16zAlpha = React.lazy(() => import('./components/A16ZAlpha'));
 
 function App() {
   const [currentView, setCurrentView] = useState<Section>('home');
 
   React.useEffect(() => {
+    // Check for secret a16z entry via URL
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('view') === 'a16z') {
+      setCurrentView('a16z');
+    }
+
     // Proactive preloading of photography content
     photoProjects.forEach(project => {
       if (project.images.length > 0) {
@@ -40,25 +47,62 @@ function App() {
   };
 
   const isPhotosView = currentView === 'photos';
+  const isAlphaView = currentView === 'a16z';
 
   return (
-    <div className={`App ${isPhotosView ? 'light-mode' : ''}`}>
+    <div className={`App ${isPhotosView ? 'light-mode' : ''} ${isAlphaView ? 'alpha-mode' : ''}`}>
       <CustomCursor />
       <AnimatePresence>
         {isPhotosView && (
           <motion.div
-            key="white-flash"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            key="photos-entry-flash"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            exit={{ opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
             style={{
               position: 'fixed',
               top: 0,
               left: 0,
               width: '100vw',
               height: '100vh',
-              backgroundColor: '#f5f5f5',
+              backgroundColor: '#000000',
+              zIndex: 3000,
+              pointerEvents: 'none'
+            }}
+          />
+        )}
+        {!isPhotosView && (
+          <motion.div
+            key="main-theme-entry-flash"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: '#0a0e27',
+              zIndex: 3000,
+              pointerEvents: 'none'
+            }}
+          />
+        )}
+        {isAlphaView && (
+          <motion.div
+            key="alpha-flash"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: '#000000',
               zIndex: 1500,
               pointerEvents: 'none'
             }}
@@ -135,6 +179,18 @@ function App() {
                 transition={{ duration: 0.2 }}
               >
                 <Contact />
+              </motion.div>
+            )}
+
+            {currentView === 'a16z' && (
+              <motion.div
+                key="a16z"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <A16zAlpha />
               </motion.div>
             )}
           </React.Suspense>

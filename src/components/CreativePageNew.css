@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Monofett&family=Syne+Mono&family=Syne:wght@400;700;800&family=Press+Start+2P&display=swap');
 
 .creative-page-new {
-    --bg-color: #f5f5f5;
-    --text-color: #000000;
-    --accent-color: #000000;
+    --bg-color: #0d0d0d;
+    --text-color: #ffffff;
+    --accent-color: #ffffff;
     --font-primary: 'Syne', sans-serif;
     --font-mono: 'Syne Mono', monospace;
     --font-accent: 'Monofett', cursive;
@@ -19,7 +19,6 @@
     left: 0;
     width: 100%;
     z-index: 2000;
-    /* Ensure it's on top */
 }
 
 /* Texture/Grain Overlay */
@@ -30,10 +29,11 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    opacity: 0.05;
+    opacity: 0.015;
+    /* Significantly reduced for subtle texture */
     pointer-events: none;
     z-index: 9999;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 .creative-page-new .container {
@@ -62,8 +62,8 @@
 
 .creative-page-new .name-block span {
     display: block;
-    background: black;
-    color: white;
+    background: white;
+    color: black;
     padding: 0.1rem 0.6rem;
     margin-bottom: 0.4rem;
     border-radius: 4px;
@@ -106,8 +106,137 @@
 }
 
 .creative-page-new .photo-grid-container.expanded {
-    height: auto;
-    margin: 1.5rem 0 3rem 0;
+    display: none;
+    /* Removed vertical grid */
+}
+
+/* Horizontal Layout */
+.photography-content-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.collections-nav-horizontal {
+    width: 100%;
+    margin-top: 2rem;
+    transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.photography-content-layout.is-expanded .collections-nav-horizontal {
+    transform: none;
+}
+
+.collections-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.4;
+    margin-bottom: 2rem;
+}
+
+.titles-row {
+    display: flex;
+    gap: 1.5rem;
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.horizontal-title-item {
+    cursor: pointer;
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    flex-shrink: 0;
+}
+
+.photography-content-layout.is-expanded .horizontal-title-item:not(.active) {
+    opacity: 0.25;
+    transform: scale(0.9);
+}
+
+.photography-content-layout.is-expanded .horizontal-title-item.active {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.horizontal-title-item span {
+    display: block;
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    font-family: var(--font-primary);
+    font-size: 1.4rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    transition: all 0.3s ease;
+    width: max-content;
+}
+
+.horizontal-title-item:hover span {
+    transform: translateY(-5px);
+    filter: saturate(1.5);
+}
+
+/* Carousel Side Container */
+.carousel-side-container {
+    width: 100%;
+    margin-top: 4rem;
+    opacity: 0;
+    animation: fadeInSlideUp 0.8s forwards;
+    animation-delay: 0.4s;
+}
+
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.horizontal-carousel-wrapper {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    margin-left: -40vw;
+    /* Shifted 10% right (from -50vw) */
+    overflow: hidden;
+    padding: 1rem 0;
+    pointer-events: none;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: hidden;
+    white-space: nowrap;
+    padding: 0;
+}
+
+.carousel-item {
+    flex: 0 0 auto;
+    width: 30vw;
+    min-width: 300px;
+    height: 45vh;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #111;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+}
+
+.carousel-item:hover img {
+    transform: scale(1.05);
 }
 
 .creative-page-new .photo-grid {
@@ -120,7 +249,7 @@
     break-inside: avoid;
     margin-bottom: 1rem;
     width: 100%;
-    background: rgba(0, 0, 0, 0.03);
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 4px;
     overflow: hidden;
     transition: transform 0.3s ease;
@@ -218,51 +347,22 @@
     font-size: 1.5rem;
 }
 
-/* Photo Container */
-.creative-page-new .photo-wrapper {
-    position: relative;
+/* Simplified Photography Header */
+.photography-simple-header {
     width: 100%;
-    max-width: 480px;
-    margin: 0 auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
-.creative-page-new .photo-card {
-    background: white;
-    padding: 14px 14px 45px 14px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-    border-radius: 4px;
-    position: relative;
-    overflow: hidden;
-    transform: rotate(1.5deg);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.creative-page-new .photo-card:hover {
-    transform: rotate(0deg) scale(1.03);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-}
-
-.creative-page-new .tape-top {
-    position: absolute;
-    top: -18px;
-    left: 50%;
-    transform: translateX(-50%) rotate(-1deg);
-    width: 140px;
-    height: 42px;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(4px);
-    z-index: 10;
-    clip-path: polygon(2% 0%, 98% 0%, 100 100%, 0% 100%);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.creative-page-new .photo-img {
-    width: 100%;
-    aspect-ratio: 4/5;
-    object-fit: cover;
-    display: block;
-    border-radius: 1px;
-    animation: fadeIn 0.6s ease-out;
+.photography-simple-header h2 {
+    font-family: var(--font-primary);
+    font-size: 3.5rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    margin: 0;
+    color: #ffffff;
+    line-height: 1;
 }
 
 @keyframes fadeIn {
