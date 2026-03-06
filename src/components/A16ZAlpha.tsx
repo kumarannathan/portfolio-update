@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import './A16ZAlpha.css';
 
 const BackgroundLines: React.FC = () => (
@@ -24,6 +25,7 @@ interface Project {
 }
 
 const A16ZAlpha: React.FC = () => {
+    const navigate = useNavigate();
     const [activeIndex, setActiveIndex] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -111,9 +113,7 @@ const A16ZAlpha: React.FC = () => {
                 transition={{ duration: 0.8 }}
                 className="alpha-header"
             >
-                <div className="alpha-badge">A16Z ALPHA ENTRY</div>
-                <h1 className="alpha-title">From Zero to One</h1>
-                <p className="alpha-subtitle">Technical build-out for the a16z application infrastructure.</p>
+                <h1 className="alpha-title">some work to share with you :)</h1>
             </motion.div>
 
             <div className="alpha-projects-grid">
@@ -178,7 +178,7 @@ const A16ZAlpha: React.FC = () => {
             </div>
 
             <motion.div className="alpha-footer">
-                <button onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'home' }))} className="alpha-back-btn">
+                <button onClick={() => navigate('/')} className="alpha-back-btn">
                     RETURN TO PORTFOLIO
                 </button>
             </motion.div>

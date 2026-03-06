@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './About.css';
 import tdVideo from './td.MP4';
 import td1Video from './td1.MP4';
 import td2Video from './td2.MP4';
 
 const AboutPage: React.FC = () => {
+    const navigate = useNavigate();
     return (
         <div className="about-page-content">
             <div className="bio-section">
@@ -31,7 +33,7 @@ const AboutPage: React.FC = () => {
                     When I’m not at a keyboard, I’m usually out with my camera (check out my{' '}
                     <span
                         className="inline-link"
-                        onClick={() => window.dispatchEvent(new CustomEvent('navigate', { detail: 'photos' }))}
+                        onClick={() => navigate('/photos')}
                         style={{ cursor: 'pointer' }}
                     >
                         photography work

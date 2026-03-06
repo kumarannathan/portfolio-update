@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 export type Section = 'home' | 'about' | 'photos' | 'contact' | 'a16z';
@@ -9,14 +10,20 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
+    const navigate = useNavigate();
     const isLightPage = activeSection === 'photos';
     const [searchValue, setSearchValue] = React.useState('');
+
+    const handleNavigate = (section: Section) => {
+        if (section === 'home') navigate('/');
+        else navigate(`/${section}`);
+    };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value.toLowerCase();
         setSearchValue(val);
         if (val === 'a16z') {
-            onNavigate('a16z');
+            handleNavigate('a16z');
             setSearchValue('');
         }
     };
@@ -29,7 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
                     {activeSection !== 'home' && (
                         <h1
                             className="navbar-name-simple"
-                            onClick={() => onNavigate('home')}
+                            onClick={() => handleNavigate('home')}
                         >
                             Kumaran Nathan
                         </h1>
@@ -40,19 +47,19 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
                 <div className="navbar-center">
                     <button
                         className={`nav-link ${activeSection === 'home' ? 'active' : ''}`}
-                        onClick={() => onNavigate('home')}
+                        onClick={() => handleNavigate('home')}
                     >
                         HOME
                     </button>
                     <button
                         className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}
-                        onClick={() => onNavigate('about')}
+                        onClick={() => handleNavigate('about')}
                     >
                         ABOUT
                     </button>
                     <button
                         className={`nav-link ${activeSection === 'photos' ? 'active' : ''}`}
-                        onClick={() => onNavigate('photos')}
+                        onClick={() => handleNavigate('photos')}
                     >
                         PHOTOS
                     </button>
@@ -67,7 +74,7 @@ const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
                     </a>
                     <button
                         className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}
-                        onClick={() => onNavigate('contact')}
+                        onClick={() => handleNavigate('contact')}
                     >
                         CONTACT
                     </button>
