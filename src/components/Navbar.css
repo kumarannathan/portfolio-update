@@ -1,267 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne+Mono&family=Syne:wght@400;700;800&display=swap');
-
 .navbar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 40px;
-    background: transparent;
-    z-index: 3000;
-    /* Higher than photos page */
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 30;
+    padding: 24px 34px;
 }
 
 .navbar-container {
-    max-width: 1400px;
+    max-width: 980px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    pointer-events: auto;
-}
-
-/* Simple Name for Engineering */
-.navbar-name-simple {
-    font-family: 'Lora', 'Georgia', serif;
-    font-size: 32px;
-    font-weight: 400;
-    color: #ffffff;
-    margin: 0;
-    cursor: pointer;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 .navbar-left {
+    display: none;
+}
+
+.navbar-brand-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #7dd3fc 0%, #a78bfa 45%, #34d399 100%);
+    color: #0b0b0b;
+    font-size: 10px;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    cursor: pointer;
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    justify-content: center;
 }
 
-body.navbar-sliding .navbar-left {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.secret-search-container {
-    opacity: 0.5;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    margin-top: 4px;
-}
-
-.secret-search-container:hover,
-.secret-search-container:focus-within {
-    opacity: 1;
-}
-
-.secret-input {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff;
-    font-family: 'Syne Mono', monospace;
-    font-size: 11px;
-    width: 90px;
-    outline: none;
-    transition: all 0.3s ease;
-    padding: 6px 10px;
-    border-radius: 4px;
-    animation: secret-pulse 2s infinite ease-in-out;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    text-align: center;
-}
-
-.secret-input:focus {
-    width: 110px;
-    border-color: #00ff88;
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
-    animation: none;
-}
-
-@keyframes secret-pulse {
-
-    0%,
-    100% {
-        border-color: rgba(255, 255, 255, 0.2);
-        box-shadow: 0 0 0px transparent;
-    }
-
-    50% {
-        border-color: rgba(255, 255, 255, 0.5);
-        box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-    }
-}
-
-.navbar-name-block {
-    font-family: 'Syne', sans-serif;
-    font-size: 3rem;
-    font-weight: 800;
-    line-height: 0.85;
-    text-transform: uppercase;
-    letter-spacing: -0.04em;
-    display: flex;
-    flex-direction: column;
-    color: #000;
-}
-
-.navbar-name-block span {
-    display: block;
-    background: white;
-    color: black;
-    padding: 0.1rem 0.6rem;
-    margin-bottom: 0.4rem;
-    border-radius: 4px;
-    width: fit-content;
-    transition: all 0.3s ease;
-}
-
-.navbar-name-block:hover span {
-    transform: translateX(10px);
-}
-
-/* Center/Right Section - Navigation */
 .navbar-center {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.6rem;
-    margin-left: auto;
-    transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-body.navbar-sliding .navbar-center {
-    opacity: 0;
-    pointer-events: none;
+    align-items: center;
+    gap: 14px;
 }
 
 .nav-link {
-    font-family: 'Syne Mono', monospace;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 13px;
     text-decoration: none;
-    background: none;
-    border: none;
-    color: white;
-    font-weight: 400;
-    font-size: 1rem;
-    padding: 0;
-    margin: 0;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    width: fit-content;
-    text-transform: uppercase;
 }
 
 .nav-link:hover {
-    border-color: white;
-    transform: translateY(-1px);
+    color: #fff;
 }
 
-.nav-link.active {
-    border-color: white;
-    font-weight: 600;
+.navbar-cta {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-radius: 11px;
+    padding: 8px 12px;
+    font-size: 12px;
 }
 
-.nav-dot {
-    display: none;
-    /* Removed dot in favor of border bottom */
+.navbar-cta:hover {
+    background: rgba(255, 255, 255, 0.14);
 }
 
-/* Photography Dark Mode Override (actually dark now) */
-.navbar.is-light .navbar-name-simple {
-    color: #ffffff;
-    font-family: 'Syne', sans-serif;
-    font-size: 2rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: -0.04em;
-    line-height: 0.85;
-}
-
-.navbar.is-light .nav-link {
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.navbar.is-light .nav-link:hover,
-.navbar.is-light .nav-link.active {
-    color: #ffffff;
-}
-
-.navbar.is-light .nav-link.active::after {
-    background-color: #ffffff;
-}
-
-/* Hidden elements from previous design */
-.navbar-subtitle,
-.navbar-icon,
-.navbar-right {
-    display: none;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 760px) {
     .navbar {
-        padding: 20px;
-    }
-
-    .navbar-container {
-        align-items: center;
-    }
-
-    .navbar-name-simple {
-        font-size: 20px;
-    }
-
-    .navbar-name-block {
-        font-size: 2rem;
-    }
-
-    .navbar-center {
-        gap: 10px;
-    }
-
-    .nav-link {
-        font-size: 0.85rem;
-        padding: 0;
-    }
-}
-
-@media (max-width: 480px) {
-    .navbar {
-        padding: 16px;
-    }
-
-    .navbar-name-simple {
-        font-size: 18px;
-    }
-
-    .navbar-name-block {
-        font-size: 1.6rem;
-    }
-
-    .nav-link {
-        font-size: 0.8rem;
-    }
-
-    .navbar.is-light .navbar-name-simple {
-        font-size: 1.4rem;
+        padding: 18px 16px;
     }
 
     .navbar-center {
         gap: 8px;
     }
-}
 
-/* Hide custom cursor on touch devices */
-@media (hover: none) and (pointer: coarse) {
-
-    html,
-    body,
-    * {
-        cursor: auto !important;
-    }
-
-    .custom-cursor {
-        display: none !important;
+    .nav-link {
+        font-size: 12px;
     }
 }

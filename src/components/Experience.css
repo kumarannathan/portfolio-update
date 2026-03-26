@@ -1,0 +1,116 @@
+.experience-section {
+    padding: 42px 0;
+    max-width: 720px;
+    margin: 0 0 0 clamp(48px, 12vw, 140px);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.experience-section-title {
+    margin: 0 0 18px;
+    padding-left: 0;
+    font-size: 18px;
+    font-weight: 500;
+    color: #f4f4f4;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.experience-list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.experience-item {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 18px;
+    align-items: start;
+}
+
+.experience-date {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    line-height: 1.45;
+    padding-top: 2px;
+    font-family: inherit;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.experience-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 365px;
+}
+
+.experience-header h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 500;
+    color: #ededed;
+    line-height: 1.25;
+    letter-spacing: 0;
+    text-transform: none;
+    font-family: inherit;
+}
+
+.experience-header h3 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.experience-header h3 a:hover {
+    text-decoration: underline;
+}
+
+.experience-description {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.72);
+    max-width: 100%;
+}
+
+.experience-technologies {
+    margin: 0;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.44);
+    line-height: 1.35;
+}
+
+@media (max-width: 900px) {
+    .experience-section {
+        margin-left: 0;
+    }
+
+    .experience-section-title {
+        font-size: 16px;
+        margin-bottom: 24px;
+    }
+
+    .experience-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .experience-date {
+        font-size: 12px;
+    }
+
+    .experience-header h3 {
+        font-size: 16px;
+    }
+
+    .experience-description {
+        font-size: 13px;
+    }
+
+    .experience-technologies {
+        font-size: 11px;
+    }
+}

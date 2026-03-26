@@ -11,84 +11,43 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ activeSection, onNavigate }) => {
     const navigate = useNavigate();
-    const isLightPage = activeSection === 'photos';
-    const [searchValue, setSearchValue] = React.useState('');
 
     const handleNavigate = (section: Section) => {
+    onNavigate(section);
         if (section === 'home') navigate('/');
         else navigate(`/${section}`);
     };
 
-    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value.toLowerCase();
-        setSearchValue(val);
-        if (val === 'a16z') {
-            handleNavigate('a16z');
-            setSearchValue('');
-        }
-    };
+  const scrollToSection = (id: string) => {
+    const target = document.getElementById(id);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
     return (
-        <nav className={`navbar ${isLightPage ? 'is-light' : ''}`}>
-            <div className="navbar-container">
-                {/* Left Section - Simple Name */}
-                <div className="navbar-left">
-                    {activeSection !== 'home' && (
-                        <h1
-                            className="navbar-name-simple"
-                            onClick={() => handleNavigate('home')}
-                        >
-                            Kumaran Nathan
-                        </h1>
-                    )}
+    <nav className="navbar">
+      <div className="navbar-container">
+        <div className="navbar-left" onClick={() => handleNavigate('home')}>
+          <div className="navbar-brand-badge">KN</div>
                 </div>
 
-                {/* Right Section - Navigation Links */}
-                <div className="navbar-center">
-                    <button
-                        className={`nav-link ${activeSection === 'home' ? 'active' : ''}`}
-                        onClick={() => handleNavigate('home')}
-                    >
-                        HOME
-                    </button>
-                    <button
-                        className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}
-                        onClick={() => handleNavigate('about')}
-                    >
-                        ABOUT
-                    </button>
-                    <button
-                        className={`nav-link ${activeSection === 'photos' ? 'active' : ''}`}
-                        onClick={() => handleNavigate('photos')}
-                    >
-                        PHOTOS
-                    </button>
-                    <a
-                        href="/Kumi.pdf"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="nav-link"
-                        style={{ textDecoration: 'none' }}
-                    >
-                        RESUME
-                    </a>
-                    <button
-                        className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}
-                        onClick={() => handleNavigate('contact')}
-                    >
-                        CONTACT
-                    </button>
-                    <div className="secret-search-container">
-                        <input
-                            type="text"
-                            className="secret-input"
-                            placeholder="enter code"
-                            value={searchValue}
-                            onChange={handleSearchChange}
-                            spellCheck={false}
-                            autoComplete="off"
-                        />
-                    </div>
+        <div className="navbar-center">
+          {activeSection === 'home' ? (
+            <>
+              <button className="nav-link" onClick={() => scrollToSection('experience')}>Experience</button>
+              <button className="nav-link" onClick={() => scrollToSection('projects')}>Projects</button>
+              <a href="https://kumi.tiiny.site" target="_blank" rel="noopener noreferrer" className="nav-link">Resume</a>
+              <button className="navbar-cta" onClick={() => handleNavigate('contact')}>Contact</button>
+            </>
+          ) : (
+            <>
+              <button className="nav-link" onClick={() => handleNavigate('home')}>Home</button>
+              <button className="nav-link" onClick={() => handleNavigate('about')}>About</button>
+              <button className="nav-link" onClick={() => handleNavigate('photos')}>Photos</button>
+              <button className="navbar-cta" onClick={() => handleNavigate('contact')}>Contact</button>
+            </>
+          )}
                 </div>
             </div>
         </nav>
