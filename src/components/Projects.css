@@ -605,6 +605,26 @@
     transition: font-size 1.45s var(--motion-ease-soft);
 }
 
+.project-card-links {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.project-card-link {
+    color: rgba(255, 255, 255, 0.72);
+    text-decoration: none;
+    font-size: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+    transition: color var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease);
+}
+
+.project-card-link:hover {
+    color: rgba(255, 255, 255, 0.95);
+    border-color: rgba(255, 255, 255, 0.58);
+}
+
 .detail-media-shell {
     width: 100%;
     max-width: min(580px, 100%);

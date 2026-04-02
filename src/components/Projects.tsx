@@ -117,6 +117,29 @@ const Projects: React.FC = () => {
       autoplayVideo: true
     },
     {
+      id: "neetcode-redesign",
+      date: "2026",
+      title: "NeetCode Redesign",
+      category: "frontend",
+      description:
+        "Built a full NeetCode-inspired redesign with a modern dark aesthetic to make interview prep feel like a polished product rather than a static content site. Shipped for an X competition with animated landing experiences, state-driven dashboard navigation, and reusable interaction systems across key prep flows.",
+      details:
+        "Designed and shipped a complete experience from marketing landing to dashboard prototype and auth flow, with TypeScript/build fixes for deployment readiness.",
+      tag: { label: "Frontend", tone: "violet" },
+      technologies: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS v4", "GSAP"],
+      techSummary: "Next.js 16, React 19, TypeScript, Tailwind CSS v4, GSAP",
+      media: "/neetcode.mp4",
+      autoplayVideo: true,
+      link: "https://neatcoded.netlify.app/",
+      github: "https://github.com/kumarannathan/Neetcode.git",
+      highlights: [
+        "Built an animated landing with rotating insight cards, structured course explorer, roadmap section, and interactive resources blocks",
+        "Developed a rich dashboard prototype with in-page sections (Home, Coding Interviews, Problems, Company Tagged, System Design, Roadmap)",
+        "Implemented reusable UI systems (cards, chips, counters, hover/focus transitions, responsive sidebar behavior, reduced-motion-safe polish)",
+        "Integrated route flow end-to-end (/sign-in -> fake auth -> /dashboard) and resolved production TypeScript/build blockers"
+      ]
+    },
+    {
       id: "sipt",
       date: "2026",
       title: "Sipt",
@@ -559,6 +582,30 @@ const Projects: React.FC = () => {
                   return detailedView ? `${project.date} • ${techLine}` : techLine;
                 })()}
               </p>
+              {(project.link || project.github) && (
+                <div className="project-card-links">
+                  {project.link && (
+                    <a
+                      href={project.link}
+                      className="project-card-link"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Live
+                    </a>
+                  )}
+                  {project.github && (
+                    <a
+                      href={project.github}
+                      className="project-card-link"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      GitHub
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
             {detailedView && projectHasDetailContent && (
               <div className={`project-card-detail-side${projectHasBullets ? ' project-card-detail-side--has-bullets' : ''}`}>

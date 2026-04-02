@@ -45,6 +45,14 @@ const About: React.FC = () => {
             >
               Resume <span aria-hidden="true">↗</span>
             </a>
+            <a
+              href="https://github.com/kumarannathan/"
+              className="about-nav-link"
+              target="_blank"
+              rel="noreferrer"
+            >
+              GitHub <span aria-hidden="true">↗</span>
+            </a>
           </div>
         </div>
       </div>

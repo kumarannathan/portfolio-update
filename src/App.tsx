@@ -6,6 +6,8 @@ import About from './components/About';
 import Projects from './components/Projects';
 import Experience from './components/Experience';
 import CustomCursor from './components/CustomCursor';
+import DomeGallery from './components/DomeGallery';
+import Grainient from './components/Grainient';
 
 import { photoProjects } from './data/photos';
 
@@ -23,6 +25,24 @@ const Home: React.FC = () => (
     </div>
     <div className="home-section-block">
       <Projects />
+    </div>
+    <div className="home-section-block">
+      <h2 style={{ fontSize: '22px', fontWeight: 'Normal', marginBottom: '-10%', transform: 'translateX(42%)', marginTop: '15%' }}>Photos</h2>
+
+    </div>
+    <div className="home-bottom-gallery-block">
+      <DomeGallery
+        images={photoProjects
+          .filter((project) => ['formula1', 'mexico', 'filmfavorites'].includes(project.id))
+          .flatMap((project) => project.images)}
+        fit={0.8}
+        minRadius={600}
+        maxVerticalRotationDeg={0}
+        segments={34}
+        dragDampening={2}
+        grayscale={false}
+        overlayBlurColor="transparent"
+      />
     </div>
   </div>
 );
@@ -45,6 +65,32 @@ const MainContent: React.FC = () => {
 
   return (
     <div className={`App ${isPhotosView ? 'light-mode' : ''} ${isAlphaView ? 'alpha-mode' : ''}`}>
+      <div className="app-pixel-wallpaper" aria-hidden>
+        <Grainient
+          color1="#000000"
+          color2="#707070"
+          color3="#000000"
+          timeSpeed={0.25}
+          colorBalance={0}
+          warpStrength={4}
+          warpFrequency={5}
+          warpSpeed={2}
+          warpAmplitude={50}
+          blendAngle={0}
+          blendSoftness={0.05}
+          rotationAmount={500}
+          noiseScale={2}
+          grainAmount={0.1}
+          grainScale={2}
+          grainAnimated={false}
+          contrast={1.5}
+          gamma={1}
+          saturation={1}
+          centerX={0}
+          centerY={0}
+          zoom={0.9}
+        />
+      </div>
       <CustomCursor />
 
       {/* Background flashes for theme transitions */}
@@ -88,7 +134,7 @@ const MainContent: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <main className="main-layout">
+      <main className={`main-layout ${currentView === 'home' ? 'main-layout-home' : ''}`}>
         <AnimatePresence mode="wait">
           <React.Suspense fallback={null}>
             <Routes location={location} key={location.pathname}>

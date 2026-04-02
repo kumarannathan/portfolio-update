@@ -60,6 +60,15 @@ button {
   overflow-x: hidden;
   padding: 0;
   transition: background-color 0.4s ease;
+  position: relative;
+}
+
+.app-pixel-wallpaper {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.42;
 }
 
 .App.light-mode {
@@ -76,6 +85,7 @@ button {
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 40px 40px;
+  z-index: 1;
 }
 
 .home-content-grid {
@@ -2485,6 +2495,10 @@ body {
   padding: 0 34px 80px;
 }
 
+.main-layout-home {
+  padding-bottom: 0;
+}
+
 .home-shell {
   display: flex;
   flex-direction: column;
@@ -2498,6 +2512,16 @@ body {
   border-top: none;
   padding-top: 26px;
   width: 100%;
+}
+
+.home-bottom-gallery-block {
+  width: 100vw;
+  height: 100vh;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-top: 40px;
+  margin-bottom: 0;
+  position: relative;
 }
 
 @media (max-width: 760px) {
