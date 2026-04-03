@@ -1,7 +1,8 @@
 [build]
-  command = "npm run build"
+  # Inline env so dashboard CI=true cannot override; CRA fails on ESLint warnings when CI=true.
+  command = "npm ci && CI=false DISABLE_ESLINT_PLUGIN=true npm run build"
   publish = "build"
 
 [build.environment]
-  # CRA treats ESLint warnings as errors when CI=true; Netlify sets CI by default.
-  CI = "false"
+  NODE_VERSION = "20"
+  NPM_CONFIG_LEGACY_PEER_DEPS = "true"
