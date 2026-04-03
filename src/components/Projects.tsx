@@ -1,45 +1,57 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Monitor } from 'lucide-react';
+import StackIcon from 'tech-stack-icons';
+import { getTechStackIconName } from './projectTechIconMap';
 import './Projects.css';
 
-type ProjectTagTone =
-  | 'lobster'
-  | 'blue'
-  | 'amber'
-  | 'green'
-  | 'cyan'
-  | 'violet'
-  | 'lime'
-  | 'indigo'
-  | 'rose';
-
-interface ProjectTag {
-  label: string;
-  tone: ProjectTagTone;
+function BrandGithubIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.66-3.645-1.455-3.645-1.455-.495-1.26-1.2-1.59-1.2-1.59-.99-.675.075-.66.075-.66 1.095.075 1.665 1.125 1.665 1.125.975 1.665 2.55 1.185 3.165.9.105-.735.39-1.185.705-1.455-2.46-.27-5.04-1.23-5.04-5.515 0-1.23.435-2.23 1.125-3.015-.105-.27-.45-1.365.105-2.85 0 0 .915-.285 3.015 1.14.87-.24 1.815-.36 2.745-.36s1.875.12 2.745.36c2.1-1.425 3.015-1.14 3.015-1.14.555 1.485.21 2.58.105 2.85.69.785 1.125 1.785 1.125 3.015 0 4.305-2.595 5.25-5.07 5.55.405.345.765 1.02.765 2.055 0 1.485-.015 2.685-.015 3.045 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+    </svg>
+  );
 }
 
-interface Project {
+function BrandYoutubeIcon({ size = 18 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    </svg>
+  );
+}
+
+export interface ProjectEntry {
   id: string;
-  date: string;
   title: string;
-  category: string;
+  technologies: string[];
+  /** Full lead copy — expanded view (and fallback if no summary) */
   description: string;
-  details: string;
-  tag?: ProjectTag;
-  /** Optional expanded copy for text-only detailed cards */
-  detailText?: string;
-  /** Optional single asset for detailed view: one video, one image, or none */
+  /** One-line preview on grid cards */
+  summary?: string;
+  /** Category chip (e.g. OpenClaw, Frontend) — expanded + grid */
+  roleTag?: string;
+  /** e.g. "2026 • React, …" — expanded view only */
+  metaLine?: string;
+  /** Shown only in expanded view — stack, scope, or feature summary */
+  details?: string;
+  /** Bullet list — expanded view only */
+  highlights?: string[];
+  cover?: string;
   media?: string;
-  technologies?: string[];
+  /** youtu.be/… or youtube.com/watch?v=… — embedded in the card */
+  youtubeUrl?: string;
+  autoplayVideo?: boolean;
   link?: string;
   github?: string;
-  /** When set, detailed-view video autoplays (muted + loop; browser autoplay policy) */
-  autoplayVideo?: boolean;
-  /** Optional structured bullets under the main description */
-  highlights?: string[];
-  /** Optional second bullet list (no visible section title in UI) */
-  agentsSection?: { items: string[] };
-  /** Overrides joined technologies for the tech line when present */
-  techSummary?: string;
+  /** Extra paragraph, expanded view only */
+  detailText?: string;
+}
+
+function publicAssetUrl(path: string): string {
+  const base = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
+  const p = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${p}`;
 }
 
 function isVideoMediaSrc(src: string): boolean {
@@ -47,648 +59,414 @@ function isVideoMediaSrc(src: string): boolean {
   return cleaned.endsWith('.mp4') || cleaned.endsWith('.webm') || cleaned.endsWith('.ogg');
 }
 
-/** CRA `public/` files — respect `PUBLIC_URL` when the app is hosted under a subpath */
-function publicAssetUrl(path: string): string {
-  const base = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
-  const p = path.startsWith('/') ? path : `/${path}`;
-  return `${base}${p}`;
+function youTubeEmbedSrc(url: string): string | null {
+  const u = url.trim();
+  const short = u.match(/youtu\.be\/([^?&#]+)/);
+  if (short) return `https://www.youtube.com/embed/${short[1]}`;
+  const v = u.match(/[?&]v=([^?&#]+)/);
+  if (v) return `https://www.youtube.com/embed/${v[1]}`;
+  const embed = u.match(/youtube\.com\/embed\/([^?&#]+)/);
+  if (embed) return `https://www.youtube.com/embed/${embed[1]}`;
+  return null;
 }
 
-function hasProjectBullets(project: Project): boolean {
-  const hl = project.highlights?.length ?? 0;
-  const ag = project.agentsSection?.items?.length ?? 0;
-  return hl > 0 || ag > 0;
-}
+function ProjectCover({ project, detail }: { project: ProjectEntry; detail?: boolean }) {
+  const base = detail ? 'projects-detail__cover' : 'projects-card__cover';
 
-function hasProjectDetailContent(project: Project): boolean {
-  return Boolean(project.media) || Boolean(project.detailText) || Boolean(project.details) || hasProjectBullets(project);
-}
-
-const Projects: React.FC = () => {
-  const [activeTagFilters, setActiveTagFilters] = useState<string[]>([]);
-  const [detailedView, setDetailedView] = useState<boolean>(false);
-  const [activeDetailedProjectId, setActiveDetailedProjectId] = useState<string>('');
-  /** After left-side layout finishes entering; drives media pop-up */
-  const [detailMediaRevealed, setDetailMediaRevealed] = useState<boolean>(false);
-  /** True only while left layout is animating in (panel stays hidden until this ends) */
-  const [detailLayoutEntering, setDetailLayoutEntering] = useState<boolean>(false);
-  /** True while media is popping down before layout exit runs */
-  const [detailExitInProgress, setDetailExitInProgress] = useState<boolean>(false);
-  const [filtersOpen, setFiltersOpen] = useState<boolean>(false);
-  /** Media-ready gate per project so bullets wait for the asset to load */
-  const [detailMediaReadyByProject, setDetailMediaReadyByProject] = useState<Record<string, boolean>>({});
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const projectRefs = useRef<Record<string, HTMLElement | null>>({});
-  const detailEnterTimeoutRef = useRef<number | null>(null);
-  const detailExitTimeoutRef = useRef<number | null>(null);
-  const detailSnapTimeoutRef = useRef<number | null>(null);
-  const detailAutoScrollingRef = useRef(false);
-  /** Must match --detail-layout-enter-ms / --detail-media-pop-ms in Projects.css */
-  const LAYOUT_ENTER_MS = 2000;
-  const MEDIA_POP_MS = 520;
-
-  const projectsData = useMemo<Project[]>(() => [
-    {
-      id: "milo-mission-control",
-      date: "2026",
-      title: "Milo — Mission Control",
-      category: "ai",
-      description:
-        "Run a fleet of specialized AI agents from one Mission Control dashboard—live status, shared memory, and a task bus you can actually watch instead of guessing what your bots are doing. I wired end-to-end pipelines from research and drafts through publish and social, with Milo orchestrating handoffs across agents in production. The whole stack is serverless APIs plus Supabase-backed state, tuned so cheap local inference (Ollama) keeps monthly costs trivial until you need to scale.",
-      details: "Multi-agent task queues, Mission Control UI, Netlify Functions, Ollama cost optimization.",
-      technologies: ["React", "Netlify Functions", "Supabase", "Python", "Ollama", "RapidAPI"],
-      highlights: [
-        "Built a multi-agent architecture orchestrated via shared task queues and memory (Supabase)",
-        "Designed a Mission Control UI (React) to visualize agent status, activity feeds, and pipelines in real time",
-        "Implemented a serverless backend (Netlify Functions) for agent communication, logging, and coordination",
-        "Optimized for low-cost local inference (Ollama) with ~$1.50/month API usage (option to scale with paid models)"
-      ],
-      agentsSection: {
-        items: [
-          "Trade Bot: Tracks Polymarket activity and auto-researches positions/trends",
-          "Competitor Intelligence Bot: Monitors tweets, news, and trends based on brand configs using RapidAPI + Clawdbot",
-          "Content Pipeline Agents: End-to-end automation (research → draft → optimize → publish) across multiple specialized bots",
-          "Orchestrator (Milo): Manages task scheduling, agent coordination, and pipeline execution via shared agent_tasks"
-        ]
-      },
-      tag: { label: "OpenClaw", tone: "lobster" },
-      techSummary: "React, Netlify Functions, Supabase, Python, Ollama, RapidAPI",
-      media: "/milo.mp4",
-      autoplayVideo: true
-    },
-    {
-      id: "neetcode-redesign",
-      date: "2026",
-      title: "NeetCode Redesign",
-      category: "frontend",
-      description:
-        "Built a full NeetCode-inspired redesign with a modern dark aesthetic to make interview prep feel like a polished product rather than a static content site. Shipped for an X competition with animated landing experiences, state-driven dashboard navigation, and reusable interaction systems across key prep flows.",
-      details:
-        "Designed and shipped a complete experience from marketing landing to dashboard prototype and auth flow, with TypeScript/build fixes for deployment readiness.",
-      tag: { label: "Frontend", tone: "violet" },
-      technologies: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS v4", "GSAP"],
-      techSummary: "Next.js 16, React 19, TypeScript, Tailwind CSS v4, GSAP",
-      media: "/neetcode.mp4",
-      autoplayVideo: true,
-      link: "https://neatcoded.netlify.app/",
-      github: "https://github.com/kumarannathan/Neetcode.git",
-      highlights: [
-        "Built an animated landing with rotating insight cards, structured course explorer, roadmap section, and interactive resources blocks",
-        "Developed a rich dashboard prototype with in-page sections (Home, Coding Interviews, Problems, Company Tagged, System Design, Roadmap)",
-        "Implemented reusable UI systems (cards, chips, counters, hover/focus transitions, responsive sidebar behavior, reduced-motion-safe polish)",
-        "Integrated route flow end-to-end (/sign-in -> fake auth -> /dashboard) and resolved production TypeScript/build blockers"
-      ]
-    },
-    {
-      id: "sipt",
-      date: "2026",
-      title: "Sipt",
-      category: "fullstack",
-      description: "Letterboxd for specialty coffee. Existing coffee loggers help you track brews privately, but they stop short of discovery, taste identity, and community. Sipt adds the social layer: log coffees with a 3-axis rating across Enjoyment, Balance, and Clarity, follow people whose taste you trust, and build a profile that actually says something about what you like.",
-      details: "I designed the rating system, social discovery loop, and product direction for a coffee-first consumer app.",
-      tag: { label: "Mobile", tone: "blue" },
-      technologies: ["React", "React Native", "TypeScript", "Mobile Development"],
-      techSummary: "React, React Native, TypeScript, mobile development",
-      media: "/videos/coffee.mp4",
-      autoplayVideo: true
-    },
-    {
-      id: "booking-platform",
-      date: "2025",
-      title: "Startup Booking Platform",
-      category: "fullstack",
-      description: "Full-stack booking platform with TypeScript/React frontend and Node.js/Express backend handling 100+ monthly reservations with PostgreSQL managing relational customer and availability data. Built RESTful API layer with automated email notifications and JWT authentication.",
-      details: "I designed the booking flow, reservation APIs, and admin operations tooling with an emphasis on reliability and speed.",
-      tag: { label: "Frontend", tone: "amber" },
-      technologies: ["React", "Node.js", "Express", "PostgreSQL", "JWT"],
-      media: "/mtm.mp4",
-      autoplayVideo: true
-    },
-    {
-      id: "soul-forest",
-      date: "2023",
-      title: "Soul of the Forest",
-      category: "game development",
-      description: "Directed UI/UX department for commercial game development, establishing development timelines using Jira, Confluence, and Git. Led comprehensive playtesting and implemented menu designs using Figma, C# Scripts, and Unity Game Engine.",
-      details: "Owned UI/UX quality across gameplay systems and coordinated QA with production for consistent releases.",
-      tag: { label: "Game Dev", tone: "green" },
-      technologies: ["Unity", "C#", "Figma", "Jira", "Git"],
-      media: "/soul-of-the-forest.mp4",
-      link: "https://store.steampowered.com/app/2877660/Soul_of_the_Forest/",
-      autoplayVideo: true
-    },
-    {
-      id: "tennis-analytics",
-      date: "2025", 
-      title: "CV Tennis Analytics",
-      category: "ai",
-      description: "Full-stack sports analytics platform with React dashboard and FastAPI backend processing match footage using custom YOLOv8 and PyTorch models. Designed RESTful APIs serving real-time analysis endpoints with PostgreSQL storing match statistics.",
-      details: "Built the model-to-dashboard loop so users can upload footage and quickly see tactical insights.",
-      tag: { label: "Computer Vision", tone: "cyan" },
-      detailText: "I built the full path from raw match footage to usable analysis: a browser dashboard for uploads, a FastAPI layer for orchestration, and a CV pipeline that turned detections into rally-level stats and tactical feedback. The product goal was speed and clarity, so players could move from video to insight without touching a notebook or labeling tool.",
-      technologies: ["React", "FastAPI", "YOLOv8", "PyTorch", "D3.js"],
-    },
-    {
-      id: "dance-ar",
-      date: "2025",
-      title: "Dance AR",
-      category: "ar/vr",
-      description: "Full-stack AR fitness platform analyzing movement against choreography using MediaPipe pose estimation. Engineered RESTful API handling real-time WebRTC streams and movement scoring algorithms. Deployed via CI/CD on GCP.",
-      details: "Shipped real-time pose feedback and score overlays, focused on responsiveness and user motivation loops.",
-      tag: { label: "Game Dev", tone: "green" },
-      technologies: ["Next.js", "MediaPipe", "WebRTC", "Firebase", "GCP"],
-    },
-    {
-      id: "jobsim-vr",
-      date: "2024",
-      title: "JobSim VR",
-      category: "ar/vr",
-      description: "Corporate life simulator featuring NPCs with dynamic behaviors, head-tracking, movement, and dialogue. Designed 'Severance'-inspired Macrodata Refinement Room with interactable components and immersive VR environment. Featured in UMich Game Design Showcase.",
-      details: "Implemented immersive interactions and pacing systems to make the simulation feel cohesive and reactive.",
-      tag: { label: "Game Dev", tone: "green" },
-      detailText: "This project was about making a strange office space feel alive in VR. I focused on interaction design, NPC behavior, and environmental pacing so the world stayed readable and uncanny at the same time, with enough system depth that the player could explore, observe, and feel the room reacting back.",
-      technologies: ["Unreal Engine 5", "Blueprints", "C++"],
-    },
-    {
-      id: "ann-arbor-go",
-      date: "2024",
-      title: "AnnArborGo",
-      category: "ar/vr",
-      description: "Location-based AR game promoting environmental stewardship through virtual tree planting, landmark exploration, and eco-defense mechanics. Features Environmental Achievement Recognition System with eco-medals, GPS landmark navigation, interactive history reveals, and dynamic squirrel encounters requiring strategic acorn-throwing defense.",
-      details: "Designed map-based progression and AR interactions that encourage exploration with clear reward loops.",
-      tag: { label: "Location AR", tone: "lime" },
-      detailText: "I treated AnnArborGo as a city-scale progression system, combining GPS movement, landmark discovery, and lightweight AR interactions into something that felt playful instead of purely educational. The core challenge was balancing exploration, reward loops, and local context so the experience felt grounded in Ann Arbor rather than like a generic location game.",
-      technologies: ["Unreal Engine 5", "AR", "GPS", "Blueprints", "C++"],
-    },
-    {
-      id: "focus-zone",
-      date: "2025",
-      title: "Focus Zone",
-      category: "cv",
-      description: "Computer vision-powered focus tracking application using MediaPipe face mesh detection. Features hand gesture controls and real-time distraction detection.",
-      details: "Built low-latency visual tracking and interaction controls directly in the browser for daily productivity use.",
-      tag: { label: "MediaPipe", tone: "blue" },
-      detailText: "Focus Zone started as a practical browser tool for staying locked in during deep work. I built low-latency face and gesture tracking in the client, then layered in distraction signals and simple controls so the system could react in real time without feeling heavy or invasive. It is the same kind of CV loop I want to revisit later with stronger video-driven UX.",
-      technologies: ["React", "TypeScript", "MediaPipe", "Computer Vision"],
-    },
-    {
-      id: "meeting-summarizer",
-      date: "2025",
-      title: "Smart Meeting Summarizer",
-      category: "ai",
-      description: "Meeting intelligence app that transcribes audio, extracts chapters, and detects attendees automatically using FastAPI and OpenAI/AssemblyAI.",
-      details: "Focused on practical output formatting and summary quality so teams can act on notes immediately.",
-      tag: { label: "Voice AI", tone: "amber" },
-      technologies: ["React", "TypeScript", "FastAPI", "Python", "AssemblyAI"],
-    },
-    {
-      id: "studyai",
-      date: "2024",
-      title: "StudyAI",
-      category: "ai",
-      description: "AI-powered learning platform using Next.js and TypeScript that leverages multiple AI APIs to generate flashcards and quizzes.",
-      details: "Designed content-to-practice workflows to help students convert notes into active recall sessions quickly.",
-      tag: { label: "EdTech", tone: "rose" },
-      technologies: ["Next.js", "TypeScript", "Prisma", "OpenAI"],
-    }
-  ], []);
-
-  const tagFilters = useMemo(
-    () => [
-      { label: 'All', value: 'all', tone: null as ProjectTagTone | null },
-      ...projectsData.reduce<{ label: string; value: string; tone: ProjectTagTone }[]>((filters, project) => {
-        if (!project.tag) return filters;
-        if (filters.some((filter) => filter.value === project.tag?.label)) return filters;
-        return [...filters, { label: project.tag.label, value: project.tag.label, tone: project.tag.tone }];
-      }, [])
-    ],
-    [projectsData]
-  );
-
-  const filteredProjects = useMemo(
-    () => (
-      activeTagFilters.length === 0
-        ? projectsData
-        : projectsData.filter((project) => (
-            project.tag ? activeTagFilters.includes(project.tag.label) : false
-          ))
-    ).slice(0, 10),
-    [activeTagFilters, projectsData]
-  );
-
-  useEffect(() => {
-    setActiveDetailedProjectId(filteredProjects[0]?.id ?? '');
-  }, [activeTagFilters, filteredProjects]);
-
-  useEffect(() => {
-    if (!detailedView || filteredProjects.length === 0) return;
-    const firstProjectId = filteredProjects[0].id;
-    const t = window.setTimeout(() => {
-      scrollToProject(firstProjectId);
-    }, 80);
-    return () => window.clearTimeout(t);
-  }, [detailedView, filteredProjects]);
-
-  const markProjectMediaReady = (projectId: string) => {
-    setDetailMediaReadyByProject((current) =>
-      current[projectId] ? current : { ...current, [projectId]: true }
-    );
-  };
-
-  useEffect(() => {
-    if (!detailedView) return;
-
-    const updateActiveProject = () => {
-      const viewportCenter = window.innerHeight / 2;
-      let closestId = filteredProjects[0]?.id ?? '';
-      let closestDistance = Number.POSITIVE_INFINITY;
-
-      filteredProjects.forEach((project) => {
-        const el = projectRefs.current[project.id];
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const projectCenter = rect.top + rect.height / 2;
-        const distance = Math.abs(projectCenter - viewportCenter);
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestId = project.id;
-        }
-      });
-
-      if (closestId) {
-        setActiveDetailedProjectId((current) => (current === closestId ? current : closestId));
-      }
-    };
-
-    const snapToNearestProject = () => {
-      if (detailAutoScrollingRef.current) return;
-      const section = sectionRef.current;
-      if (!section) return;
-      const rect = section.getBoundingClientRect();
-      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
-
-      const targetId = filteredProjects.reduce(
-        (closestId, project) => {
-          const el = projectRefs.current[project.id];
-          if (!el) return closestId;
-          const viewportCenter = window.innerHeight / 2;
-          const projectRect = el.getBoundingClientRect();
-          const projectCenter = projectRect.top + projectRect.height / 2;
-          const closestEl = projectRefs.current[closestId];
-          const closestCenter = closestEl
-            ? closestEl.getBoundingClientRect().top + closestEl.getBoundingClientRect().height / 2
-            : viewportCenter;
-          return Math.abs(projectCenter - viewportCenter) < Math.abs(closestCenter - viewportCenter)
-            ? project.id
-            : closestId;
-        },
-        filteredProjects[0]?.id ?? ''
-      );
-
-      if (!targetId) return;
-      const target = projectRefs.current[targetId];
-      if (!target) return;
-      const targetRect = target.getBoundingClientRect();
-      const threshold = window.innerHeight * 0.5;
-      if (Math.abs(targetRect.top + targetRect.height / 2 - window.innerHeight / 2) < threshold) {
-        detailAutoScrollingRef.current = true;
-        target.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        window.setTimeout(() => {
-          detailAutoScrollingRef.current = false;
-        }, 420);
-      }
-    };
-
-    const onScroll = () => {
-      updateActiveProject();
-      if (detailSnapTimeoutRef.current !== null) {
-        window.clearTimeout(detailSnapTimeoutRef.current);
-      }
-      detailSnapTimeoutRef.current = window.setTimeout(() => {
-        snapToNearestProject();
-        detailSnapTimeoutRef.current = null;
-      }, 120);
-    };
-
-    updateActiveProject();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    const rafId = window.requestAnimationFrame(updateActiveProject);
-
-    return () => {
-      window.cancelAnimationFrame(rafId);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (detailSnapTimeoutRef.current !== null) {
-        window.clearTimeout(detailSnapTimeoutRef.current);
-        detailSnapTimeoutRef.current = null;
-      }
-    };
-  }, [detailedView, filteredProjects]);
-
-  const scrollToProject = (projectId: string) => {
-    const target = projectRefs.current[projectId];
-    if (!target) return;
-    detailAutoScrollingRef.current = true;
-    target.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    setActiveDetailedProjectId(projectId);
-    window.setTimeout(() => {
-      detailAutoScrollingRef.current = false;
-    }, 420);
-  };
-
-  useEffect(() => () => {
-    if (detailEnterTimeoutRef.current !== null) {
-      window.clearTimeout(detailEnterTimeoutRef.current);
-    }
-    if (detailExitTimeoutRef.current !== null) {
-      window.clearTimeout(detailExitTimeoutRef.current);
-    }
-  }, []);
-
-  const toggleDetailedView = () => {
-    const reduceMotion =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (detailedView) {
-      if (detailEnterTimeoutRef.current !== null) {
-        window.clearTimeout(detailEnterTimeoutRef.current);
-        detailEnterTimeoutRef.current = null;
-      }
-      if (detailExitTimeoutRef.current !== null) {
-        window.clearTimeout(detailExitTimeoutRef.current);
-      }
-      if (reduceMotion) {
-        setDetailMediaRevealed(false);
-        setDetailLayoutEntering(false);
-        setDetailedView(false);
-        setDetailExitInProgress(false);
-        return;
-      }
-      /* 1) Pop media down (panel stays visible), 2) then collapse left layout */
-      setDetailLayoutEntering(false);
-      setDetailMediaRevealed(false);
-      setDetailExitInProgress(true);
-      detailExitTimeoutRef.current = window.setTimeout(() => {
-        setDetailedView(false);
-        setDetailExitInProgress(false);
-        detailExitTimeoutRef.current = null;
-      }, MEDIA_POP_MS);
-      return;
-    }
-
-    if (detailExitTimeoutRef.current !== null) {
-      window.clearTimeout(detailExitTimeoutRef.current);
-      detailExitTimeoutRef.current = null;
-    }
-    if (detailEnterTimeoutRef.current !== null) {
-      window.clearTimeout(detailEnterTimeoutRef.current);
-    }
-
-    if (reduceMotion) {
-      setDetailedView(true);
-      setDetailLayoutEntering(false);
-      setDetailMediaRevealed(true);
-      return;
-    }
-
-    /* 1) Left layout animates, 2) then media pops up */
-    setDetailedView(true);
-    setDetailLayoutEntering(true);
-    setDetailMediaRevealed(false);
-    detailEnterTimeoutRef.current = window.setTimeout(() => {
-      setDetailLayoutEntering(false);
-      setDetailMediaRevealed(true);
-      detailEnterTimeoutRef.current = null;
-    }, LAYOUT_ENTER_MS);
-  };
-
-  const renderFilterControl = (isDetailedOverlay = false) => (
-    <div className={`filter-inline${isDetailedOverlay ? ' filter-inline--overlay' : ''}`}>
-      <button
-        className="filter-main-btn"
-        onClick={() => setFiltersOpen((value) => !value)}
-      >
-        Filters
-      </button>
-      <div className={`filter-options-rail ${filtersOpen ? 'open' : ''}`}>
-        {tagFilters.map((filter) => (
-          <button
-            key={filter.value}
-            className={`filter-tag-btn${(filter.value === 'all' ? activeTagFilters.length === 0 : activeTagFilters.includes(filter.value)) ? ' is-active' : ''}${filter.tone ? ` project-chip project-chip--${filter.tone}` : ' filter-tag-btn--all'}`}
-            aria-label={filter.label}
-            title={filter.label}
-            onClick={() => {
-              if (filter.value === 'all') {
-                setActiveTagFilters([]);
-                return;
-              }
-
-              setActiveTagFilters((current) => (
-                current.includes(filter.value)
-                  ? current.filter((value) => value !== filter.value)
-                  : [...current, filter.value]
-              ));
-            }}
-          />
-        ))}
+  if (project.cover) {
+    return (
+      <div className={base}>
+        <img src={publicAssetUrl(project.cover)} alt="" />
       </div>
+    );
+  }
+  if (project.youtubeUrl) {
+    const embed = youTubeEmbedSrc(project.youtubeUrl);
+    if (embed) {
+      return (
+        <div className={`${base} ${base}--youtube`}>
+          <iframe
+            src={embed}
+            title={`${project.title} video`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+      );
+    }
+  }
+  if (!project.media) {
+    return <div className={`${base} ${base}--empty`} aria-hidden />;
+  }
+  const url = publicAssetUrl(project.media);
+  if (isVideoMediaSrc(project.media)) {
+    return (
+      <div className={base}>
+        <video
+          className={detail ? 'projects-detail__cover-video' : 'projects-card__cover-video'}
+          src={url}
+          controls
+          playsInline
+          muted={Boolean(project.autoplayVideo)}
+          autoPlay={Boolean(project.autoplayVideo)}
+          loop={Boolean(project.autoplayVideo)}
+        />
+      </div>
+    );
+  }
+  return (
+    <div className={base}>
+      <img src={url} alt="" />
     </div>
   );
+}
+
+function ExpandArrowIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
+      <path
+        d="M2 10L10 2M10 2H4M10 2V8"
+        stroke="currentColor"
+        strokeWidth="1.35"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Stable hue per label — muted chips when no tech-stack-icons asset exists. */
+function techChipStyle(tech: string): React.CSSProperties {
+  let n = 216;
+  for (let i = 0; i < tech.length; i++) {
+    n = (n * 33 + tech.charCodeAt(i) * (i + 1)) >>> 0;
+  }
+  const hue = n % 360;
+  return {
+    background: `hsla(${hue}, 14%, 24%, 0.52)`,
+    borderColor: `hsla(${hue}, 16%, 36%, 0.42)`,
+    color: `hsl(${hue}, 8%, 82%)`
+  };
+}
+
+function ProjectTechChip({ tech, tagClass, iconSize }: { tech: string; tagClass: string; iconSize: number }) {
+  const icon = getTechStackIconName(tech);
+  if (icon) {
+    return (
+      <span className={`${tagClass} ${tagClass}--stack`} title={tech}>
+        <span className={`${tagClass}__icon`} aria-hidden>
+          <StackIcon
+            name={icon}
+            variant="dark"
+            style={{ width: iconSize, height: iconSize, display: 'block' }}
+          />
+        </span>
+        <span className={`${tagClass}__label`}>{tech}</span>
+      </span>
+    );
+  }
+  return (
+    <span className={tagClass} style={techChipStyle(tech)}>
+      {tech}
+    </span>
+  );
+}
+
+function ProjectLinks({
+  project,
+  className,
+  iconSize = 18
+}: {
+  project: ProjectEntry;
+  className: string;
+  iconSize?: number;
+}) {
+  if (!project.link && !project.github && !project.youtubeUrl) return null;
+  const stroke = 1.65;
+  return (
+    <div className={className}>
+      {project.link && (
+        <a
+          href={project.link}
+          target="_blank"
+          rel="noreferrer"
+          className="projects-external-link"
+          aria-label="Open live site"
+          title="Live site"
+        >
+          <Monitor size={iconSize} strokeWidth={stroke} aria-hidden />
+        </a>
+      )}
+      {project.youtubeUrl && (
+        <a
+          href={project.youtubeUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="projects-external-link projects-external-link--brand"
+          aria-label="Watch on YouTube"
+          title="YouTube"
+        >
+          <BrandYoutubeIcon size={iconSize} />
+        </a>
+      )}
+      {project.github && (
+        <a
+          href={project.github}
+          target="_blank"
+          rel="noreferrer"
+          className="projects-external-link projects-external-link--brand"
+          aria-label="View source on GitHub"
+          title="GitHub"
+        >
+          <BrandGithubIcon size={iconSize} />
+        </a>
+      )}
+    </div>
+  );
+}
+
+const PROJECTS: ProjectEntry[] = [
+  {
+    id: 'milo-mission-control',
+    title: 'Milo — Mission Control',
+    roleTag: 'OpenClaw',
+    technologies: ['React', 'Netlify Functions', 'Supabase', 'Python', 'Ollama', 'RapidAPI'],
+    summary:
+      'Run a fleet of specialized AI agents from one Mission Control dashboard—live status, shared memory, and a task bus you can actually watch.',
+    metaLine: '2026 • React, Netlify Functions, Supabase, Python, Ollama, RapidAPI',
+    description:
+      'Run a fleet of specialized AI agents from one Mission Control dashboard—live status, shared memory, and a task bus you can actually watch instead of guessing what your bots are doing. I wired end-to-end pipelines from research and drafts through publish and social, with Milo orchestrating handoffs across agents in production. The whole stack is serverless APIs plus Supabase-backed state, tuned so cheap local inference (Ollama) keeps monthly costs trivial until you need to scale.',
+    highlights: [
+      'Built a multi-agent architecture orchestrated via shared task queues and memory (Supabase)',
+      'Designed a Mission Control UI (React) to visualize agent status, activity feeds, and pipelines in real time',
+      'Implemented a serverless backend (Netlify Functions) for agent communication, logging, and coordination',
+      'Optimized for low-cost local inference (Ollama) with ~$1.50/month API usage (option to scale with paid models)',
+      'Trade Bot: Tracks Polymarket activity and auto-researches positions/trends',
+      'Competitor Intelligence Bot: Monitors tweets, news, and trends based on brand configs using RapidAPI + Clawdbot',
+      'Content Pipeline Agents: End-to-end automation (research → draft → optimize → publish) across multiple specialized bots',
+      'Orchestrator (Milo): Manages task scheduling, agent coordination, and pipeline execution via shared agent_tasks'
+    ],
+    media: '/milo.mp4',
+    autoplayVideo: true
+  },
+  {
+    id: 'neetcode-redesign',
+    title: 'NeetCode Redesign',
+    roleTag: 'Frontend',
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'GSAP'],
+    summary:
+      'Built a full NeetCode-inspired redesign with a modern dark aesthetic to make interview prep feel like a polished product.',
+    metaLine: '2026 • Next.js 16, React 19, TypeScript, Tailwind CSS v4, GSAP',
+    description:
+      'Built a full NeetCode-inspired redesign with a modern dark aesthetic to make interview prep feel like a polished product rather than a static content site. Shipped for an X competition with animated landing experiences, state-driven dashboard navigation, and reusable interaction systems across key prep flows.',
+    highlights: [
+      'Built an animated landing with rotating insight cards, structured course explorer, roadmap section, and interactive resources blocks',
+      'Developed a rich dashboard prototype with in-page sections (Home, Coding Interviews, Problems, Company Tagged, System Design, Roadmap)',
+      'Implemented reusable UI systems (cards, chips, counters, hover/focus transitions, responsive sidebar behavior, reduced-motion-safe polish)',
+      'Integrated route flow end-to-end (/sign-in → fake auth → /dashboard) and resolved production TypeScript/build blockers'
+    ],
+    media: '/neetcode.mp4',
+    autoplayVideo: true,
+    link: 'https://neatcoded.netlify.app/',
+    github: 'https://github.com/kumarannathan/Neetcode.git'
+  },
+  {
+    id: 'sipt',
+    title: 'Sipt',
+    roleTag: 'Mobile',
+    technologies: ['React', 'React Native', 'TypeScript', 'mobile development'],
+    summary: 'Letterboxd for specialty coffee—social discovery, taste identity, and community around how you rate brews.',
+    metaLine: '2026 • React, React Native, TypeScript, mobile development',
+    description:
+      'Letterboxd for specialty coffee. Existing coffee loggers help you track brews privately, but they stop short of discovery, taste identity, and community. Sipt adds the social layer: log coffees with a 3-axis rating across Enjoyment, Balance, and Clarity, follow people whose taste you trust, and build a profile that actually says something about what you like.',
+    media: '/videos/coffee.mp4',
+    autoplayVideo: true
+  },
+  {
+    id: 'booking-platform',
+    title: 'Startup Booking Platform',
+    roleTag: 'Frontend',
+    technologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'JWT'],
+    summary:
+      'Full-stack booking platform with TypeScript/React and Node/Express—100+ monthly reservations with PostgreSQL and JWT auth.',
+    metaLine: '2025 • React • Node.js • Express • PostgreSQL • JWT',
+    description:
+      'Full-stack booking platform with TypeScript/React frontend and Node.js/Express backend handling 100+ monthly reservations with PostgreSQL managing relational customer and availability data. Built RESTful API layer with automated email notifications and JWT authentication.',
+    media: '/mtm.mp4',
+    autoplayVideo: true
+  },
+  {
+    id: 'soul-forest',
+    title: 'Soul of the Forest',
+    roleTag: 'Game Dev',
+    technologies: ['Unity', 'C#', 'Figma', 'Jira', 'Git'],
+    summary: 'Commercial game UI/UX—timelines, playtesting, menus in Figma, C#, Unity.',
+    metaLine: '2023 • Unity • C# • Figma • Jira • Git',
+    description:
+      'Directed UI/UX department for commercial game development, establishing development timelines using Jira, Confluence, and Git. Led comprehensive playtesting and implemented menu designs using Figma, C# Scripts, and Unity Game Engine.',
+    media: '/soul-of-the-forest.mp4',
+    link: 'https://store.steampowered.com/app/2877660/Soul_of_the_Forest/',
+    autoplayVideo: true
+  },
+  {
+    id: 'tennis-analytics',
+    title: 'CV Tennis Analytics',
+    roleTag: 'Computer Vision',
+    technologies: ['React', 'FastAPI', 'YOLOv8', 'PyTorch', 'D3.js'],
+    summary:
+      'Full-stack sports analytics with React dashboard and FastAPI—YOLOv8 and PyTorch on match footage.',
+    metaLine: '2025 • React • FastAPI • YOLOv8 • PyTorch • D3.js',
+    description:
+      'Full-stack sports analytics platform with React dashboard and FastAPI backend processing match footage using custom YOLOv8 and PyTorch models. Designed RESTful APIs serving real-time analysis endpoints with PostgreSQL storing match statistics.',
+    detailText:
+      'I built the full path from raw match footage to usable analysis: a browser dashboard for uploads, a FastAPI layer for orchestration, and a CV pipeline that turned detections into rally-level stats and tactical feedback. The product goal was speed and clarity, so players could move from video to insight without touching a notebook or labeling tool.'
+  },
+  {
+    id: 'dance-ar',
+    title: 'Dance AR',
+    roleTag: 'Game Dev',
+    technologies: ['Next.js', 'MediaPipe', 'WebRTC', 'Firebase', 'GCP'],
+    summary: 'AR fitness platform analyzing movement against choreography using MediaPipe pose estimation.',
+    metaLine: '2025 • Next.js • MediaPipe • WebRTC • Firebase • GCP',
+    description:
+      'Full-stack AR fitness platform analyzing movement against choreography using MediaPipe pose estimation. Engineered RESTful API handling real-time WebRTC streams and movement scoring algorithms. Deployed via CI/CD on GCP.',
+    detailText: 'Shipped real-time pose feedback and score overlays, focused on responsiveness and user motivation loops.'
+  },
+  {
+    id: 'jobsim-vr',
+    title: 'JobSim VR',
+    roleTag: 'Game Dev',
+    technologies: ['Unreal Engine 5', 'Blueprints', 'C++'],
+    summary:
+      'Corporate life simulator in VR—NPCs, head-tracking, dialogue, and a Severance-inspired Macrodata Refinement Room.',
+    metaLine: '2024 • Unreal Engine 5 • Blueprints • C++',
+    description:
+      "Corporate life simulator featuring NPCs with dynamic behaviors, head-tracking, movement, and dialogue. Designed 'Severance'-inspired Macrodata Refinement Room with interactable components and immersive VR environment. Featured in UMich Game Design Showcase.",
+    detailText:
+      'This project was about making a strange office space feel alive in VR. I focused on interaction design, NPC behavior, and environmental pacing so the world stayed readable and uncanny at the same time, with enough system depth that the player could explore, observe, and feel the room reacting back.',
+    youtubeUrl: 'https://youtu.be/EPbTNA2fU0g',
+    github: 'https://github.com/kumarannathan/JobSimVR'
+  },
+  {
+    id: 'ann-arbor-go',
+    title: 'AnnArborGo',
+    roleTag: 'Location AR',
+    technologies: ['Unreal Engine 5', 'AR', 'GPS', 'Blueprints', 'C++'],
+    summary:
+      'Location-based AR game—virtual tree planting, landmarks, eco-defense, GPS navigation, and squirrel encounters.',
+    metaLine: '2024 • Unreal Engine 5 • AR • GPS • Blueprints • C++',
+    description:
+      'Location-based AR game promoting environmental stewardship through virtual tree planting, landmark exploration, and eco-defense mechanics. Features Environmental Achievement Recognition System with eco-medals, GPS landmark navigation, interactive history reveals, and dynamic squirrel encounters requiring strategic acorn-throwing defense.',
+    detailText:
+      'I treated AnnArborGo as a city-scale progression system, combining GPS movement, landmark discovery, and lightweight AR interactions into something that felt playful instead of purely educational. The core challenge was balancing exploration, reward loops, and local context so the experience felt grounded in Ann Arbor rather than like a generic location game.',
+    github: 'https://github.com/kumarannathan/AnnArborGo'
+  },
+  {
+    id: 'focus-zone',
+    title: 'CV Distraction Tracker',
+    roleTag: 'MediaPipe',
+    technologies: ['React', 'TypeScript', 'MediaPipe', 'Computer Vision'],
+    summary:
+      'Computer vision-powered focus tracking with MediaPipe face mesh—hand gestures and real-time distraction detection.',
+    metaLine: '2025 • React • TypeScript • MediaPipe • Computer Vision',
+    description:
+      'Computer vision-powered focus tracking application using MediaPipe face mesh detection. Features hand gesture controls and real-time distraction detection.',
+    detailText:
+      'Focus Zone started as a practical browser tool for staying locked in during deep work. I built low-latency face and gesture tracking in the client, then layered in distraction signals and simple controls so the system could react in real time without feeling heavy or invasive. It is the same kind of CV loop I want to revisit later with stronger video-driven UX.',
+    github: 'https://github.com/kumarannathan/cv-distraction-tracker'
+  }
+];
+
+const motionEase = [0.22, 1, 0.36, 1] as const;
+
+const Projects: React.FC = () => {
+  const [focusId, setFocusId] = useState<string | null>(null);
+
+  const focused = focusId ? PROJECTS.find((p) => p.id === focusId) : null;
+
+  useEffect(() => {
+    if (focusId) {
+      document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [focusId]);
 
   return (
-    <section
-      className={`projects-section-new ${detailedView ? 'detailed-active' : ''}`}
-      id="projects"
-      ref={sectionRef}
-    >
+    <section className="projects-section" id="projects">
       <h2 className="projects-section-title">Side Projects</h2>
-      <div className="projects-filter-row">
-        {!detailedView && renderFilterControl()}
-        {!detailedView && (
-          <button
-            className="detail-view-toggle"
-            onClick={toggleDetailedView}
-            disabled={detailExitInProgress}
-          >
-            Detailed view
-          </button>
-        )}
-      </div>
 
-      {detailedView && (
-        <div className={`detail-view-controls${!detailExitInProgress ? ' is-visible' : ''}`}>
-          <div className="detail-view-controls-left">
-            {renderFilterControl(true)}
-          </div>
-          <button
-            type="button"
-            className="detail-view-leave-btn"
-            onClick={toggleDetailedView}
-            disabled={!detailMediaRevealed || detailExitInProgress}
-          >
-            Leave detailed view
-          </button>
-        </div>
-      )}
-
-      <div
-        className={`projects-layout ${detailedView ? 'is-detailed' : ''} ${detailLayoutEntering ? 'detail-layout-entering' : ''} ${detailedView && detailMediaRevealed ? 'detail-media-revealed' : ''}`}
-      >
-        <div className="projects-grid projects-grid-vertical">
-        {filteredProjects.map((project) => {
-          const projectHasBullets = hasProjectBullets(project);
-          const projectHasDetailContent = hasProjectDetailContent(project);
-          const projectMediaReady = !project.media || Boolean(detailMediaReadyByProject[project.id]);
-          const isSmallPortraitMedia = project.id === 'sipt';
-          return (
-          <article
-            key={project.id}
-            className={`project-card${detailedView && projectHasDetailContent ? ' project-card--with-detail-side' : ''}${detailedView && activeDetailedProjectId === project.id ? ' is-active' : ''}`}
-            ref={(el) => {
-              projectRefs.current[project.id] = el;
-            }}
-          >
-            <div className="project-row-meta">{project.date}</div>
-            <div className="project-card-body">
-              <div className="project-card-title-row">
-                <h3 className="project-card-title">
-                  {project.link ? (
-                    <a
-                      href={project.link}
-                      className="project-card-title-link"
-                      target="_blank"
-                      rel="noreferrer"
+      <div className="projects-stage">
+        <AnimatePresence mode="wait">
+          {!focusId ? (
+            <motion.div
+              key="grid"
+              className="projects-grid"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.28, ease: motionEase }}
+            >
+              {PROJECTS.map((project) => (
+                <article key={project.id} className="projects-card">
+                  <ProjectCover project={project} />
+                  <h3 className="projects-card__title">{project.title}</h3>
+                  {project.roleTag && <span className="projects-card__role">{project.roleTag}</span>}
+                  <div className="projects-card__tags">
+                    {project.technologies.map((tech) => (
+                      <ProjectTechChip key={tech} tech={tech} tagClass="projects-card__tag" iconSize={15} />
+                    ))}
+                  </div>
+                  <p className="projects-card__desc">{project.summary ?? project.description}</p>
+                  <div className="projects-card__bottom">
+                    <ProjectLinks project={project} className="projects-card__links" />
+                    <button
+                      type="button"
+                      className="projects-card__expand"
+                      onClick={() => setFocusId(project.id)}
                     >
-                      {project.title}
-                    </a>
-                  ) : (
-                    project.title
-                  )}
-                </h3>
-                {project.tag && (
-                  <span className={`project-chip project-chip--${project.tag.tone}`}>
-                    {project.tag.label}
-                  </span>
-                )}
+                      <span>Expand</span>
+                      <ExpandArrowIcon className="projects-card__expand-icon" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </motion.div>
+          ) : focused ? (
+            <motion.div
+              key={`detail-${focusId}`}
+              className="projects-detail"
+              initial={{ opacity: 0, scale: 0.96, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.98, y: 12 }}
+              transition={{ duration: 0.42, ease: motionEase }}
+            >
+              <button type="button" className="projects-detail__back" onClick={() => setFocusId(null)}>
+                ← All projects
+              </button>
+              <ProjectCover project={focused} detail />
+              <h3 className="projects-detail__title">{focused.title}</h3>
+              {focused.roleTag && <span className="projects-detail__role">{focused.roleTag}</span>}
+              <div className="projects-detail__tags">
+                {focused.technologies.map((tech) => (
+                  <ProjectTechChip key={tech} tech={tech} tagClass="projects-detail__tag" iconSize={17} />
+                ))}
               </div>
-              <p className="project-card-description">{project.description}</p>
-              <p className="project-card-tech">
-                {(() => {
-                  const techLine = project.techSummary
-                    ? project.techSummary
-                    : project.technologies?.join(' • ') ?? '';
-                  return detailedView ? `${project.date} • ${techLine}` : techLine;
-                })()}
-              </p>
-              {(project.link || project.github) && (
-                <div className="project-card-links">
-                  {project.link && (
-                    <a
-                      href={project.link}
-                      className="project-card-link"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Live
-                    </a>
-                  )}
-                  {project.github && (
-                    <a
-                      href={project.github}
-                      className="project-card-link"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      GitHub
-                    </a>
-                  )}
-                </div>
+              {focused.metaLine && <p className="projects-detail__meta">{focused.metaLine}</p>}
+              <p className="projects-detail__desc">{focused.description}</p>
+              {focused.details && <p className="projects-detail__details">{focused.details}</p>}
+              {focused.detailText && (
+                <p className="projects-detail__desc projects-detail__desc--secondary">{focused.detailText}</p>
               )}
-            </div>
-            {detailedView && projectHasDetailContent && (
-              <div className={`project-card-detail-side${projectHasBullets ? ' project-card-detail-side--has-bullets' : ''}`}>
-                <div className={`detail-media-shell${isSmallPortraitMedia ? ' detail-media-shell--portrait' : ''}`}>
-                  <div className="detail-media-dim" aria-hidden />
-                  {project.media && (
-                    <div className="detail-media-inner">
-                      <div className={`detail-media-frame${isSmallPortraitMedia ? ' detail-media-frame--portrait-small' : ''}`}>
-                        {isVideoMediaSrc(project.media) ? (
-                          <video
-                            key={`${project.id}-media`}
-                            src={publicAssetUrl(project.media)}
-                            className={`detail-media-item detail-media-item--video${isSmallPortraitMedia ? ' detail-media-item--portrait' : ''}`}
-                            controls
-                            playsInline
-                            muted={Boolean(project.autoplayVideo)}
-                            autoPlay={Boolean(project.autoplayVideo)}
-                            loop={Boolean(project.autoplayVideo)}
-                          onLoadedData={() => markProjectMediaReady(project.id)}
-                          onCanPlay={() => markProjectMediaReady(project.id)}
-                          onError={() => markProjectMediaReady(project.id)}
-                          />
-                        ) : (
-                          <img
-                            key={`${project.id}-media`}
-                            src={publicAssetUrl(project.media)}
-                            alt={project.title}
-                            className="detail-media-item detail-media-item--image"
-                          onLoad={() => markProjectMediaReady(project.id)}
-                          onError={() => markProjectMediaReady(project.id)}
-                          />
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  {!project.media && (project.detailText || project.details) && (
-                    <div className="detail-text-panel">
-                      <p className="detail-text-panel-copy">{project.detailText ?? project.details}</p>
-                    </div>
-                  )}
-                  {projectHasBullets && projectMediaReady && (
-                    <div className="detail-panel-bullets-stack">
-                      {(project.highlights?.length ?? 0) > 0 && (
-                        <ul className="detail-panel-bullets" aria-label={`${project.title} highlights`}>
-                          {(project.highlights ?? []).map((line, i) => (
-                            <li key={`h-${project.id}-${i}`}>{line}</li>
-                          ))}
-                        </ul>
-                      )}
-                      {project.agentsSection &&
-                        project.agentsSection.items.length > 0 && (
-                          <ul
-                            className="detail-panel-bullets detail-panel-bullets--agents"
-                            aria-label={`${project.title} additional details`}
-                          >
-                            {project.agentsSection.items.map((line, i) => (
-                              <li key={`a-${project.id}-${i}`}>{line}</li>
-                            ))}
-                          </ul>
-                        )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </article>
-          );
-        })}
-        </div>
-        {detailedView && (
-          <div className="project-scroll-dots" aria-label="Project positions">
-            {filteredProjects.map((project) => (
-              <button
-                key={`dot-${project.id}`}
-                type="button"
-                className={`project-scroll-dot${activeDetailedProjectId === project.id ? ' is-active' : ''}`}
-                aria-label={`Jump to ${project.title}`}
-                aria-pressed={activeDetailedProjectId === project.id}
-                onClick={() => scrollToProject(project.id)}
-              />
-            ))}
-          </div>
-        )}
+              {focused.highlights && focused.highlights.length > 0 && (
+                <ul className="projects-detail__highlights">
+                  {focused.highlights.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              )}
+              <ProjectLinks project={focused} className="projects-detail__links" iconSize={22} />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </div>
     </section>
   );

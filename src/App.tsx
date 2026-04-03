@@ -6,7 +6,7 @@ import About from './components/About';
 import Projects from './components/Projects';
 import Experience from './components/Experience';
 import CustomCursor from './components/CustomCursor';
-import Grainient from './components/Grainient';
+import Dither from './components/Dither';
 import ClickSpark from './components/ClickSpark';
 import { photoProjects } from './data/photos';
 
@@ -48,32 +48,20 @@ const MainContent: React.FC = () => {
 
   return (
     <div className={`App ${isPhotosView ? 'light-mode' : ''} ${isAlphaView ? 'alpha-mode' : ''}`}>
-      <div className="app-pixel-wallpaper" aria-hidden>
-        <Grainient
-          color1="#000000"
-          color2="#707070"
-          color3="#000000"
-          timeSpeed={0.25}
-          colorBalance={0}
-          warpStrength={4}
-          warpFrequency={5}
-          warpSpeed={2}
-          warpAmplitude={50}
-          blendAngle={0}
-          blendSoftness={0.05}
-          rotationAmount={500}
-          noiseScale={2}
-          grainAmount={0.1}
-          grainScale={2}
-          grainAnimated={false}
-          contrast={1.5}
-          gamma={1}
-          saturation={1}
-          centerX={0}
-          centerY={0}
-          zoom={0.9}
-        />
-      </div>
+      {!isPhotosView && (
+        <div className="app-pixel-wallpaper" aria-hidden>
+          <Dither
+            waveColor={[0.5, 0.5, 0.5]}
+            disableAnimation={false}
+            enableMouseInteraction
+            mouseRadius={0.3}
+            colorNum={4}
+            waveAmplitude={0.3}
+            waveFrequency={3}
+            waveSpeed={0.05}
+          />
+        </div>
+      )}
       <CustomCursor />
 
       <ClickSpark
