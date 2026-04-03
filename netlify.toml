@@ -1,0 +1,7 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+
+[build.environment]
+  # CRA treats ESLint warnings as errors when CI=true; Netlify sets CI by default.
+  CI = "false"
