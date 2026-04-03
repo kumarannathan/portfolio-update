@@ -2481,6 +2481,12 @@ body,
   cursor: auto !important;
 }
 
+/* `a, button { cursor: none }` above uses a tag selector and beats `*`; restore visible cursors */
+a,
+button {
+  cursor: pointer !important;
+}
+
 .custom-cursor {
   display: none !important;
 }
@@ -2493,6 +2499,13 @@ body {
 .main-layout {
   max-width: 980px;
   padding: 0 34px 80px;
+}
+
+.app-click-spark {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .home-shell {

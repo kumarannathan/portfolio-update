@@ -21,7 +21,7 @@ const About: React.FC = () => {
         <div className="about-header-copy">
           <h1 className="about-title">Kumaran Nathan</h1>
           <p className="about-role">Product-focused Software Engineer</p>
-          <a className="about-handle" href="mailto:kumarnath@umich.edu">kumarnath@umich.edu</a>
+          <a className="about-handle" href="mailto:kumarnath@umich.edu">kumarann@umich.edu</a>
           <div className="about-nav-actions">
             <a
               href="#experience"

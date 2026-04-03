@@ -7,7 +7,7 @@ import Projects from './components/Projects';
 import Experience from './components/Experience';
 import CustomCursor from './components/CustomCursor';
 import Grainient from './components/Grainient';
-
+import ClickSpark from './components/ClickSpark';
 import { photoProjects } from './data/photos';
 
 type AppView = 'home' | 'about' | 'photos' | 'a16z';
@@ -18,7 +18,9 @@ const A16zAlpha = React.lazy(() => import('./components/A16ZAlpha'));
 
 const Home: React.FC = () => (
   <div className="home-shell">
+    
     <About />
+    
     <div className="home-section-block">
       <Experience />
     </div>
@@ -74,6 +76,16 @@ const MainContent: React.FC = () => {
       </div>
       <CustomCursor />
 
+      <ClickSpark
+        className="app-click-spark"
+        sparkColor="#fff"
+        sparkSize={10}
+        sparkRadius={15}
+        sparkCount={8}
+        duration={400}
+        easing="ease-out"
+        extraScale={1}
+      >
       {/* Background flashes for theme transitions */}
       <AnimatePresence>
         {isPhotosView && (
@@ -158,6 +170,7 @@ const MainContent: React.FC = () => {
           </React.Suspense>
         </AnimatePresence>
       </main>
+      </ClickSpark>
     </div>
   );
 };
