@@ -6,7 +6,6 @@ import About from './components/About';
 import Projects from './components/Projects';
 import Experience from './components/Experience';
 import CustomCursor from './components/CustomCursor';
-import DomeGallery from './components/DomeGallery';
 import Grainient from './components/Grainient';
 
 import { photoProjects } from './data/photos';
@@ -25,24 +24,6 @@ const Home: React.FC = () => (
     </div>
     <div className="home-section-block">
       <Projects />
-    </div>
-    <div className="home-section-block">
-      <h2 style={{ fontSize: '22px', fontWeight: 'Normal', marginBottom: '-10%', transform: 'translateX(42%)', marginTop: '15%' }}>Photos</h2>
-
-    </div>
-    <div className="home-bottom-gallery-block">
-      <DomeGallery
-        images={photoProjects
-          .filter((project) => ['formula1', 'mexico', 'filmfavorites'].includes(project.id))
-          .flatMap((project) => project.images)}
-        fit={0.8}
-        minRadius={600}
-        maxVerticalRotationDeg={0}
-        segments={34}
-        dragDampening={2}
-        grayscale={false}
-        overlayBlurColor="transparent"
-      />
     </div>
   </div>
 );
@@ -134,7 +115,7 @@ const MainContent: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <main className={`main-layout ${currentView === 'home' ? 'main-layout-home' : ''}`}>
+      <main className="main-layout">
         <AnimatePresence mode="wait">
           <React.Suspense fallback={null}>
             <Routes location={location} key={location.pathname}>
