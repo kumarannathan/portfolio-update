@@ -20,7 +20,7 @@ const About: React.FC = () => {
         <img className="about-avatar" src="/me.jpg" alt="Kumaran Nathan" />
         <div className="about-header-copy">
           <h1 className="about-title">Kumaran Nathan</h1>
-          <p className="about-role">Product-focused Software Engineer</p>
+          <p className="about-role">Product focused Software Engineer</p>
           <a className="about-handle" href="mailto:kumarnath@umich.edu">kumarann@umich.edu</a>
           <div className="about-nav-actions">
             <a
@@ -53,6 +53,9 @@ const About: React.FC = () => {
             >
               GitHub <span aria-hidden="true">↗</span>
             </a>
+            <a href="/#/photos" className="about-nav-link">
+              Photos <span aria-hidden="true">↗</span>
+            </a>
           </div>
         </div>
       </div>
@@ -60,10 +63,10 @@ const About: React.FC = () => {
       <div className="about-content">
         <p className="about-label">About</p>
         <p className="about-intro">
-          I build software products from idea to production, with a focus on intuitive experiences and measurable outcomes. I recently graduated from the University of Michigan and have shipped across full-stack web, computer vision, and game systems.
+          hey! i'm kumaran. i graduated from the university of michigan in 2025, where i studied computer science. i love working across the stack, building products from idea to production.
         </p>
         <p className="about-intro">
-          My toolbox spans React, TypeScript, Python, C++, and cloud infrastructure. I enjoy fast iteration, tight feedback loops, and solving real user problems with clean execution.
+          beyond work, i love photography, hiking, gaming, and music.
         </p>
       </div>
     </section>

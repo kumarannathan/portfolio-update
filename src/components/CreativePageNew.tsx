@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CreativePageNew.css';
 import logo from '../assets/logo.png';
 import { photoProjects } from '../data/photos';
+import MetallicPaint from './MetallicPaint';
 
 const GrainyCircle = () => (
     <div className="floating-element" style={{
@@ -55,6 +57,7 @@ const HorizontalCarousel = ({ images, title }: { images: string[]; title: string
 };
 
 const CreativePageNew: React.FC = () => {
+    const navigate = useNavigate();
     const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
 
     const toggleProject = (id: string) => {
@@ -63,9 +66,53 @@ const CreativePageNew: React.FC = () => {
 
     return (
         <div className="creative-page-new">
+            <div
+                aria-hidden
+                style={{
+                    position: 'fixed',
+                    top: 16,
+                    left: 16,
+                    width: 68,
+                    height: 68,
+                    zIndex: 10050,
+                    pointerEvents: 'none'
+                }}
+            >
+                <MetallicPaint
+                    imageSrc={logo}
+                    seed={42}
+                    scale={4}
+                    patternSharpness={1}
+                    noiseScale={0.5}
+                    speed={0.3}
+                    liquid={0.75}
+                    mouseAnimation={false}
+                    brightness={2}
+                    contrast={0.5}
+                    refraction={0.01}
+                    blur={0.015}
+                    chromaticSpread={2}
+                    fresnel={1}
+                    angle={0}
+                    waveAmplitude={1}
+                    distortion={1}
+                    contour={0.2}
+                    lightColor="#ffffff"
+                    darkColor="#000000"
+                    tintColor="#feb3ff"
+                />
+            </div>
             <div className="container" style={{ paddingTop: '20px' }}>
                 <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'flex-start', marginTop: '0' }}>
                     <section style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+
+                        <button
+                            type="button"
+                            className="photos-back-button"
+                            onClick={() => navigate('/')}
+                        >
+                            ← Back
+                        </button>
 
                         <div className="photography-simple-header">
                             <h2>VISUAL WORKS</h2>

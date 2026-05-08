@@ -6,9 +6,10 @@ import About from './components/About';
 import Projects from './components/Projects';
 import Experience from './components/Experience';
 import CustomCursor from './components/CustomCursor';
-import Dither from './components/Dither';
 import ClickSpark from './components/ClickSpark';
 import { photoProjects } from './data/photos';
+import MetallicPaint from './components/MetallicPaint';
+import pageLogo from './assets/logo.png';
 
 type AppView = 'home' | 'about' | 'photos' | 'a16z';
 
@@ -47,18 +48,42 @@ const MainContent: React.FC = () => {
   const isAlphaView = currentView === 'a16z';
 
   return (
-    <div className={`App ${isPhotosView ? 'light-mode' : ''} ${isAlphaView ? 'alpha-mode' : ''}`}>
+    <div className={`App ${isAlphaView ? 'alpha-mode' : ''}`}>
       {!isPhotosView && (
-        <div className="app-pixel-wallpaper" aria-hidden>
-          <Dither
-            waveColor={[0.5, 0.5, 0.5]}
-            disableAnimation={false}
-            enableMouseInteraction
-            mouseRadius={0.3}
-            colorNum={4}
-            waveAmplitude={0.3}
-            waveFrequency={3}
-            waveSpeed={0.05}
+        <div
+          aria-hidden
+          style={{
+            position: 'fixed',
+            top: 16,
+            left: 16,
+            width: 68,
+            height: 68,
+            zIndex: 2500,
+            pointerEvents: 'none'
+          }}
+        >
+          <MetallicPaint
+            imageSrc={pageLogo}
+            seed={42}
+            scale={4}
+            patternSharpness={1}
+            noiseScale={0.5}
+            speed={0.3}
+            liquid={0.75}
+            mouseAnimation={false}
+            brightness={2}
+            contrast={0.5}
+            refraction={0.01}
+            blur={0.015}
+            chromaticSpread={2}
+            fresnel={1}
+            angle={0}
+            waveAmplitude={1}
+            distortion={1}
+            contour={0.2}
+            lightColor="#ffffff"
+            darkColor="#000000"
+            tintColor="#feb3ff"
           />
         </div>
       )}

@@ -98,6 +98,38 @@
     color: rgba(255, 255, 255, 0.62);
 }
 
+.about-umich-gradient {
+    display: inline-flex;
+    margin: 0;
+    vertical-align: baseline;
+    cursor: default;
+    border-radius: 0.6rem;
+    backdrop-filter: none;
+}
+
+.about-umich-gradient .text-content {
+    display: inline;
+    line-height: inherit;
+}
+
+.about-rotate {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0 0.2rem;
+    border-radius: 0.45rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    overflow: hidden;
+    vertical-align: baseline;
+}
+
+.about-rotate-split {
+    overflow: hidden;
+    padding-bottom: 0.05em;
+}
+
 @media (max-width: 768px) {
     .about-section {
         padding-top: 48px;

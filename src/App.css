@@ -23,7 +23,7 @@ body,
 
 body {
   font-family: 'Lora', 'Georgia', serif;
-  background: #0a0e27;
+  background: #000000;
   color: #ffffff;
   overflow-x: hidden;
   overflow-y: auto;
@@ -61,6 +61,7 @@ button {
   padding: 0;
   transition: background-color 0.4s ease;
   position: relative;
+  background-color: #000000;
 }
 
 .app-pixel-wallpaper {
@@ -72,7 +73,7 @@ button {
 }
 
 .App.light-mode {
-  background-color: #f5f5f5;
+  background-color: #000000;
 }
 
 .App.alpha-mode {
@@ -2492,7 +2493,7 @@ button {
 }
 
 body {
-  background: #050505;
+  background: #000000;
   color: #f3f3f3;
 }
 

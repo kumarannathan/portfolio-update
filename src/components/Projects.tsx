@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Monitor } from 'lucide-react';
 import StackIcon from 'tech-stack-icons';
 import { getTechStackIconName } from './projectTechIconMap';
+import Dither from './Dither';
 import './Projects.css';
 
 function BrandGithubIcon({ size = 18 }: { size?: number }) {
@@ -96,7 +97,21 @@ function ProjectCover({ project, detail }: { project: ProjectEntry; detail?: boo
     }
   }
   if (!project.media) {
-    return <div className={`${base} ${base}--empty`} aria-hidden />;
+    return (
+      <div className={`${base} ${base}--dither`} aria-hidden>
+        <Dither
+          waveColor={[0.52, 0.52, 0.52]}
+          disableAnimation={!detail}
+          enableMouseInteraction={false}
+          mouseRadius={0.25}
+          colorNum={4}
+          pixelSize={2}
+          waveAmplitude={0.32}
+          waveFrequency={3}
+          waveSpeed={0.05}
+        />
+      </div>
+    );
   }
   const url = publicAssetUrl(project.media);
   if (isVideoMediaSrc(project.media)) {
@@ -153,7 +168,7 @@ function ProjectTechChip({ tech, tagClass, iconSize }: { tech: string; tagClass:
   const icon = getTechStackIconName(tech);
   if (icon) {
     return (
-      <span className={`${tagClass} ${tagClass}--stack`} title={tech}>
+      <span className={`${tagClass} ${tagClass}--stack ${tagClass}--icon-only`} title={tech} aria-label={tech}>
         <span className={`${tagClass}__icon`} aria-hidden>
           <StackIcon
             name={icon}
@@ -161,7 +176,6 @@ function ProjectTechChip({ tech, tagClass, iconSize }: { tech: string; tagClass:
             style={{ width: iconSize, height: iconSize, display: 'block' }}
           />
         </span>
-        <span className={`${tagClass}__label`}>{tech}</span>
       </span>
     );
   }
@@ -415,7 +429,6 @@ const Projects: React.FC = () => {
                       <ProjectTechChip key={tech} tech={tech} tagClass="projects-card__tag" iconSize={15} />
                     ))}
                   </div>
-                  <p className="projects-card__desc">{project.summary ?? project.description}</p>
                   <div className="projects-card__bottom">
                     <ProjectLinks project={project} className="projects-card__links" />
                     <button

@@ -21,6 +21,32 @@
     z-index: 2000;
 }
 
+.photos-back-button {
+    appearance: none;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(0, 0, 0, 0.35);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-bottom: 14px;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.photos-back-button:hover {
+    background: rgba(0, 0, 0, 0.55);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.photos-back-button:active {
+    transform: translateY(0);
+}
+
 /* Texture/Grain Overlay */
 .creative-page-new::before {
     content: "";
