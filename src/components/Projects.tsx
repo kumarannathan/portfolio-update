@@ -394,22 +394,44 @@ const PROJECTS: ProjectEntry[] = [
 const motionEase = [0.22, 1, 0.36, 1] as const;
 
 const Projects: React.FC = () => {
+  const [expanded, setExpanded] = useState(false);
   const [focusId, setFocusId] = useState<string | null>(null);
 
   const focused = focusId ? PROJECTS.find((p) => p.id === focusId) : null;
 
   useEffect(() => {
-    if (focusId) {
+    if (focusId && expanded) {
       document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [focusId]);
+  }, [focusId, expanded]);
+
+  const handleToggle = () => {
+    setExpanded((open) => {
+      if (open) setFocusId(null);
+      return !open;
+    });
+  };
 
   return (
     <section className="projects-section" id="projects">
-      <h2 className="projects-section-title">Side Projects</h2>
+      <div className={`projects-bevel-card ${expanded ? 'is-open' : ''}`}>
+        <button
+          type="button"
+          className="projects-bevel-card__toggle"
+          onClick={handleToggle}
+          aria-expanded={expanded}
+        >
+          <h2 className="projects-section-title">Side Projects</h2>
+          <span className="projects-bevel-card__chevron" aria-hidden>
+            {expanded ? '−' : '+'}
+          </span>
+        </button>
 
-      <div className="projects-stage">
-        <AnimatePresence mode="wait">
+        <div className={`projects-bevel-card__body${expanded ? ' is-open' : ''}`}>
+          {expanded && (
+            <div className="projects-bevel-card__collapse">
+              <div className="projects-stage">
+                <AnimatePresence mode="wait">
           {!focusId ? (
             <motion.div
               key="grid"
@@ -479,7 +501,11 @@ const Projects: React.FC = () => {
               <ProjectLinks project={focused} className="projects-detail__links" iconSize={22} />
             </motion.div>
           ) : null}
-        </AnimatePresence>
+                </AnimatePresence>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

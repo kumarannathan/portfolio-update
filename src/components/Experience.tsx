@@ -9,7 +9,7 @@ const Experience: React.FC = () => {
   const experiences = [
     {
       company: "Yogger",
-      role: "SDE Intern",
+      role: "Software Engineer",
       period: "Apr. 2026 – Present",
       description:
         "Developed web, mobile, and pose detection features with React, TypeScript, Kotlin, Swift, Firebase, and Node.js.",

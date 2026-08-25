@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import './App.css';
@@ -9,6 +9,8 @@ import CustomCursor from './components/CustomCursor';
 import ClickSpark from './components/ClickSpark';
 import { photoProjects } from './data/photos';
 import MetallicPaint from './components/MetallicPaint';
+import ParticleField from './components/ParticleField';
+import ProductionProjects from './components/ProductionProjects';
 import pageLogo from './assets/logo.png';
 
 type AppView = 'home' | 'about' | 'photos' | 'a16z';
@@ -17,19 +19,52 @@ const CreativePageNew = React.lazy(() => import('./components/CreativePageNew'))
 const AboutPage = React.lazy(() => import('./components/AboutPage'));
 const A16zAlpha = React.lazy(() => import('./components/A16ZAlpha'));
 
-const Home: React.FC = () => (
-  <div className="home-shell">
-    
-    <About />
-    
-    <div className="home-section-block">
-      <Experience />
+const Home: React.FC = () => {
+  const [particleOpacity, setParticleOpacity] = useState(1);
+
+  useEffect(() => {
+    const updateParticleFade = () => {
+      const experience = document.getElementById('experience');
+      if (!experience) {
+        setParticleOpacity(1);
+        return;
+      }
+
+      const rect = experience.getBoundingClientRect();
+      const fadeStart = window.innerHeight * 0.72;
+      const fadeDistance = window.innerHeight * 0.5;
+      const progress = Math.min(1, Math.max(0, (fadeStart - rect.bottom) / fadeDistance));
+
+      setParticleOpacity(1 - progress);
+    };
+
+    updateParticleFade();
+    window.addEventListener('scroll', updateParticleFade, { passive: true });
+    window.addEventListener('resize', updateParticleFade);
+
+    return () => {
+      window.removeEventListener('scroll', updateParticleFade);
+      window.removeEventListener('resize', updateParticleFade);
+    };
+  }, []);
+
+  return (
+    <div className="home-shell">
+      <ParticleField opacity={particleOpacity} />
+      <About />
+
+      <div className="home-section-block">
+        <Experience />
+      </div>
+      <div className="home-section-block">
+        <ProductionProjects />
+      </div>
+      <div className="home-section-block home-section-block--projects">
+        <Projects />
+      </div>
     </div>
-    <div className="home-section-block">
-      <Projects />
-    </div>
-  </div>
-);
+  );
+};
 
 const MainContent: React.FC = () => {
   const location = useLocation();
