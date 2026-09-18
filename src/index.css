@@ -1,15 +1,21 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+:root {
+  --bg: #f5f1ec;
+  --ink: #2a2520;
+  --ink-95: rgba(42, 37, 32, 0.95);
+  --ink-90: rgba(42, 37, 32, 0.9);
+  --ink-70: rgba(42, 37, 32, 0.7);
+  --ink-60: rgba(42, 37, 32, 0.6);
+  --ink-55: rgba(42, 37, 32, 0.55);
+  --ink-40: rgba(42, 37, 32, 0.4);
+  --ink-25: rgba(42, 37, 32, 0.25);
+  --black-08: rgba(0, 0, 0, 0.08);
+  --black-04: rgba(0, 0, 0, 0.04);
+  --font: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --maxw: 868px;
+  --gutter: 20px;
+  --radius: 10px;
+  --nav-h: 56px;
 }
 
 * {
@@ -17,5 +23,64 @@ code {
 }
 
 html {
+  background: var(--bg);
   scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+}
+
+code {
+  font-family: var(--mono);
+}
+
+::selection {
+  background: rgba(42, 37, 32, 0.14);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

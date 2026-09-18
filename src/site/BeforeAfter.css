@@ -1,0 +1,115 @@
+.ba {
+  margin: 0;
+}
+
+.ba__stage {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 12px 30px rgba(0, 0, 0, 0.08);
+  cursor: ew-resize;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  aspect-ratio: 16 / 10;
+}
+
+.ba__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+}
+
+.ba__before {
+  position: absolute;
+  inset: 0;
+  will-change: clip-path;
+}
+
+.ba__tag {
+  position: absolute;
+  top: 10px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  background: rgba(42, 37, 32, 0.72);
+  color: #f5f1ec;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.ba__tag--before {
+  left: 10px;
+}
+
+.ba__tag--after {
+  right: 10px;
+}
+
+.ba__handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: #f5f1ec;
+  box-shadow: 0 0 0 1px rgba(42, 37, 32, 0.15);
+  outline: none;
+}
+
+.ba__knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #f5f1ec;
+  color: var(--ink-70);
+  font-size: 12px;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ba__handle:focus-visible .ba__knob {
+  box-shadow: 0 0 0 2px var(--ink-40), 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ba figcaption {
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--ink-40);
+  text-align: center;
+}
+
+.shot-missing {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  background: repeating-linear-gradient(135deg, #f3eee7 0 8px, #ede7de 8px 16px);
+  font-size: 11px;
+  color: var(--ink-55);
+  text-align: center;
+}
+
+.shot-missing code {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  color: var(--ink-40);
+  word-break: break-all;
+}
+
+.ba__before .shot-missing {
+  background: repeating-linear-gradient(135deg, #e6ddd2 0 8px, #ddd3c6 8px 16px);
+}

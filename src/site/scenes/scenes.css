@@ -1,0 +1,13 @@
+.scene {
+  width: 100%;
+  position: relative;
+}
+
+.scene canvas {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}

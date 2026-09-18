@@ -1,0 +1,90 @@
+/*
+ * Wavy underline for tab keywords. The wave is an SVG mask on a pseudo-element,
+ * so its color comes from --squig and it can scroll sideways like a wave on hover.
+ */
+.squig {
+  --squig: var(--ink-70);
+  position: relative;
+  padding: 4px 2px 12px;
+  color: var(--ink-40);
+  transition: color 0.2s ease;
+}
+
+.squig--favorites {
+  --squig: #c8553d;
+}
+
+.squig--yogger {
+  --squig: #5b9a6a;
+}
+
+.squig--personal {
+  --squig: #4a7fb0;
+}
+
+.squig--ink {
+  --squig: var(--ink-70);
+}
+
+.squig::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  height: 6px;
+  background: var(--squig);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath d='M0 3 Q3 0 6 3 T12 3' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E")
+    0 0 / 12px 6px repeat-x;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='6' viewBox='0 0 12 6'%3E%3Cpath d='M0 3 Q3 0 6 3 T12 3' fill='none' stroke='black' stroke-width='1.6'/%3E%3C/svg%3E")
+    0 0 / 12px 6px repeat-x;
+  opacity: 0;
+  transform: scaleX(0.6);
+  transform-origin: left center;
+  transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.squig:hover {
+  color: var(--ink-70);
+}
+
+.squig:hover::after {
+  opacity: 0.45;
+  transform: scaleX(1);
+  animation: squig-wave 0.9s linear infinite;
+}
+
+.squig.is-active {
+  color: var(--ink-95);
+}
+
+.squig.is-active::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.squig.is-active:hover::after {
+  opacity: 1;
+}
+
+.squig:focus-visible {
+  outline: none;
+  color: var(--ink-95);
+}
+
+@keyframes squig-wave {
+  from {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+  to {
+    -webkit-mask-position: 12px 0;
+    mask-position: 12px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .squig:hover::after {
+    animation: none;
+  }
+}

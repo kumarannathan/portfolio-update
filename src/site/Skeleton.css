@@ -1,0 +1,86 @@
+/*
+ * Loading placeholders, same idea as Yogger's web app: the box is already the
+ * right size, and until the media arrives it's a soft surface with a slow sheen
+ * sweeping across it. Here the surface is a soft blue that sits on the cream theme.
+ *
+ * The sheen is painted as the element's own background, so a loaded image or
+ * video simply covers it. Once media reports loaded (see index.tsx) the
+ * animation stops.
+ */
+:root {
+  --skel-surface: #e6edf4;
+  --skel-sheen: rgba(150, 178, 206, 0.45);
+}
+
+.pcard__frame,
+.wcard__thumb,
+.gtile,
+.ba__stage,
+.browser__screen,
+.phone__screen,
+.ag-panel__frame,
+.about__video,
+.about__avatar,
+.cs__figure img,
+.cs__figure video {
+  background-color: var(--skel-surface);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    var(--skel-sheen) 45%,
+    rgba(255, 255, 255, 0.6) 50%,
+    var(--skel-sheen) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 60% 100%;
+  animation: skel-sheen 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Figures size to their image, so give them some height to shimmer in while waiting. */
+.cs__figure img:not([data-loaded]),
+.cs__figure video:not([data-loaded]) {
+  min-height: 220px;
+}
+
+/* Stop once the media is in, or when there's nothing to load (placeholders). */
+.pcard__frame:has(img[data-loaded], video[data-loaded], .pcard__placeholder),
+.wcard__thumb:has(img[data-loaded], video[data-loaded], .pcard__placeholder),
+.gtile:has(img[data-loaded]),
+.gtile.is-loaded,
+.ba__stage:has(> img[data-loaded], > .shot-missing),
+.browser__screen:has(img[data-loaded], .shot-missing, .frame__placeholder),
+.phone__screen:has(img[data-loaded], .frame__placeholder),
+.ag-panel__frame:has(img[data-loaded]),
+.about__video[data-loaded],
+.about__avatar[data-loaded],
+.cs__figure img[data-loaded],
+.cs__figure video[data-loaded] {
+  animation: none;
+  background-image: none;
+}
+
+@keyframes skel-sheen {
+  from {
+    background-position: -150% 0;
+  }
+  to {
+    background-position: 250% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pcard__frame,
+  .wcard__thumb,
+  .gtile,
+  .ba__stage,
+  .browser__screen,
+  .phone__screen,
+  .ag-panel__frame,
+  .about__video,
+  .about__avatar,
+  .cs__figure img,
+  .cs__figure video {
+    animation: none;
+  }
+}

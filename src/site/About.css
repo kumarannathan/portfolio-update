@@ -1,0 +1,150 @@
+.about {
+  padding-top: 40px;
+  max-width: 640px;
+}
+
+.about__head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+
+.about__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  object-fit: cover;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.about__name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ink-90);
+}
+
+.about__role {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--ink-55);
+}
+
+.about__bio p,
+.about__blurb {
+  margin: 0 0 12px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-70);
+}
+
+.about__bio strong,
+.about__blurb strong {
+  font-weight: 500;
+  color: var(--ink-90);
+}
+
+.about__bio a {
+  color: var(--ink-90);
+  border-bottom: 1px solid var(--ink-25);
+  transition: border-color 0.2s ease;
+}
+
+.about__bio a:hover {
+  border-color: var(--ink-70);
+}
+
+.about__section {
+  padding: 36px 0 0;
+}
+
+.xp {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.xp__row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 14px;
+  padding: 12px 0;
+}
+
+.xp__logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  object-fit: cover;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--black-08);
+}
+
+.xp__title {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink-90);
+}
+
+.xp__title a:hover {
+  text-decoration: underline;
+}
+
+.xp__role {
+  font-weight: 400;
+  color: var(--ink-60);
+}
+
+.xp__desc {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-60);
+}
+
+.xp__tech {
+  margin: 4px 0 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-40);
+}
+
+.xp__period {
+  font-size: 11px;
+  color: var(--ink-40);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+.about__videos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.about__video {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.about__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+@media (max-width: 560px) {
+  .xp__row {
+    grid-template-columns: 28px 1fr;
+  }
+  .xp__period {
+    grid-column: 2;
+  }
+  .about__videos {
+    grid-template-columns: 1fr;
+  }
+}

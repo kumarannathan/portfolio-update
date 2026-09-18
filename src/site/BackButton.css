@@ -1,0 +1,22 @@
+.backbtn {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: 0 0 14px -6px;
+  border-radius: 999px;
+  font-size: 15px;
+  color: var(--ink-55);
+  transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.backbtn:hover {
+  color: var(--ink-95);
+  background: var(--black-04);
+  transform: translateX(-2px);
+}
+
+.backbtn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ink-40);
+}

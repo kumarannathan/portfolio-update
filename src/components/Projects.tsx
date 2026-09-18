@@ -5,6 +5,9 @@ import StackIcon from 'tech-stack-icons';
 import { getTechStackIconName } from './projectTechIconMap';
 import Dither from './Dither';
 import './Projects.css';
+import { PROJECTS } from '../site/data/projectEntries';
+import type { ProjectEntry } from '../site/data/projectEntries';
+export type { ProjectEntry };
 
 function BrandGithubIcon({ size = 18 }: { size?: number }) {
   return (
@@ -22,32 +25,6 @@ function BrandYoutubeIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-export interface ProjectEntry {
-  id: string;
-  title: string;
-  technologies: string[];
-  /** Full lead copy — expanded view (and fallback if no summary) */
-  description: string;
-  /** One-line preview on grid cards */
-  summary?: string;
-  /** Category chip (e.g. OpenClaw, Frontend) — expanded + grid */
-  roleTag?: string;
-  /** e.g. "2026 • React, …" — expanded view only */
-  metaLine?: string;
-  /** Shown only in expanded view — stack, scope, or feature summary */
-  details?: string;
-  /** Bullet list — expanded view only */
-  highlights?: string[];
-  cover?: string;
-  media?: string;
-  /** youtu.be/… or youtube.com/watch?v=… — embedded in the card */
-  youtubeUrl?: string;
-  autoplayVideo?: boolean;
-  link?: string;
-  github?: string;
-  /** Extra paragraph, expanded view only */
-  detailText?: string;
-}
 
 function publicAssetUrl(path: string): string {
   const base = (process.env.PUBLIC_URL || '').replace(/\/$/, '');
@@ -239,157 +216,6 @@ function ProjectLinks({
   );
 }
 
-const PROJECTS: ProjectEntry[] = [
-  {
-    id: 'milo-mission-control',
-    title: 'Milo — Mission Control',
-    roleTag: 'OpenClaw',
-    technologies: ['React', 'Netlify Functions', 'Supabase', 'Python', 'Ollama', 'RapidAPI'],
-    summary:
-      'Run a fleet of specialized AI agents from one Mission Control dashboard—live status, shared memory, and a task bus you can actually watch.',
-    metaLine: '2026 • React, Netlify Functions, Supabase, Python, Ollama, RapidAPI',
-    description:
-      'Run a fleet of specialized AI agents from one Mission Control dashboard—live status, shared memory, and a task bus you can actually watch instead of guessing what your bots are doing. I wired end-to-end pipelines from research and drafts through publish and social, with Milo orchestrating handoffs across agents in production. The whole stack is serverless APIs plus Supabase-backed state, tuned so cheap local inference (Ollama) keeps monthly costs trivial until you need to scale.',
-    highlights: [
-      'Built a multi-agent architecture orchestrated via shared task queues and memory (Supabase)',
-      'Designed a Mission Control UI (React) to visualize agent status, activity feeds, and pipelines in real time',
-      'Implemented a serverless backend (Netlify Functions) for agent communication, logging, and coordination',
-      'Optimized for low-cost local inference (Ollama) with ~$1.50/month API usage (option to scale with paid models)',
-      'Trade Bot: Tracks Polymarket activity and auto-researches positions/trends',
-      'Competitor Intelligence Bot: Monitors tweets, news, and trends based on brand configs using RapidAPI + Clawdbot',
-      'Content Pipeline Agents: End-to-end automation (research → draft → optimize → publish) across multiple specialized bots',
-      'Orchestrator (Milo): Manages task scheduling, agent coordination, and pipeline execution via shared agent_tasks'
-    ],
-    media: '/milo.mp4',
-    autoplayVideo: true
-  },
-  {
-    id: 'neetcode-redesign',
-    title: 'NeetCode Redesign',
-    roleTag: 'Frontend',
-    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS v4', 'GSAP'],
-    summary:
-      'Built a full NeetCode-inspired redesign with a modern dark aesthetic to make interview prep feel like a polished product.',
-    metaLine: '2026 • Next.js 16, React 19, TypeScript, Tailwind CSS v4, GSAP',
-    description:
-      'Built a full NeetCode-inspired redesign with a modern dark aesthetic to make interview prep feel like a polished product rather than a static content site. Shipped for an X competition with animated landing experiences, state-driven dashboard navigation, and reusable interaction systems across key prep flows.',
-    highlights: [
-      'Built an animated landing with rotating insight cards, structured course explorer, roadmap section, and interactive resources blocks',
-      'Developed a rich dashboard prototype with in-page sections (Home, Coding Interviews, Problems, Company Tagged, System Design, Roadmap)',
-      'Implemented reusable UI systems (cards, chips, counters, hover/focus transitions, responsive sidebar behavior, reduced-motion-safe polish)',
-      'Integrated route flow end-to-end (/sign-in → fake auth → /dashboard) and resolved production TypeScript/build blockers'
-    ],
-    media: '/neetcode.mp4',
-    autoplayVideo: true,
-    link: 'https://neatcoded.netlify.app/',
-    github: 'https://github.com/kumarannathan/Neetcode.git'
-  },
-  {
-    id: 'sipt',
-    title: 'Sipt',
-    roleTag: 'Mobile',
-    technologies: ['React', 'React Native', 'TypeScript', 'mobile development'],
-    summary: 'Letterboxd for specialty coffee—social discovery, taste identity, and community around how you rate brews.',
-    metaLine: '2026 • React, React Native, TypeScript, mobile development',
-    description:
-      'Letterboxd for specialty coffee. Existing coffee loggers help you track brews privately, but they stop short of discovery, taste identity, and community. Sipt adds the social layer: log coffees with a 3-axis rating across Enjoyment, Balance, and Clarity, follow people whose taste you trust, and build a profile that actually says something about what you like.',
-    media: '/videos/coffee.mp4',
-    autoplayVideo: true
-  },
-  {
-    id: 'booking-platform',
-    title: 'Startup Booking Platform',
-    roleTag: 'Frontend',
-    technologies: ['React', 'Node.js', 'Express', 'PostgreSQL', 'JWT'],
-    summary:
-      'Full-stack booking platform with TypeScript/React and Node/Express—100+ monthly reservations with PostgreSQL and JWT auth.',
-    metaLine: '2025 • React • Node.js • Express • PostgreSQL • JWT',
-    description:
-      'Full-stack booking platform with TypeScript/React frontend and Node.js/Express backend handling 100+ monthly reservations with PostgreSQL managing relational customer and availability data. Built RESTful API layer with automated email notifications and JWT authentication.',
-    media: '/mtm.mp4',
-    autoplayVideo: true
-  },
-  {
-    id: 'soul-forest',
-    title: 'Soul of the Forest',
-    roleTag: 'Game Dev',
-    technologies: ['Unity', 'C#', 'Figma', 'Jira', 'Git'],
-    summary: 'Commercial game UI/UX—timelines, playtesting, menus in Figma, C#, Unity.',
-    metaLine: '2023 • Unity • C# • Figma • Jira • Git',
-    description:
-      'Directed UI/UX department for commercial game development, establishing development timelines using Jira, Confluence, and Git. Led comprehensive playtesting and implemented menu designs using Figma, C# Scripts, and Unity Game Engine.',
-    media: '/soul-of-the-forest.mp4',
-    link: 'https://store.steampowered.com/app/2877660/Soul_of_the_Forest/',
-    autoplayVideo: true
-  },
-  {
-    id: 'tennis-analytics',
-    title: 'CV Tennis Analytics',
-    roleTag: 'Computer Vision',
-    technologies: ['React', 'FastAPI', 'YOLOv8', 'PyTorch', 'D3.js'],
-    summary:
-      'Full-stack sports analytics with React dashboard and FastAPI—YOLOv8 and PyTorch on match footage.',
-    metaLine: '2025 • React • FastAPI • YOLOv8 • PyTorch • D3.js',
-    description:
-      'Full-stack sports analytics platform with React dashboard and FastAPI backend processing match footage using custom YOLOv8 and PyTorch models. Designed RESTful APIs serving real-time analysis endpoints with PostgreSQL storing match statistics.',
-    detailText:
-      'I built the full path from raw match footage to usable analysis: a browser dashboard for uploads, a FastAPI layer for orchestration, and a CV pipeline that turned detections into rally-level stats and tactical feedback. The product goal was speed and clarity, so players could move from video to insight without touching a notebook or labeling tool.'
-  },
-  {
-    id: 'dance-ar',
-    title: 'Dance AR',
-    roleTag: 'Game Dev',
-    technologies: ['Next.js', 'MediaPipe', 'WebRTC', 'Firebase', 'GCP'],
-    summary: 'AR fitness platform analyzing movement against choreography using MediaPipe pose estimation.',
-    metaLine: '2025 • Next.js • MediaPipe • WebRTC • Firebase • GCP',
-    description:
-      'Full-stack AR fitness platform analyzing movement against choreography using MediaPipe pose estimation. Engineered RESTful API handling real-time WebRTC streams and movement scoring algorithms. Deployed via CI/CD on GCP.',
-    detailText: 'Shipped real-time pose feedback and score overlays, focused on responsiveness and user motivation loops.'
-  },
-  {
-    id: 'jobsim-vr',
-    title: 'JobSim VR',
-    roleTag: 'Game Dev',
-    technologies: ['Unreal Engine 5', 'Blueprints', 'C++'],
-    summary:
-      'Corporate life simulator in VR—NPCs, head-tracking, dialogue, and a Severance-inspired Macrodata Refinement Room.',
-    metaLine: '2024 • Unreal Engine 5 • Blueprints • C++',
-    description:
-      "Corporate life simulator featuring NPCs with dynamic behaviors, head-tracking, movement, and dialogue. Designed 'Severance'-inspired Macrodata Refinement Room with interactable components and immersive VR environment. Featured in UMich Game Design Showcase.",
-    detailText:
-      'This project was about making a strange office space feel alive in VR. I focused on interaction design, NPC behavior, and environmental pacing so the world stayed readable and uncanny at the same time, with enough system depth that the player could explore, observe, and feel the room reacting back.',
-    youtubeUrl: 'https://youtu.be/EPbTNA2fU0g',
-    github: 'https://github.com/kumarannathan/JobSimVR'
-  },
-  {
-    id: 'ann-arbor-go',
-    title: 'AnnArborGo',
-    roleTag: 'Location AR',
-    technologies: ['Unreal Engine 5', 'AR', 'GPS', 'Blueprints', 'C++'],
-    summary:
-      'Location-based AR game—virtual tree planting, landmarks, eco-defense, GPS navigation, and squirrel encounters.',
-    metaLine: '2024 • Unreal Engine 5 • AR • GPS • Blueprints • C++',
-    description:
-      'Location-based AR game promoting environmental stewardship through virtual tree planting, landmark exploration, and eco-defense mechanics. Features Environmental Achievement Recognition System with eco-medals, GPS landmark navigation, interactive history reveals, and dynamic squirrel encounters requiring strategic acorn-throwing defense.',
-    detailText:
-      'I treated AnnArborGo as a city-scale progression system, combining GPS movement, landmark discovery, and lightweight AR interactions into something that felt playful instead of purely educational. The core challenge was balancing exploration, reward loops, and local context so the experience felt grounded in Ann Arbor rather than like a generic location game.',
-    github: 'https://github.com/kumarannathan/AnnArborGo'
-  },
-  {
-    id: 'focus-zone',
-    title: 'CV Distraction Tracker',
-    roleTag: 'MediaPipe',
-    technologies: ['React', 'TypeScript', 'MediaPipe', 'Computer Vision'],
-    summary:
-      'Computer vision-powered focus tracking with MediaPipe face mesh—hand gestures and real-time distraction detection.',
-    metaLine: '2025 • React • TypeScript • MediaPipe • Computer Vision',
-    description:
-      'Computer vision-powered focus tracking application using MediaPipe face mesh detection. Features hand gesture controls and real-time distraction detection.',
-    detailText:
-      'Focus Zone started as a practical browser tool for staying locked in during deep work. I built low-latency face and gesture tracking in the client, then layered in distraction signals and simple controls so the system could react in real time without feeling heavy or invasive. It is the same kind of CV loop I want to revisit later with stronger video-driven UX.',
-    github: 'https://github.com/kumarannathan/cv-distraction-tracker'
-  }
-];
 
 const motionEase = [0.22, 1, 0.36, 1] as const;
 
