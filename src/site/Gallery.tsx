@@ -29,13 +29,25 @@ export interface Photo {
 const asset = (p: string) => `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}${p}`;
 const PHOTOS: Photo[] = (manifest as { photos: Photo[] }).photos;
 
-
-/** Masonry is a CSS grid with tiny rows; each tile spans enough rows for its aspect ratio. */
 const ROW = 8;
 const GAP = 12;
 
 const EASE: [number, number, number, number] = [0.2, 0.7, 0.2, 1];
 const LAYOUT_TRANSITION = { duration: 0.75, ease: EASE };
+
+function useIsMobile(query = '(max-width: 640px)') {
+  const [mobile, setMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(query).matches : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMobile(mq.matches);
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+  return mobile;
+}
 
 function exifLine(p: Photo): string {
   const e = p.exif;
@@ -48,7 +60,6 @@ function rowSpan(p: Photo, width: number): number {
   return Math.max(1, Math.ceil((height + GAP) / (ROW + GAP)));
 }
 
-/** Watch a grid and report its column width and full width. */
 function useGridMetrics(ref: React.RefObject<HTMLDivElement | null>, columns: number) {
   const [m, setM] = useState({ col: 0, full: 0 });
   useLayoutEffect(() => {
@@ -93,7 +104,6 @@ const PhotoTile: React.FC<TileProps> = ({ photo, eager, expanded, span, colSpan,
 
   useEffect(() => {
     if (!expanded) return undefined;
-    // Bring the opened photo into view once the grid has re-flowed around it.
     const id = window.setTimeout(() => ref.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
     return () => window.clearTimeout(id);
   }, [expanded]);
@@ -155,7 +165,6 @@ const GroupGrid: React.FC<{
     >
       {photos.map((p, i) => {
         const expanded = expandedId === p.id;
-        // Open tiles take two columns (never the whole row on wide screens), so the rest packs around them.
         const colSpan = expanded ? Math.min(2, columns) : 1;
         const width = colSpan > 1 ? col * colSpan + GAP * (colSpan - 1) : col;
         return (
@@ -174,7 +183,121 @@ const GroupGrid: React.FC<{
   );
 };
 
+/** One photo at a time — topic menu + left/right (and swipe). No page scroll. */
+const MobileSlider: React.FC<{ photos: Photo[]; subject: string }> = ({ photos, subject }) => {
+  const [index, setIndex] = useState(0);
+  const touchX = useRef<number | null>(null);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [subject, photos]);
+
+  const n = photos.length;
+  const go = useCallback(
+    (dir: number) => {
+      if (n < 1) return;
+      setIndex((i) => (i + dir + n) % n);
+    },
+    [n]
+  );
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') go(1);
+      if (e.key === 'ArrowLeft') go(-1);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [go]);
+
+  const photo = photos[index];
+  if (!photo) return null;
+
+  return (
+    <div className="gallery__simple">
+      <button type="button" className="gallery__simple-btn" aria-label="Previous photo" onClick={() => go(-1)}>
+        ‹
+      </button>
+      <div
+        className="gallery__simple-frame"
+        onTouchStart={(e) => {
+          touchX.current = e.changedTouches[0]?.clientX ?? null;
+        }}
+        onTouchEnd={(e) => {
+          if (touchX.current == null) return;
+          const dx = (e.changedTouches[0]?.clientX ?? touchX.current) - touchX.current;
+          touchX.current = null;
+          if (Math.abs(dx) < 40) return;
+          go(dx < 0 ? 1 : -1);
+        }}
+      >
+        <img
+          key={photo.id}
+          className="gallery__simple-img"
+          src={asset(photo.srcSmall)}
+          srcSet={`${asset(photo.srcSmall)} 800w, ${asset(photo.src)} 1600w`}
+          sizes="(max-width: 640px) 78vw, 400px"
+          alt=""
+          decoding="async"
+        />
+      </div>
+      <button type="button" className="gallery__simple-btn" aria-label="Next photo" onClick={() => go(1)}>
+        ›
+      </button>
+      <div className="gallery__simple-meta">
+        <span>{photo.exif.date || subject}</span>
+        <span>
+          {index + 1}/{n}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const MobileGallery: React.FC<{
+  grouped: { subject: string; photos: Photo[] }[];
+}> = ({ grouped }) => {
+  const topics = useMemo(() => grouped.map((g) => g.subject), [grouped]);
+  const [subject, setSubject] = useState(topics[0] ?? SUBJECT_ORDER[0]);
+
+  useEffect(() => {
+    if (!topics.includes(subject) && topics[0]) setSubject(topics[0]);
+  }, [topics, subject]);
+
+  const photos = useMemo(
+    () => grouped.find((g) => g.subject === subject)?.photos ?? [],
+    [grouped, subject]
+  );
+
+  return (
+    <div className="gallery gallery--mobile container">
+      <h1 className="sr-only">Photos</h1>
+      <header className="gallery__head">
+        <div className="gallery__filters" role="tablist" aria-label="subjects">
+          {topics.map((s) => (
+            <button
+              key={s}
+              type="button"
+              role="tab"
+              aria-selected={subject === s}
+              className={`squig squig--ink gallery__filter${subject === s ? ' is-active' : ''}`}
+              onClick={() => setSubject(s)}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      </header>
+
+      <div className="gallery__morph">
+        <MobileSlider key={subject} photos={photos} subject={subject} />
+      </div>
+    </div>
+  );
+};
+
 const Gallery: React.FC = () => {
+  const mobile = useIsMobile();
   const [subject, setSubject] = useState<string>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const columns = useColumns();
@@ -203,8 +326,9 @@ const Gallery: React.FC = () => {
   }, []);
 
   const visible = subject === 'all' ? grouped : grouped.filter((g) => g.subject === subject);
-
   const toggle = useCallback((p: Photo) => setExpandedId((cur) => (cur === p.id ? null : p.id)), []);
+
+  if (mobile) return <MobileGallery grouped={grouped} />;
 
   let eagerStart = 0;
 

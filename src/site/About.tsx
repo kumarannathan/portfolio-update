@@ -2,15 +2,28 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FadeContent from '../components/reactbits/FadeContent';
 import { EXPERIENCE } from './data/experience';
-import tdVideo from '../components/td.MP4';
-import td1Video from '../components/td1.MP4';
-import td2Video from '../components/td2.MP4';
+import { ALL_WORK } from './data/work';
+import ProjectCard from './ProjectCard';
 import './About.css';
+import './ProjectCard.css';
 
-const About: React.FC = () => {
+const MOBILE_FEATURED_IDS = ['toshi', 'yogger-web-redesign'];
+
+interface AboutProps {
+  /** Mobile home only — Toshi + Yogger Redesign + work link. Hidden on /about. */
+  showProjects?: boolean;
+}
+
+const About: React.FC<AboutProps> = ({ showProjects = false }) => {
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
+
+  const featured = showProjects
+    ? MOBILE_FEATURED_IDS.map((id) => ALL_WORK.find((w) => w.id === id)).filter(
+        (w): w is NonNullable<typeof w> => Boolean(w)
+      )
+    : [];
 
   return (
     <div className="about container">
@@ -44,6 +57,22 @@ const About: React.FC = () => {
         </section>
       </FadeContent>
 
+      {showProjects && featured.length > 0 && (
+        <section className="section about__section">
+          <h2 className="label label--left">recent projects</h2>
+          <div className="about__projects">
+            {featured.map((item) => (
+              <ProjectCard key={item.id} item={item} />
+            ))}
+          </div>
+          <div className="about__more">
+            <Link to="/work" className="textlink">
+              see more work →
+            </Link>
+          </div>
+        </section>
+      )}
+
       <section className="section about__section">
         <h2 className="label label--left">experience</h2>
         <ul className="xp">
@@ -68,22 +97,6 @@ const About: React.FC = () => {
             </li>
           ))}
         </ul>
-      </section>
-
-      <section className="section about__section">
-        <h2 className="label label--left">currently</h2>
-        <p className="about__blurb">
-          experimenting with a <strong>TouchDesigner plugin</strong> for computer vision, bridging real-time CV models with
-          generative visuals. right now it's going into a speed camera project that detects and visualizes motion as it
-          happens.
-        </p>
-        <div className="about__videos">
-          {[tdVideo, td1Video, td2Video].map((src) => (
-            <video key={src} autoPlay loop muted playsInline preload="metadata" className="about__video">
-              <source src={src} type="video/mp4" />
-            </video>
-          ))}
-        </div>
       </section>
 
       <section className="section about__section">

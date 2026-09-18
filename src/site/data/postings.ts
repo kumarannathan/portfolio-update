@@ -28,7 +28,7 @@ export const YOGGER_POSTINGS: Posting[] = [
   {
     id: 'yogger-web-redesign',
     caseId: 'yogger-web-redesign',
-    title: 'Yogger',
+    title: 'Yogger Redesign',
     blurb:
       'A new shell and sidebar, tasks rebuilt as a roster, new analytics and home exercise program tools. Shipped behind a toggle so coaches opt in.',
     categories: ['web'],

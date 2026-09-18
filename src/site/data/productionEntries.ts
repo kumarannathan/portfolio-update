@@ -31,7 +31,7 @@ export type ProductionProject = {
 export const PRODUCTION_PROJECTS: ProductionProject[] = [
   {
     id: 'yogger-web-redesign',
-    title: 'Yogger',
+    title: 'Yogger Redesign',
     roleTag: 'Web',
     summary: 'A calmer, clearer coach dashboard, plus the tasks, analytics and home exercise program tools it was missing',
     lead:

@@ -117,24 +117,21 @@
   padding-top: 2px;
 }
 
-.about__videos {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.about__video {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
 .about__links {
   display: flex;
   flex-wrap: wrap;
   gap: 18px;
+}
+
+.about__projects {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  margin-top: 8px;
+}
+
+.about__more {
+  margin-top: 20px;
 }
 
 @media (max-width: 560px) {
@@ -143,8 +140,5 @@
   }
   .xp__period {
     grid-column: 2;
-  }
-  .about__videos {
-    grid-template-columns: 1fr;
   }
 }

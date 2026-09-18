@@ -5,19 +5,39 @@ import AnimatedContent from '../components/reactbits/AnimatedContent';
 import SceneCanvas from './scenes/SceneCanvas';
 import { AquariumScene } from './scenes/AquariumScene';
 import ProjectCard from './ProjectCard';
+import About from './About';
 import { FEATURED_WORK } from './data/work';
 import './Home.css';
 
+function useIsMobile(query = '(max-width: 640px)') {
+  const [mobile, setMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(query).matches : false
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const onChange = () => setMobile(mq.matches);
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+
+  return mobile;
+}
+
 const Home: React.FC = () => {
+  const mobile = useIsMobile();
   const tank = useMemo(() => new AquariumScene(), []);
   const [, setTick] = useState(0);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
-    // Re-render the little hint now and then so the algae warning can show up.
+    if (mobile) return;
     const id = window.setInterval(() => setTick((n) => n + 1), 1500);
     return () => window.clearInterval(id);
-  }, []);
+  }, [mobile]);
+
+  if (mobile) return <About showProjects />;
 
   const addFish = () => {
     tank.addFish();
