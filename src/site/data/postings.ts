@@ -56,8 +56,8 @@ export const YOGGER_POSTINGS: Posting[] = [
       { src: '/projects/home-exercise-builder/exercise-library.jpg', alt: 'exercise library' }
     ],
     stats: [
-      { value: '1', label: 'creation flow' },
-      { value: 'HEP', label: 'programs + tasks' }
+      { value: 'Rx', label: 'sets, reps, holds, side' },
+      { value: 'roster', label: 'HEP tasks + adherence' }
     ],
     tags: ['React', 'TypeScript', 'MUI']
   },

@@ -63,15 +63,4 @@
 
 .site-footer {
   padding: 40px var(--gutter) 72px;
-  text-align: center;
-  font-size: 11px;
-  color: var(--ink-40);
-}
-
-.site-footer a {
-  color: var(--ink-55);
-}
-
-.site-footer a:hover {
-  color: var(--ink-90);
 }

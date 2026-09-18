@@ -154,7 +154,7 @@ function fromProject(p: ProjectEntry, i: number): WorkItem {
     detail: {
       lead: p.description,
       highlights: p.highlights ?? [],
-      tech: p.technologies.join(' · '),
+      tech: p.technologies.join(', '),
       links,
       extra: p.detailText
     }

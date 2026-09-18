@@ -63,7 +63,7 @@ export const PRODUCTION_PROJECTS: ProductionProject[] = [
           'grid and list views in the library, color-coded scores in assessments, reports as a searchable table with drafts and saved counts, and athlete management as a table with status, tasks and a copyable invite link.',
       },
     ],
-    technologies: 'React · TypeScript · MUI · Firebase (Firestore, Storage, Auth)',
+    technologies: 'React, TypeScript, MUI, Firebase (Firestore, Storage, Auth)',
     images: [
       '/projects/yogger-web/after/login-cover.jpg',
       '/projects/yogger-web/after/analytics-cover.jpg',
@@ -101,7 +101,7 @@ export const PRODUCTION_PROJECTS: ProductionProject[] = [
           'HEP tasks and adherence sit next to the builder: who is on track, who went quiet, and what they were assigned. the builder is the craft surface; the roster is the reason to check in again tomorrow.',
       },
     ],
-    technologies: 'React · TypeScript · MUI · Firebase (Firestore, Storage)',
+    technologies: 'React, TypeScript, MUI, Firebase (Firestore, Storage)',
     images: [
       '/projects/home-exercise-builder/program-overview.jpg',
       '/projects/home-exercise-builder/analytics-cover.jpg',
@@ -140,7 +140,7 @@ export const PRODUCTION_PROJECTS: ProductionProject[] = [
           'clinic-trial progress tracking and UTM attribution built on scheduled Cloud Functions rollups, turning raw event streams into queryable cohort and funnel views.',
       },
     ],
-    technologies: 'React · TypeScript · Firebase (Firestore, Auth, Cloud Functions) · scheduled rollup jobs',
+    technologies: 'React, TypeScript, Firebase (Firestore, Auth, Cloud Functions), scheduled rollup jobs',
     images: YOGGER_CRM_IMAGES,
   },
   {
@@ -167,7 +167,7 @@ export const PRODUCTION_PROJECTS: ProductionProject[] = [
           'a shared web-based flow the Android and iOS clients hand off to, keeping one implementation instead of three divergent native ones.',
       },
     ],
-    technologies: 'Firebase Identity Platform · SAML 2.0 · TypeScript · Kotlin · Swift',
+    technologies: 'Firebase Identity Platform, SAML 2.0, TypeScript, Kotlin, Swift',
   },
   {
     id: 'rag-gemini',
@@ -198,7 +198,7 @@ export const PRODUCTION_PROJECTS: ProductionProject[] = [
           'tiered retrieval and quota fallbacks keep the feature available under load; prompt-version plus content-hash caching on the iOS client avoids paying for identical generations twice.',
       },
     ],
-    technologies: 'Google Gemini (File Search) · Firebase Cloud Functions · Node.js CLI tooling · Swift',
+    technologies: 'Google Gemini (File Search), Firebase Cloud Functions, Node.js CLI tooling, Swift',
   },
   {
     id: 'movement-age',
@@ -224,7 +224,7 @@ export const PRODUCTION_PROJECTS: ProductionProject[] = [
           'score breakdowns that lead with the takeaway, expandable component cards that collapse a long scroll into a scannable overview, and a lighter visual system that keeps attention on the analysis.',
       },
     ],
-    technologies: 'Kotlin · Android · Firebase · MediaPipe-style pose tracking',
+    technologies: 'Kotlin, Android, Firebase, MediaPipe-style pose tracking',
     images: ['/projects/yogger-mobile/cover.jpg'],
     links: [
       {

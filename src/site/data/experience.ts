@@ -19,7 +19,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     role: 'Software Engineer',
     period: 'Apr 2026 – Present',
     description: 'Web, mobile, and pose-detection features across React, TypeScript, Kotlin, Swift, Firebase, and Node.js.',
-    technologies: 'React · TypeScript · Kotlin · Swift · Firebase · Node.js',
+    technologies: 'React, TypeScript, Kotlin, Swift, Firebase, Node.js',
     logo: yoggerLogo
   },
   {
@@ -28,7 +28,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     role: 'Software Engineer Intern',
     period: 'Jul 2024 – Oct 2024',
     description: 'Cut API latency 20% by profiling Python and C++ data paths. Built a real-time SaaS analytics dashboard in React and D3.',
-    technologies: 'Python · C++ · React · D3.js',
+    technologies: 'Python, C++, React, D3.js',
     logo: einnelLogo
   },
   {
@@ -37,7 +37,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     role: 'QA Lead / Programmer',
     period: 'Sep 2023 – Sep 2024',
     description: 'Led UI systems and quest architecture in Unity, and ran QA in an Agile workflow with Jira and Confluence.',
-    technologies: 'Unity · C# · Jira · Confluence',
+    technologies: 'Unity, C#, Jira, Confluence',
     logo: wsoftLogo
   },
   {
@@ -45,7 +45,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     role: 'Snap Lens Developer',
     period: 'Mar 2024 – May 2024',
     description: 'Analyzed engagement across 50K+ users with SQL and Python, surfacing trends behind a 13% retention lift.',
-    technologies: 'SQL · Python · Analytics',
+    technologies: 'SQL, Python, Analytics',
     logo: snapLogo
   }
 ];

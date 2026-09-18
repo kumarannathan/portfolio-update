@@ -33,12 +33,6 @@ const Shell: React.FC = () => {
           </Routes>
         </React.Suspense>
       </main>
-      {!bare && (
-        <footer className="site-footer">
-          © {new Date().getFullYear()} Kumaran Nathan · Detroit ·{' '}
-          <a href="mailto:kumarann@umich.edu">kumarann@umich.edu</a>
-        </footer>
-      )}
     </div>
   );
 };

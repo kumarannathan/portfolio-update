@@ -154,7 +154,7 @@ function fromProject(p: ProjectEntry): CaseStudy {
     overview: p.description,
     sections,
     figures: figures.length ? figures : undefined,
-    stack: p.technologies.join(' · '),
+    stack: p.technologies.join(', '),
     links
   };
 }

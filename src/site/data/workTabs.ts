@@ -25,7 +25,7 @@ const FAVORITES = [
 const PERSONAL_STATS: Record<string, Stat[]> = {
   toshi: [
     { value: '14', label: 'tools on one deal' },
-    { value: '1', label: 'sample deal, end to end' }
+    { value: '5yr', label: 'ownership cost baked in' }
   ],
   'milo-mission-control': [{ value: '~$1.50', label: 'a month in API usage' }],
   'soul-forest': [{ value: 'Steam', label: 'commercial release' }],

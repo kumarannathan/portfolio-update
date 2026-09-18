@@ -70,7 +70,6 @@
 }
 
 .pcard__placeholder-tech {
-  font-family: var(--mono);
   font-size: 9.5px;
   line-height: 1.5;
   color: var(--ink-40);
@@ -110,7 +109,6 @@
 
 .pcard__tech {
   margin: 4px 0 0;
-  font-family: var(--mono);
   font-size: 10.5px;
   line-height: 1.5;
   color: var(--ink-40);

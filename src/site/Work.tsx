@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AnimatedContent from '../components/reactbits/AnimatedContent';
-import BackButton from './BackButton';
 import CountUp from './CountUp';
 import { Thumb, logoFor } from './ProjectCard';
 import { TABS, Tab, entriesFor, WorkEntry } from './data/workTabs';
@@ -78,7 +77,6 @@ const Work: React.FC = () => {
   return (
     <div className="work container">
       <h1 className="sr-only">Work</h1>
-      <BackButton fallback="/" />
 
       <nav className="work__tabs" role="tablist" aria-label="work">
         {TABS.map((t) => (
