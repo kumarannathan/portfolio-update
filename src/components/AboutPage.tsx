@@ -1,9 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './About.css';
-import tdVideo from './td.MP4';
-import td1Video from './td1.MP4';
-import td2Video from './td2.MP4';
 
 const AboutPage: React.FC = () => {
     const navigate = useNavigate();
@@ -40,34 +37,6 @@ const AboutPage: React.FC = () => {
                     </span>) or exploring worlds in games like <strong>Arc Raiders</strong> and <strong>Hogwarts Legacy</strong>.
                     I’m just trying to build things that feel good to use and look even better.
                 </p>
-            </div>
-
-            <div className="experiment-section">
-                <h2 className="section-subtitle">Currently working on:</h2>
-                <p className="experiment-blurb">
-                    Right now, I'm experimenting with making a <strong>TouchDesigner plugin</strong> for computer vision,
-                    bridging high-performance CV models with real-time generative visuals. I'm currently
-                    incorporating this into a <strong>speed camera project</strong> to detect and visualize
-                    motion dynamics in real-time.
-                </p>
-
-                <div className="video-grid">
-                    <div className="video-item">
-                        <video autoPlay loop muted playsInline preload="metadata" className="experiment-video">
-                            <source src={tdVideo} type="video/mp4" />
-                        </video>
-                    </div>
-                    <div className="video-item">
-                        <video autoPlay loop muted playsInline preload="metadata" className="experiment-video">
-                            <source src={td1Video} type="video/mp4" />
-                        </video>
-                    </div>
-                    <div className="video-item">
-                        <video autoPlay loop muted playsInline preload="metadata" className="experiment-video">
-                            <source src={td2Video} type="video/mp4" />
-                        </video>
-                    </div>
-                </div>
             </div>
 
         </div>

@@ -16,6 +16,8 @@
   --gutter: 20px;
   --radius: 10px;
   --nav-h: 56px;
+  /* Everything renders 10% larger; vw maths divides by this to stay true. */
+  --zoom: 1.1;
 }
 
 * {
@@ -28,6 +30,7 @@ html {
 }
 
 body {
+  zoom: var(--zoom);
   margin: 0;
   background: var(--bg);
   color: var(--ink);

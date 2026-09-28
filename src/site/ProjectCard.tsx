@@ -2,13 +2,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { WorkItem } from './data/work';
 import yoggerLogo from '../assets/yogger-logo.png';
+import toshiLogo from '../assets/toshi-logo.svg';
 import './ProjectCard.css';
 
 const asset = (p: string) => `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}${p.startsWith('/') ? p : `/${p}`}`;
 
-/** Company logo for work done somewhere, same treatment as the about page. */
+/** Product marks shown beside a title, same treatment as the about page. */
+const LOGOS: Record<string, string> = { toshi: toshiLogo };
+
 export function logoFor(item: WorkItem): string | undefined {
-  return item.kind === 'production' ? yoggerLogo : undefined;
+  return LOGOS[item.id] ?? (item.kind === 'production' ? yoggerLogo : undefined);
 }
 
 function Placeholder({ item }: { item: WorkItem }) {

@@ -369,7 +369,7 @@ class MorphEngine {
       img.onload = () => {
         const texture = new Texture(this.gl, { generateMipmaps: false });
         texture.image = img;
-        // @ts-expect-error ogl marks the upload on next bind
+        // ogl marks the upload on next bind
         texture.needsUpdate = true;
         this.textures[index] = texture;
         this.sizes[index] = [img.naturalWidth || 1, img.naturalHeight || 1];

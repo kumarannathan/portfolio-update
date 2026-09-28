@@ -24,6 +24,19 @@
   padding: 22px 0 8px;
 }
 
+/* One full-bleed row per subject. */
+.gallery__rail {
+  position: relative;
+  height: 400px;
+  margin: 0 calc(50% - 50vw / var(--zoom));
+}
+
+@media (max-width: 760px) {
+  .gallery__rail {
+    height: 300px;
+  }
+}
+
 .gallery__subject {
   margin: 0 0 12px;
   font-size: 12px;

@@ -17,7 +17,7 @@
 .wgrid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 52px 32px;
+  gap: 44px 32px;
 }
 
 .wcard {
@@ -67,10 +67,21 @@
   text-align: left;
 }
 
+/* Title on the left, the way in on the right. */
+.wcard__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  margin-top: auto;
+}
+
 .wcard__row {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .wcard__title {
@@ -84,78 +95,29 @@
   color: var(--ink-70);
 }
 
-.wcard__blurb {
-  margin: 6px 0 12px;
-  font-size: 12.5px;
-  line-height: 1.6;
-  color: var(--ink-60);
-}
-
-.wcard:not(.wcard--wide) .wcard__blurb {
-  font-size: 12px;
-}
-
-.wcard__foot {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
-  width: 100%;
-  margin-top: auto;
-}
-
-.wcard__foot-spacer {
-  flex: 1;
-}
-
-.wcard__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px 24px;
-  margin: 0;
-  min-width: 0;
-}
-
-.wcard__stats dt {
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--ink-95);
-  line-height: 1.1;
-}
-
-.wcard__stats dd {
-  margin: 2px 0 0;
-  font-size: 10.5px;
-  color: var(--ink-55);
-}
-
+/* Underline only, tinted by the filter you're on. */
 .wcard__cta {
   flex-shrink: 0;
   margin-left: auto;
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 12px;
-  border-radius: 6px;
-  border: 1px solid var(--ink-20, rgba(42, 37, 32, 0.14));
-  background: transparent;
   font-size: 12px;
   font-weight: 500;
-  color: var(--ink-80, #3a342e);
-  text-decoration: none;
+  color: var(--squig, var(--ink-70));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
   white-space: nowrap;
-  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition: opacity 0.2s ease, text-decoration-thickness 0.2s ease;
 }
 
 .wcard__cta:hover {
-  background: var(--ink-05, rgba(42, 37, 32, 0.05));
-  border-color: var(--ink-40, rgba(42, 37, 32, 0.28));
-  color: var(--ink-95);
+  opacity: 0.75;
+  text-decoration-thickness: 2px;
 }
 
 @media (max-width: 760px) {
   .wgrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 40px 24px;
+    gap: 36px 24px;
   }
   .wcard,
   .wcard--wide {

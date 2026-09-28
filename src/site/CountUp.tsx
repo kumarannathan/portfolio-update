@@ -5,7 +5,8 @@ import React, { useEffect, useRef, useState } from 'react';
  * Keeps whatever wraps the number: "+40%", "~$1.50", "47,000", "2×", "16.8K peak", "1st".
  * Values with no number in them ("steam", "featured") render as-is.
  */
-const NUM = /^([^\d]*?)(\d[\d,]*(?:\.\d+)?)(.*)$/;
+// Thousands groups only, so a trailing comma or period stays in the suffix ("$34,990," keeps its comma).
+const NUM = /^([^\d]*?)(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(.*)$/;
 
 function parse(value: string) {
   const m = value.match(NUM);

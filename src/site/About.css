@@ -68,8 +68,9 @@
 .xp__row {
   display: grid;
   grid-template-columns: 28px 1fr auto;
+  align-items: center;
   gap: 14px;
-  padding: 12px 0;
+  padding: 9px 0;
 }
 
 .xp__logo {
@@ -96,20 +97,6 @@
   color: var(--ink-60);
 }
 
-.xp__desc {
-  margin: 4px 0 0;
-  font-size: 12.5px;
-  line-height: 1.55;
-  color: var(--ink-60);
-}
-
-.xp__tech {
-  margin: 4px 0 0;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-40);
-}
-
 .xp__period {
   font-size: 11px;
   color: var(--ink-40);
@@ -123,11 +110,22 @@
   gap: 18px;
 }
 
+/* Two projects, stacked, with a smaller window than the work page uses. */
 .about__projects {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 32px;
-  margin-top: 8px;
+  gap: 28px;
+  margin-top: 10px;
+  max-width: 420px;
+}
+
+.about__projects .pcard__frame {
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.about__projects .pcard__title {
+  font-size: 14px;
 }
 
 .about__more {
@@ -140,5 +138,22 @@
   }
   .xp__period {
     grid-column: 2;
+  }
+}
+
+/* The lake closes the page out. */
+.about__lake {
+  margin: 56px 0 0;
+}
+
+.about__lake-hint {
+  margin: 12px 0 0;
+  font-size: 11px;
+  color: var(--ink-40);
+}
+
+@media (max-width: 640px) {
+  .about__lake {
+    margin-top: 40px;
   }
 }

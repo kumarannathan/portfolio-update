@@ -2,7 +2,6 @@ import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Nav from './site/Nav';
-import Home from './site/Home';
 import Work from './site/Work';
 import CaseStudy from './site/CaseStudy';
 import About from './site/About';
@@ -23,10 +22,10 @@ const Shell: React.FC = () => {
       <main id="main" className={`site-main${bare ? ' site-main--bare' : ''}`}>
         <React.Suspense fallback={null}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<About />} />
             <Route path="/work" element={<Work />} />
             <Route path="/work/:id" element={<CaseStudy />} />
-            <Route path="/about" element={<About />} />
+            <Route path="/about" element={<Navigate to="/" replace />} />
             <Route path="/photos" element={<Gallery />} />
             <Route path="/a16z" element={<A16zAlpha />} />
             <Route path="*" element={<Navigate to="/" replace />} />

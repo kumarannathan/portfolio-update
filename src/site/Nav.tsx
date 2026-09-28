@@ -63,9 +63,6 @@ const Nav: React.FC = () => {
           <NavLink to="/photos" className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
             photos
           </NavLink>
-          <NavLink to="/about" className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
-            about
-          </NavLink>
         </nav>
         <div className="nav__social">
           {SOCIAL.map((s) => (

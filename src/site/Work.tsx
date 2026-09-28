@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AnimatedContent from '../components/reactbits/AnimatedContent';
-import CountUp from './CountUp';
 import { Thumb, logoFor } from './ProjectCard';
 import { TABS, Tab, entriesFor, WorkEntry } from './data/workTabs';
 import './ProjectCard.css';
@@ -27,28 +26,13 @@ const EntryCard: React.FC<{ entry: WorkEntry; wide: boolean }> = ({ entry, wide 
       <button type="button" className="wcard__thumb" onClick={() => navigate(href)} aria-label={`${entry.title}: more`}>
         <Thumb item={entry.item} />
       </button>
-      <div className="wcard__row">
-        {logo && <img className="pcard__logo" src={logo} alt="" aria-hidden />}
-        <h3 className="wcard__title">
-          <Link to={href}>{entry.title}</Link>
-        </h3>
-      </div>
-      <p className="wcard__blurb">{entry.blurb}</p>
       <div className="wcard__foot">
-        {entry.stats.length > 0 ? (
-          <dl className="wcard__stats">
-            {entry.stats.map((s) => (
-              <div key={s.label}>
-                <dt>
-                  <CountUp value={s.value} />
-                </dt>
-                <dd>{s.label}</dd>
-              </div>
-            ))}
-          </dl>
-        ) : (
-          <span className="wcard__foot-spacer" aria-hidden />
-        )}
+        <div className="wcard__row">
+          {logo && <img className="pcard__logo" src={logo} alt="" aria-hidden />}
+          <h3 className="wcard__title">
+            <Link to={href}>{entry.title}</Link>
+          </h3>
+        </div>
         <Link to={href} className="wcard__cta">
           more
         </Link>
@@ -94,7 +78,7 @@ const Work: React.FC = () => {
       </nav>
 
       <AnimatedContent key={tab} distance={16} duration={0.5} threshold={0}>
-        <div className="wgrid">
+        <div className={`wgrid squig--${tab}`}>
           {entries.map((e, i) => (
             <EntryCard key={e.item.id} entry={e} wide={i < 2} />
           ))}

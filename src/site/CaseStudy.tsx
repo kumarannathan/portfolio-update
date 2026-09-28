@@ -9,11 +9,17 @@ import CountUp from './CountUp';
 import { ShotImage } from './BeforeAfter';
 import { REDESIGN_PAIRS, REDESIGN_NEW, REDESIGN_VIDEO } from './data/redesign';
 import { getCaseStudy, getWorkItem, Figure } from './data/caseStudies';
+import { Playground, hasPlayground } from './playground';
 import './CaseStudy.css';
 
 const asset = (p: string) => `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}${p.startsWith('/') ? p : `/${p}`}`;
 
 type TocItem = { id: string; label: string };
+
+/** Who I was on the project, shown in the facts line under the title. */
+const ROLE: Record<string, string> = {
+  toshi: 'solo · design, build, ship'
+};
 
 const KPI_RE =
   /((?:~?\$)?[+#]?\d[\d,.]*(?:%|×|x|K|k|\+)?(?:[\s-]?(?:peak|documents?|assessment types?|assessments|screens|components|employees|users|weeks|filterable fields|monthly reservations|queries|months?|minutes?|hours?|clicks|place))?)/g;
@@ -206,6 +212,7 @@ const CaseStudy: React.FC = () => {
       cs.id === 'home-exercise-builder' || cs.id === 'toshi'
         ? (cs.figures?.length ?? 0) - 1 > cs.sections.length
         : (cs.figures?.length ?? 0) > 1;
+    if (hasPlayground(cs.id)) items.push({ id: 'cs-play', label: 'Try it' });
     if (extraScreens) items.push({ id: 'cs-screens', label: 'Screens' });
     items.push({ id: 'cs-more', label: 'More Projects' });
     return items;
@@ -277,6 +284,26 @@ const CaseStudy: React.FC = () => {
               </p>
               <h1 className="cs__title">{cs.title}</h1>
               <p className="cs__company">{cs.company}</p>
+              <dl className="cs__facts">
+                <div>
+                  <dt>role</dt>
+                  <dd>{ROLE[cs.id] ?? (item.kind === 'production' ? 'software engineer, yogger' : 'solo project')}</dd>
+                </div>
+                {cs.year && (
+                  <div>
+                    <dt>year</dt>
+                    <dd>{cs.year}</dd>
+                  </div>
+                )}
+                <div>
+                  <dt>platform</dt>
+                  <dd>{cs.platforms}</dd>
+                </div>
+                <div className="cs__facts-stack">
+                  <dt>stack</dt>
+                  <dd>{cs.stack}</dd>
+                </div>
+              </dl>
               {cs.links.length > 0 && (
                 <div className="cs__actions">
                   {cs.links.map((l, i) => (
@@ -321,7 +348,12 @@ const CaseStudy: React.FC = () => {
 
             return (
               <section key={i} className="cs__section" id={`cs-sec-${i}-${slugify(label)}`}>
-                {sec.heading && <h2 className="cs__h2">{sec.heading}</h2>}
+                {sec.heading && (
+                  <h2 className="cs__h2">
+                    <span className="cs__num">{String(i + 1).padStart(2, '0')}</span>
+                    {sec.heading}
+                  </h2>
+                )}
                 {useWrap && paired ? (
                   <div className={`cs__prose${i % 2 === 1 ? ' cs__prose--flip' : ''}`}>
                     <Media fig={paired} className="cs__figure--float cs__figure--float-lg" />
@@ -346,6 +378,16 @@ const CaseStudy: React.FC = () => {
               </section>
             );
           })}
+
+          {hasPlayground(cs.id) && (
+            <section className="cs__section cs__play" id="cs-play">
+              <h2 className="cs__h2">Try it</h2>
+              <p className="cs__body">
+                live components from the project, running the same logic as the real thing. poke at them.
+              </p>
+              <Playground id={cs.id} />
+            </section>
+          )}
 
           {cs.id === 'yogger-web-redesign' && (
             <>
@@ -387,10 +429,6 @@ const CaseStudy: React.FC = () => {
               </div>
             </section>
           )}
-
-          <section className="cs__section">
-            <p className="cs__note">{cs.stack}</p>
-          </section>
 
           <section className="cs__section cs__more" id="cs-more">
             <h2 className="cs__h2">More Projects</h2>

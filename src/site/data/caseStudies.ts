@@ -93,14 +93,14 @@ const PRODUCTION_FIGURES: Record<string, Figure[]> = {
     { src: '/projects/home-exercise-builder/analytics-cover.jpg', caption: 'caseload analytics beside HEP' }
   ],
   'yogger-crm': [
-    { src: '/projects/yogger-crm/cover.jpg', caption: 'yogger crm' },
-    { src: '/projects/yogger-crm/form-submissions.jpg', caption: 'form submissions pipeline' },
-    { src: '/projects/yogger-crm/profile.png', caption: 'user profile & entitlements' },
-    { src: '/projects/yogger-crm/subscription.png', caption: 'subscription management' },
-    { src: '/projects/yogger-crm/journey.png', caption: 'customer journey' },
-    { src: '/projects/yogger-crm/trials.png', caption: 'clinic trial tracking' },
-    { src: '/projects/yogger-crm/forms.png', caption: 'form submissions detail' },
-    { src: '/projects/yogger-crm/analytics.png', caption: 'org kpi dashboards' }
+    { src: '/projects/yogger-crm/user-analytics.webp', caption: 'user analytics — signups, retention, and how people signed up' },
+    { src: '/projects/yogger-crm/metric-row.webp', caption: 'the metric card: number, change against the last period, sparkline' },
+    { src: '/projects/yogger-crm/signups-chart.png', caption: 'one dot per slice of the day, so a spike reads as height and density' },
+    { src: '/projects/yogger-crm/journey-analytics.webp', caption: 'journey — where people sign up and which paywall they hit' },
+    { src: '/projects/yogger-crm/form-submissions.webp', caption: 'form submissions by stage (lead names blurred)' },
+    { src: '/projects/yogger-crm/trial-detail.png', caption: 'a clinic trial: day count, feature usage, whether a card is on file' },
+    { src: '/projects/yogger-crm/app-feedback.webp', caption: 'in-app ratings and cancellation reasons, pulled on demand' },
+    { src: '/projects/yogger-crm/team.webp', caption: 'team — who owns what, and their open support work' }
   ],
   'movement-age': [
     { src: '/projects/yogger-mobile/cover.jpg', caption: 'movement analysis on tablet' }

@@ -1,9 +1,9 @@
 const YOGGER_CRM_IMAGES = [
-  '/projects/yogger-crm/cover.jpg',
-  '/projects/yogger-crm/profile.png',
-  '/projects/yogger-crm/subscription.png',
-  '/projects/yogger-crm/journey.png',
-  '/projects/yogger-crm/trials.png',
+  '/projects/yogger-crm/user-analytics.webp',
+  '/projects/yogger-crm/journey-analytics.webp',
+  '/projects/yogger-crm/form-submissions.webp',
+  '/projects/yogger-crm/trial-detail.png',
+  '/projects/yogger-crm/team.webp',
 ];
 
 export type ProductionLink = {
@@ -120,9 +120,24 @@ export const PRODUCTION_PROJECTS: ProductionProject[] = [
       "Architected and built Yogger's internal operations platform in React and TypeScript — 60+ components spanning deal pipelines, form submissions, support ticketing, and user/org management — replacing manual sales tracking with a single operator surface used daily across support, sales, and CS.",
     highlights: [
       {
-        title: 'Deal pipeline & form submissions',
+        title: 'Every lead in one board',
         detail:
-          "inbound demo and trial requests flow through a staged pipeline, so sales sees every lead's state at a glance instead of digging through raw form data.",
+          'inbound demo and trial requests land in a staged board — new, responded, resolved, converted, closed — so sales sees where each lead sits instead of digging through raw form data. each column counts itself, and the header says how many are still waiting on us.',
+      },
+      {
+        title: 'Analytics that never scroll',
+        detail:
+          'each dashboard measures the space it has and pages itself: cards, columns and lists show what fits and hand the rest to a small pager. a page reads as one screen, so nobody hunts below the fold for the number they came for.',
+      },
+      {
+        title: 'A chart set of our own',
+        detail:
+          'dot matrix, sparkline, funnel, donut and progress bars, all drawn off the same theme tokens so a chart matches the rest of the app without being told what color to be. signups became a column of dots, one per slice of the day, where a spike reads as height and density at once.',
+      },
+      {
+        title: 'Journey, signup to paid',
+        detail:
+          'where someone signed up, which paywall they hit, and where they stopped — funnels built on scheduled Cloud Functions rollups, filterable by entry point, so raw event streams turn into a question anyone on the team can ask.',
       },
       {
         title: 'User & org management',
@@ -135,9 +150,9 @@ export const PRODUCTION_PROJECTS: ProductionProject[] = [
           "designed a segmentation layer over flattened Firestore queries that seeds bounded pool queries from indexable fields, working around Firestore's lack of full-text and dynamic OR search to support 20+ filterable fields.",
       },
       {
-        title: 'Org KPI dashboards',
+        title: 'The support side too',
         detail:
-          'clinic-trial progress tracking and UTM attribution built on scheduled Cloud Functions rollups, turning raw event streams into queryable cohort and funnel views.',
+          'in-app ratings and cancellation reasons pull on demand and export to csv, and the team page says who owns what and how much is still open on them. the CRM answers how the product is doing and who is on the hook for it.',
       },
     ],
     technologies: 'React, TypeScript, Firebase (Firestore, Auth, Cloud Functions), scheduled rollup jobs',
