@@ -7,10 +7,11 @@ import { getCaseStudy } from './data/caseStudies';
 import Collapse from './Collapse';
 import yoggerLogo from '../assets/yogger-logo.png';
 import toshiLogo from '../assets/toshi-logo.svg';
+import countertopLogo from '../assets/countertop-logo.png';
 import './About.css';
 
 /** Product marks shown beside a project name. */
-const LOGOS: Record<string, string> = { toshi: toshiLogo };
+const LOGOS: Record<string, string> = { toshi: toshiLogo, countertop: countertopLogo };
 
 function logoFor(item: WorkItem): string | undefined {
   return LOGOS[item.id] ?? (item.kind === 'production' ? yoggerLogo : undefined);
@@ -24,6 +25,7 @@ const PROJECT_ORDER = [
   'yogger-web-redesign',
   'toshi',
   'yogger-crm',
+  'countertop',
   'home-exercise-builder',
   'movement-age',
   'saml-sso',

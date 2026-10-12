@@ -41,6 +41,7 @@ const PLATFORMS: Record<string, string> = {
   'home-exercise-builder': 'web',
   toshi: 'web and ios',
   'yogger-crm': 'web',
+  countertop: 'macos',
   'saml-sso': 'web, android and ios',
   'rag-gemini': 'ios and cloud',
   'movement-age': 'android',
@@ -71,6 +72,13 @@ const LEAD_SECTIONS: Record<string, CaseSection[]> = {
 };
 
 const PROJECT_FIGURES: Record<string, Figure[]> = {
+  countertop: [
+    { src: '/projects/countertop/hero.png', caption: 'the menu bar panel — what went where, today' },
+    { src: '/projects/countertop/overview.png', caption: 'overview — totals and recent activity' },
+    { src: '/projects/countertop/activity.png', caption: 'activity — every move, with put back' },
+    { src: '/projects/countertop/files.png', caption: 'files across the countertop folders' },
+    { src: '/projects/countertop/onboarding.png', caption: 'setup — choosing where files go' }
+  ],
   toshi: [
     { src: '/projects/toshi/cover.jpg', caption: 'landing — real cost vs the dealer payment' },
     { src: '/projects/toshi/walkthrough.mp4', kind: 'video', caption: 'walkthrough' },

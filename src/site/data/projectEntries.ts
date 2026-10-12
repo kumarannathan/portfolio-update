@@ -27,6 +27,29 @@ export interface ProjectEntry {
 
 export const PROJECTS: ProjectEntry[] = [
   {
+    id: 'countertop',
+    title: 'Countertop',
+    roleTag: 'macOS',
+    technologies: ['Swift', 'SwiftUI', 'AppKit', 'App Sandbox', 'Sparkle'],
+    summary: 'A quiet menu bar app that puts your downloads away.',
+    metaLine: '2026 • Swift, SwiftUI, App Sandbox, Sparkle',
+    cover: '/projects/countertop/hero.png',
+    link: 'https://github.com/kumarannathan/Countertop/releases/latest',
+    github: 'https://github.com/kumarannathan/Countertop',
+    description:
+      'Your Downloads folder fills up like a kitchen counter. Countertop clears it for you: when a download finishes, it moves the file into a folder that matches what it is — images to Images, installers to Applications, .fbx models to 3D. You never open it. Download something, and a moment later it is sorted.',
+    highlights: [
+      'Waits for the download to finish: partial files from Chrome (.crdownload), Safari (.download) and Firefox (.part) are left alone until they are complete.',
+      'Never overwrites: if photo.jpg is already there the new file becomes photo 2.jpg, and anything that cannot be moved stays in Downloads with a reason.',
+      'Your rules first: sorting checks your rules, then your categories, then the built-in ones, then what macOS knows about the file type. send .blend to Blender Assets, .rbxl to Roblox, anything named Screenshot to Screenshots.',
+      'Undo: every move is listed in Activity with Show in Finder and Put Back.',
+      'Private by construction: it runs in the App Sandbox with no network access, so it can only see Downloads and the folders you pick. no account, no analytics, no server.',
+      'Updates: Sparkle checks the repo once a day in its own sandboxed downloader and verifies each build with an EdDSA signature before installing.'
+    ],
+    detailText:
+      'Free and open source, macOS 15 or later, Apple silicon and Intel. it is not notarized — that needs a paid developer membership — so the first launch takes a trip through System Settings, and the readme walks through it.'
+  },
+  {
     id: 'toshi',
     title: 'Toshi (年, “year”)',
     roleTag: 'Full Stack',
