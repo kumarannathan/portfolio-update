@@ -306,3 +306,31 @@ img.gallery__mark {
 .gallery__simple-btn:hover {
   color: var(--ink-90);
 }
+
+/* One photo open: everything else steps back until you click it again. */
+.gallery__group {
+  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery__group.is-dim {
+  opacity: 0.08;
+  transform: scale(0.985);
+  pointer-events: none;
+}
+
+.gallery.is-zoomed .gallery__group .gallery__toggle {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.gallery.is-zoomed .gallery__group {
+  border-bottom-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery__group,
+  .gallery.is-zoomed .gallery__group .gallery__toggle {
+    transition: none;
+  }
+}

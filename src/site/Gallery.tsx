@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import FlexCarousel, { FlexCarouselItem } from '../components/reactbits/FlexCarousel';
 import manifest from './data/gallery.json';
 import { subjectOf, SUBJECT_ORDER, SUBJECT_LABEL, F1_SUBJECTS } from './data/gallerySubjects';
@@ -72,10 +72,35 @@ const F1Mark: React.FC = () => {
   );
 };
 
-const Row: React.FC<{ photos: Photo[] }> = ({ photos }) => {
+/**
+ * The carousel opens a card on click and closes it on the next click, drag or
+ * escape — but it only reports the opening. It does keep a --flex-carousel-lift
+ * variable on its container, 1 at rest and higher while a card is open, so
+ * watching that tells the page when to get out of the way and when to come back.
+ */
+const Row: React.FC<{ photos: Photo[]; onZoom: (open: boolean) => void }> = ({ photos, onZoom }) => {
   const items = useMemo(() => itemsFor(photos), [photos]);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return undefined;
+    const read = () => {
+      const car = el.querySelector<HTMLElement>('.flex-carousel');
+      const lift = parseFloat(car?.style.getPropertyValue('--flex-carousel-lift') || '1');
+      onZoom(lift > 1.02);
+    };
+    const mo = new MutationObserver(read);
+    mo.observe(el, { subtree: true, childList: true, attributes: true, attributeFilter: ['style'] });
+    read();
+    return () => {
+      mo.disconnect();
+      onZoom(false);
+    };
+  }, [onZoom]);
+
   return (
-    <div className="gallery__rail">
+    <div className="gallery__rail" ref={ref}>
       <FlexCarousel
         items={items}
         preset="liquid"
@@ -91,11 +116,13 @@ const Row: React.FC<{ photos: Photo[] }> = ({ photos }) => {
   );
 };
 
-const SubjectRow: React.FC<{ subject: string; photos: Photo[]; defaultOpen: boolean }> = ({
-  subject,
-  photos,
-  defaultOpen
-}) => {
+const SubjectRow: React.FC<{
+  subject: string;
+  photos: Photo[];
+  defaultOpen: boolean;
+  dim: boolean;
+  onZoom: (open: boolean) => void;
+}> = ({ subject, photos, defaultOpen, dim, onZoom }) => {
   const [open, setOpen] = useState(defaultOpen);
   // Mounted on first open and kept, so collapsing is a pure css transition and the
   // carousel never has to boot its canvas twice.
@@ -108,7 +135,7 @@ const SubjectRow: React.FC<{ subject: string; photos: Photo[]; defaultOpen: bool
   };
 
   return (
-    <section className={`gallery__group${open ? ' is-open' : ''}`}>
+    <section className={`gallery__group${open ? ' is-open' : ''}${dim ? ' is-dim' : ''}`}>
       <button type="button" className="gallery__toggle" aria-expanded={open} onClick={toggle}>
         <span className="gallery__chev" aria-hidden>
           ›
@@ -118,12 +145,14 @@ const SubjectRow: React.FC<{ subject: string; photos: Photo[]; defaultOpen: bool
           {label} <span className="gallery__count">{photos.length}</span>
         </h2>
       </button>
-      <Collapse open={open}>{mounted && <Row photos={photos} />}</Collapse>
+      <Collapse open={open}>{mounted && <Row photos={photos} onZoom={onZoom} />}</Collapse>
     </section>
   );
 };
 
 const Gallery: React.FC = () => {
+  const [zoomed, setZoomed] = useState<string | null>(null);
+
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
@@ -139,10 +168,17 @@ const Gallery: React.FC = () => {
   }, []);
 
   return (
-    <div className="gallery container">
+    <div className={`gallery container${zoomed ? ' is-zoomed' : ''}`}>
       <h1 className="sr-only">Photos</h1>
       {grouped.map((g, i) => (
-        <SubjectRow key={g.subject} subject={g.subject} photos={g.photos} defaultOpen={i === 0} />
+        <SubjectRow
+          key={g.subject}
+          subject={g.subject}
+          photos={g.photos}
+          defaultOpen={i === 0}
+          dim={Boolean(zoomed) && zoomed !== g.subject}
+          onZoom={(open) => setZoomed((cur) => (open ? g.subject : cur === g.subject ? null : cur))}
+        />
       ))}
     </div>
   );
