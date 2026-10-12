@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FlexCarousel, { FlexCarouselItem } from '../components/reactbits/FlexCarousel';
 import manifest from './data/gallery.json';
 import { subjectOf, SUBJECT_ORDER, SUBJECT_LABEL, F1_SUBJECTS } from './data/gallerySubjects';
@@ -95,9 +95,17 @@ const Row: React.FC<{ photos: Photo[]; onOpen: (photo: Photo) => void }> = ({ ph
 
 /** The clicked photo, full size and full resolution. Click or escape to close. */
 const Viewer: React.FC<{ photo: Photo; onClose: () => void }> = ({ photo, onClose }) => {
+  const [closing, setClosing] = useState(false);
+
+  // Animate out before unmounting, so closing reads as smoothly as opening.
+  const close = useCallback(() => {
+    setClosing(true);
+    window.setTimeout(onClose, 260);
+  }, [onClose]);
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') close();
     };
     window.addEventListener('keydown', onKey);
     const { overflow } = document.body.style;
@@ -106,10 +114,16 @@ const Viewer: React.FC<{ photo: Photo; onClose: () => void }> = ({ photo, onClos
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
     };
-  }, [onClose]);
+  }, [close]);
 
   return (
-    <div className="viewer" role="dialog" aria-modal="true" aria-label="photo" onClick={onClose}>
+    <div
+      className={`viewer${closing ? ' is-closing' : ''}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label="photo"
+      onClick={close}
+    >
       <figure className="viewer__frame">
         <img src={asset(photo.src)} alt={[cameraOf(photo), settingsOf(photo)].filter(Boolean).join(' — ')} />
         <figcaption>

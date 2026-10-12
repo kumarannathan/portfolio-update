@@ -317,10 +317,11 @@ img.gallery__mark {
   align-items: center;
   justify-content: center;
   gap: 14px;
-  padding: 3%;
+  /* Always a margin of page around it — the photo never meets an edge. */
+  padding: clamp(28px, 6vh, 64px) clamp(28px, 6vw, 88px);
   background: rgba(245, 241, 236, 0.97);
   cursor: zoom-out;
-  animation: viewer-in 0.3s ease both;
+  animation: viewer-in 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes viewer-in {
@@ -329,6 +330,27 @@ img.gallery__mark {
   }
   to {
     opacity: 1;
+  }
+}
+
+.viewer.is-closing {
+  animation: viewer-out 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes viewer-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.viewer.is-closing .viewer__frame img {
+  animation: viewer-sink 0.26s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+@keyframes viewer-sink {
+  to {
+    opacity: 0;
+    transform: scale(0.97);
   }
 }
 
@@ -345,13 +367,13 @@ img.gallery__mark {
 .viewer__frame img {
   display: block;
   max-width: 100%;
-  max-height: 88vh;
+  max-height: 74vh;
   width: auto;
   height: auto;
   object-fit: contain;
   border-radius: 6px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 30px 80px rgba(42, 37, 32, 0.22);
-  animation: viewer-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: viewer-rise 0.48s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes viewer-rise {
@@ -401,7 +423,9 @@ img.gallery__mark {
 
 @media (prefers-reduced-motion: reduce) {
   .viewer,
-  .viewer__frame img {
+  .viewer.is-closing,
+  .viewer__frame img,
+  .viewer.is-closing .viewer__frame img {
     animation: none;
   }
 }
