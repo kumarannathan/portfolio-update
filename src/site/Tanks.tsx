@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import FadeContent from '../components/reactbits/FadeContent';
 import { TANKS, Tank, TankEntry, TankPhoto, TankStat } from './data/tanks';
+import Collapse from './Collapse';
 import './Tanks.css';
 
 const asset = (p: string) => `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}${p}`;
@@ -59,41 +60,12 @@ const Photo: React.FC<{ photo: TankPhoto; lead?: boolean }> = ({ photo, lead }) 
   );
 };
 
-/** The muted colour strip from the top of the page, seeded per tank. */
-const Strip: React.FC<{ seed: number }> = ({ seed }) => {
-  const tones = ['#e4572e', '#2a6f97', '#e9b44c', '#3f8f5f', '#8d8d8d'];
-  const bars = Array.from({ length: 64 }, (_, i) => {
-    let h = Math.imul(seed + i + 1, 2654435761) >>> 0;
-    const lit = h % 100 < 22;
-    const tone = tones[(h >>> 8) % tones.length];
-    const top = (h >>> 12) % 70;
-    const height = 10 + ((h >>> 18) % 26);
-    return { lit, tone, top, height, key: i, left: (i / 64) * 100 };
-  });
-  return (
-    <div className="tstrip" aria-hidden>
-      {bars.map((b) => (
-        <span
-          key={b.key}
-          className="tstrip__bar"
-          style={{
-            background: b.lit ? b.tone : 'rgba(42, 37, 32, 0.07)',
-            left: `${b.left}%`,
-            top: `${b.top}%`,
-            height: `${b.height}%`,
-            opacity: b.lit ? 0.85 : 1
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
 const TankSection: React.FC<{ tank: Tank; index: number }> = ({ tank, index }) => {
   const tone = ['#e4572e', '#2a6f97', '#3f8f5f'][index % 3];
   const main = tank.photos.find((p) => p.main);
   const rest = tank.photos.filter((p) => p !== main);
   const schedule = tank.schedule.filter((row) => row.value);
+  const [shots, setShots] = useState(index === 0);
   return (
     <section className="tank" id={tank.id}>
       <header className="tank__head">
@@ -107,17 +79,28 @@ const TankSection: React.FC<{ tank: Tank; index: number }> = ({ tank, index }) =
         )}
       </header>
 
-      {main && <Photo photo={main} lead />}
-
-      {rest.length > 0 && (
-        <div className="tank__shots">
-          {rest.map((p) => (
-            <Photo key={p.src} photo={p} />
-          ))}
+      {tank.photos.length > 0 && (
+        <div className={`tank__gallery${shots ? ' is-open' : ''}`}>
+          <button type="button" className="tank__toggle" aria-expanded={shots} onClick={() => setShots((v) => !v)}>
+            <span className="tank__chev" aria-hidden>
+              ›
+            </span>
+            <span className="tank__toggle-label">
+              photos <span className="tank__count">{tank.photos.length}</span>
+            </span>
+          </button>
+          <Collapse open={shots}>
+            {main && <Photo photo={main} lead />}
+            {rest.length > 0 && (
+              <div className="tank__shots">
+                {rest.map((p) => (
+                  <Photo key={p.src} photo={p} />
+                ))}
+              </div>
+            )}
+          </Collapse>
         </div>
       )}
-
-      <Strip seed={index * 977 + 13} />
 
       <div className="tank__stats">
         {tank.stats.map((s) => (

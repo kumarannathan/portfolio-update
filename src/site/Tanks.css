@@ -72,20 +72,6 @@
   color: var(--ink-60);
 }
 
-/* the colour strip */
-.tstrip {
-  position: relative;
-  height: 112px;
-  margin: 26px 0 8px;
-  overflow: hidden;
-}
-
-.tstrip__bar {
-  position: absolute;
-  width: 5px;
-  border-radius: 1px;
-}
-
 /* stats */
 .tank__stats {
   display: grid;
@@ -214,38 +200,82 @@
 }
 
 /* photos — these come first, the numbers read underneath */
+.tank__gallery {
+  padding: 8px 0 2px;
+}
+
+.tank__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 0;
+  text-align: left;
+}
+
+.tank__chev {
+  font-size: 13px;
+  color: var(--ink-40);
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1), color 0.2s ease;
+}
+
+.tank__gallery.is-open .tank__chev {
+  transform: rotate(90deg);
+}
+
+.tank__toggle:hover .tank__chev,
+.tank__toggle:hover .tank__toggle-label {
+  color: var(--ink-90);
+}
+
+.tank__toggle-label {
+  font-size: 12px;
+  color: var(--ink-55);
+  transition: color 0.2s ease;
+}
+
+.tank__count {
+  color: var(--ink-25);
+  margin-left: 2px;
+}
+
 .tshot--lead {
-  margin: 22px 0 14px;
+  margin: 4px 0 16px;
 }
 
 .tshot--lead img {
-  aspect-ratio: 16 / 9;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
+/* The rest stagger in two columns, each kept at its own shape. */
 .tank__shots {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
+  columns: 2;
+  column-gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .tank__shots {
+    columns: 1;
+  }
 }
 
 .tshot {
-  margin: 0;
+  margin: 0 0 16px;
+  break-inside: avoid;
 }
 
 .tshot img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: inset 0 0 0 1px var(--black-08);
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 14px 36px rgba(42, 37, 32, 0.12);
 }
 
 .tshot__missing {
   display: grid;
   place-items: center;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   border-radius: 8px;
   background: rgba(42, 37, 32, 0.03);
   box-shadow: inset 0 0 0 1px var(--black-08);
