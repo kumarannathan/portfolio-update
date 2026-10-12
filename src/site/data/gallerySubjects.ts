@@ -2,9 +2,19 @@
  * Subject grouping for the photo gallery, keyed by the ids in gallery.json.
  * Anything not listed falls back to its folder's default below.
  */
-export const SUBJECT_ORDER = ['mountains', 'water', 'street', 'motorsport', 'wild'];
+export const SUBJECT_ORDER = ['f1-montreal-2026', 'mountains', 'water', 'street', 'motorsport', 'wild'];
+
+/** How a subject is printed, where the folder name isn't what I'd write. */
+export const SUBJECT_LABEL: Record<string, string> = {
+  'f1-montreal-2026': 'montreal 2026',
+  motorsport: 'japan 2024'
+};
+
+/** Subjects that carry the f1 mark beside the name. */
+export const F1_SUBJECTS = new Set(['f1-montreal-2026', 'motorsport']);
 
 const BY_GROUP: Record<string, string> = {
+  'f1-montreal-2026': 'f1-montreal-2026',
   newz: 'mountains',
   f1: 'motorsport',
   mexico: 'street',

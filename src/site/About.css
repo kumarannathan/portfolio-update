@@ -110,26 +110,109 @@
   gap: 18px;
 }
 
-/* Two projects, stacked, with a smaller window than the work page uses. */
-.about__projects {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 28px;
+/* An underline that draws itself in once, then reacts to hover. */
+.uline {
+  position: relative;
+  display: inline;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  padding-bottom: 1px;
+  animation: uline-draw 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  transition: background-size 0.25s ease;
+}
+
+@keyframes uline-draw {
+  to {
+    background-size: 100% 1px;
+  }
+}
+
+a:hover .uline,
+button:hover .uline {
+  background-size: 100% 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .uline {
+    animation: none;
+    background-size: 100% 1px;
+  }
+}
+
+/* Projects: a plain list of names. Click one and it opens underneath. */
+.plist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.plist__row {
+  padding: 5px 0;
+}
+
+.plist__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  color: var(--ink-80, rgba(42, 37, 32, 0.8));
+  text-align: left;
+  padding: 3px 0;
+  transition: color 0.2s ease;
+}
+
+.plist__name:hover,
+.plist__name[aria-expanded='true'] {
+  color: var(--ink-95);
+}
+
+.plist__logo {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  object-fit: cover;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--black-08);
+  flex-shrink: 0;
+}
+
+.plist__body {
+  max-width: 58ch;
+  padding: 6px 0 10px;
+}
+
+.plist__lead {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-60);
+}
+
+.plist__tech {
+  margin: 8px 0 0;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-40);
+}
+
+.plist__link {
+  display: inline-block;
   margin-top: 10px;
-  max-width: 420px;
+  font-size: 12px;
+  color: var(--ink-70);
 }
 
-.about__projects .pcard__frame {
-  border-radius: 8px;
-  margin-bottom: 10px;
+.plist__more {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--ink-55);
+  transition: color 0.2s ease;
 }
 
-.about__projects .pcard__title {
-  font-size: 14px;
-}
-
-.about__more {
-  margin-top: 20px;
+.plist__more:hover {
+  color: var(--ink-90);
 }
 
 @media (max-width: 560px) {
@@ -138,22 +221,5 @@
   }
   .xp__period {
     grid-column: 2;
-  }
-}
-
-/* The lake closes the page out. */
-.about__lake {
-  margin: 56px 0 0;
-}
-
-.about__lake-hint {
-  margin: 12px 0 0;
-  font-size: 11px;
-  color: var(--ink-40);
-}
-
-@media (max-width: 640px) {
-  .about__lake {
-    margin-top: 40px;
   }
 }

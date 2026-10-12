@@ -261,7 +261,7 @@ const CaseStudy: React.FC = () => {
     [toc]
   );
 
-  if (!cs || !item) return <Navigate to="/work" replace />;
+  if (!cs || !item) return <Navigate to="/" replace />;
 
   const figures = cs.figures ?? [];
   const hero = figures.find((f) => f.kind !== 'video' && !/\.(mp4|webm)$/i.test(f.src));
@@ -271,7 +271,7 @@ const CaseStudy: React.FC = () => {
 
   return (
     <article className="cs container">
-      <BackButton fallback="/work" />
+      <BackButton fallback="/" />
 
       <div className="cs__layout">
         <div className="cs__main">
@@ -434,7 +434,7 @@ const CaseStudy: React.FC = () => {
             <h2 className="cs__h2">More Projects</h2>
             <WorkMenu currentId={cs.id} height={260} />
             <div className="cs__all">
-              <Link to="/work" className="textlink">
+              <Link to="/" className="textlink">
                 all projects →
               </Link>
             </div>

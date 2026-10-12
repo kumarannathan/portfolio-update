@@ -1,0 +1,16 @@
+.collapse {
+  overflow: hidden;
+  height: 0;
+  transition: height 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Open and settled: let full-bleed rows run past the column again. */
+.collapse.is-settled {
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapse {
+    transition: none;
+  }
+}

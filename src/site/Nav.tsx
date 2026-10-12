@@ -57,11 +57,14 @@ const Nav: React.FC = () => {
           kumaran nathan
         </Link>
         <nav className="nav__links" aria-label="Primary">
-          <NavLink to="/work" className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
-            work
+          <NavLink to="/" end className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
+            about
           </NavLink>
           <NavLink to="/photos" className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
             photos
+          </NavLink>
+          <NavLink to="/fish-tanks" className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
+            fish tanks
           </NavLink>
         </nav>
         <div className="nav__social">

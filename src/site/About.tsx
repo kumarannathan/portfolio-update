@@ -1,34 +1,59 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import FadeContent from '../components/reactbits/FadeContent';
-import SceneCanvas from './scenes/SceneCanvas';
-import { LakeScene } from './scenes/LakeScene';
 import { EXPERIENCE } from './data/experience';
-import { ALL_WORK } from './data/work';
-import ProjectCard from './ProjectCard';
+import { ALL_WORK, WorkItem } from './data/work';
+import { getCaseStudy } from './data/caseStudies';
+import Collapse from './Collapse';
+import yoggerLogo from '../assets/yogger-logo.png';
+import toshiLogo from '../assets/toshi-logo.svg';
 import './About.css';
-import './ProjectCard.css';
 
-/** The two that lead, stacked. */
-const FEATURED_IDS = ['yogger-web-redesign', 'toshi'];
+/** Product marks shown beside a project name. */
+const LOGOS: Record<string, string> = { toshi: toshiLogo };
+
+function logoFor(item: WorkItem): string | undefined {
+  return LOGOS[item.id] ?? (item.kind === 'production' ? yoggerLogo : undefined);
+}
+
+/** How many projects show before you ask for the rest. */
+const SHOWN = 3;
+
+/** Projects in the order they're worth reading, strongest first. */
+const PROJECT_ORDER = [
+  'yogger-web-redesign',
+  'toshi',
+  'yogger-crm',
+  'home-exercise-builder',
+  'movement-age',
+  'saml-sso',
+  'rag-gemini',
+  'neetcode-redesign',
+  'soul-forest',
+  'milo-mission-control',
+  'tennis-analytics',
+  'jobsim-vr',
+  'ann-arbor-go'
+];
+
+const PROJECTS = PROJECT_ORDER.map((id) => ALL_WORK.find((w) => w.id === id)).filter(
+  (w): w is NonNullable<typeof w> => Boolean(w)
+);
 
 interface AboutProps {
-  /** The featured carousel and the work link. */
+  /** The project list. */
   showProjects?: boolean;
 }
 
 const About: React.FC<AboutProps> = ({ showProjects = true }) => {
-  const lake = useMemo(() => new LakeScene(), []);
+  const [open, setOpen] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
 
-  const featured = showProjects
-    ? FEATURED_IDS.map((id) => ALL_WORK.find((w) => w.id === id)).filter(
-        (w): w is NonNullable<typeof w> => Boolean(w)
-      )
-    : [];
+  const visible = showAll ? PROJECTS : PROJECTS.slice(0, SHOWN);
 
   return (
     <div className="about container">
@@ -48,16 +73,18 @@ const About: React.FC<AboutProps> = ({ showProjects = true }) => {
             working across the stack, building products from idea to production.
           </p>
           <p>
-            my background is in engineering, with time at <strong>Snap</strong> and leading UI/UX at{' '}
-            <strong>WolverineSoft</strong>, but the thing i keep coming back to is how software can feel more human, tactile,
-            and alive.
+            my background is in engineering, with time leading UI/UX at <strong>WolverineSoft</strong>, but the thing i
+            keep coming back to is how software can feel more human, tactile, and alive.
           </p>
           <p>
-            when i'm not at a keyboard i'm usually out with my camera (see <Link to="/photos">photos</Link>), hiking, or
-            chasing a flow state in <strong>Valorant</strong>. peaked at Ascendant 3, top 0.73% NA,{' '}
-            <a href="https://tracker.gg/valorant/profile/riot/iroh%237699/overview" target="_blank" rel="noreferrer">
-              stats here
-            </a>
+            when i'm not building, i'm usually playing <strong>Valorant</strong>, hiking, taking{' '}
+            <Link to="/photos">
+              <span className="uline">photos</span>
+            </Link>
+            , or setting up{' '}
+            <Link to="/fish-tanks">
+              <span className="uline">fish tanks</span>
+            </Link>
             .
           </p>
         </section>
@@ -87,48 +114,68 @@ const About: React.FC<AboutProps> = ({ showProjects = true }) => {
         </ul>
       </section>
 
-      {showProjects && featured.length > 0 && (
+      {showProjects && (
         <section className="section about__section">
-          <h2 className="label label--left">recent projects</h2>
-          <div className="about__projects">
-            {featured.map((item) => (
-              <ProjectCard key={item.id} item={item} />
-            ))}
-          </div>
-          <div className="about__more">
-            <Link to="/work" className="textlink">
-              see more work →
-            </Link>
-          </div>
+          <h2 className="label label--left">projects</h2>
+          <ul className="plist">
+            {visible.map((item) => {
+              const isOpen = open === item.id;
+              const study = getCaseStudy(item.id);
+              const logo = logoFor(item);
+              return (
+                <li key={item.id} className="plist__row">
+                  <button
+                    type="button"
+                    className="plist__name"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpen(isOpen ? null : item.id)}
+                  >
+                    {logo && <img className="plist__logo" src={logo} alt="" aria-hidden />}
+                    <span className="uline">{item.title}</span>
+                  </button>
+                  <Collapse open={isOpen}>
+                    <div className="plist__body">
+                      <p className="plist__lead">{item.detail.lead}</p>
+                      <p className="plist__tech">{item.detail.tech}</p>
+                      {study && (
+                        <Link to={`/work/${item.id}`} className="plist__link">
+                          <span className="uline">read the case study →</span>
+                        </Link>
+                      )}
+                    </div>
+                  </Collapse>
+                </li>
+              );
+            })}
+          </ul>
+          {PROJECTS.length > SHOWN && (
+            <button type="button" className="plist__more" onClick={() => setShowAll((v) => !v)}>
+              <span className="uline">
+                {showAll ? 'show less' : `see more (${PROJECTS.length - SHOWN})`}
+              </span>
+            </button>
+          )}
         </section>
       )}
 
       <section className="section about__section">
         <h2 className="label label--left">elsewhere</h2>
         <div className="about__links">
-          <a className="textlink" href="mailto:kumarann@umich.edu">
-            email ↗
+          <a href="mailto:kumarann@umich.edu">
+            <span className="uline">email ↗</span>
           </a>
-          <a className="textlink" href="https://github.com/kumarannathan/" target="_blank" rel="noreferrer">
-            github ↗
+          <a href="https://github.com/kumarannathan/" target="_blank" rel="noreferrer">
+            <span className="uline">github ↗</span>
           </a>
-          <a className="textlink" href="https://linkedin.com/in/kkumarann" target="_blank" rel="noreferrer">
-            linkedin ↗
+          <a href="https://linkedin.com/in/kkumarann" target="_blank" rel="noreferrer">
+            <span className="uline">linkedin ↗</span>
           </a>
-          <a className="textlink" href="https://kumi.tiiny.site" target="_blank" rel="noreferrer">
-            resume ↗
+          <a href="https://kumi.tiiny.site" target="_blank" rel="noreferrer">
+            <span className="uline">resume ↗</span>
           </a>
         </div>
       </section>
 
-      <section className="about__lake">
-        <SceneCanvas
-          scene={lake}
-          aspect={900 / 420}
-          label="A grey-blue lake with a pine shore, a drifting sailboat and gulls. Click the water to skip a stone."
-        />
-        <p className="about__lake-hint">click the water to skip a stone</p>
-      </section>
     </div>
   );
 };

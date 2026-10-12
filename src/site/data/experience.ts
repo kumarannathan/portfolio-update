@@ -1,6 +1,5 @@
 import yoggerLogo from '../../assets/yogger-logo.png';
 import einnelLogo from '../../assets/einnel-logo.png';
-import snapLogo from '../../assets/snap-logo.png';
 import wsoftLogo from '../../assets/wsoft-logo.png';
 
 export interface ExperienceEntry {
@@ -31,11 +30,5 @@ export const EXPERIENCE: ExperienceEntry[] = [
     role: 'QA Lead / Programmer',
     period: 'Sep 2023 – Sep 2024',
     logo: wsoftLogo
-  },
-  {
-    company: 'Extern',
-    role: 'Snap Lens Developer',
-    period: 'Mar 2024 – May 2024',
-    logo: snapLogo
   }
 ];
