@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import FlexCarousel, { FlexCarouselItem } from '../components/reactbits/FlexCarousel';
 import manifest from './data/gallery.json';
 import { subjectOf, SUBJECT_ORDER, SUBJECT_LABEL, F1_SUBJECTS } from './data/gallerySubjects';
@@ -29,9 +29,6 @@ export interface Photo {
 
 const asset = (p: string) => `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}${p}`;
 const PHOTOS: Photo[] = (manifest as { photos: Photo[] }).photos;
-
-/** Sets shown as full-size plates instead of a scrolling row. */
-const PLATE_SUBJECTS = new Set(['f1-montreal-2026']);
 
 /** The camera that took it, or an honest note when the file carries no exif. */
 function cameraOf(p: Photo): string {
@@ -75,131 +72,6 @@ const F1Mark: React.FC = () => {
   );
 };
 
-/** Drag it, or use a wheel — a vertical wheel scrolls the strip sideways. */
-function useDragScroll() {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-
-    const onWheel = (e: WheelEvent) => {
-      if (e.ctrlKey) return;
-      const amount = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      if (!amount) return;
-      const max = el.scrollWidth - el.clientWidth;
-      const next = el.scrollLeft + amount;
-      // Let the page keep scrolling once the strip is at either end.
-      if ((next <= 0 && amount < 0) || (next >= max && amount > 0)) return;
-      e.preventDefault();
-      el.scrollLeft = next;
-    };
-
-    let down = false;
-    let startX = 0;
-    let startLeft = 0;
-    let moved = false;
-
-    const onDown = (e: PointerEvent) => {
-      if (e.button > 0) return;
-      down = true;
-      moved = false;
-      startX = e.clientX;
-      startLeft = el.scrollLeft;
-    };
-    const onMove = (e: PointerEvent) => {
-      if (!down) return;
-      const dx = e.clientX - startX;
-      if (!moved && Math.abs(dx) > 4) {
-        moved = true;
-        el.setPointerCapture?.(e.pointerId);
-        el.classList.add('is-dragging');
-      }
-      if (moved) el.scrollLeft = startLeft - dx;
-    };
-    const onUp = (e: PointerEvent) => {
-      down = false;
-      el.releasePointerCapture?.(e.pointerId);
-      el.classList.remove('is-dragging');
-    };
-
-    el.addEventListener('wheel', onWheel, { passive: false });
-    el.addEventListener('pointerdown', onDown);
-    el.addEventListener('pointermove', onMove);
-    el.addEventListener('pointerup', onUp);
-    el.addEventListener('pointercancel', onUp);
-    el.addEventListener('pointerleave', onUp);
-    return () => {
-      el.removeEventListener('wheel', onWheel);
-      el.removeEventListener('pointerdown', onDown);
-      el.removeEventListener('pointermove', onMove);
-      el.removeEventListener('pointerup', onUp);
-      el.removeEventListener('pointercancel', onUp);
-      el.removeEventListener('pointerleave', onUp);
-    };
-  }, []);
-
-  return ref;
-}
-
-/** A horizontal strip of big plates — each photo once, at full size. */
-const Plates: React.FC<{ photos: Photo[] }> = ({ photos }) => {
-  const ref = useDragScroll();
-  const [edge, setEdge] = useState({ start: true, end: false });
-
-  const sync = () => {
-    const el = ref.current;
-    if (!el) return;
-    setEdge({ start: el.scrollLeft < 4, end: el.scrollLeft >= el.scrollWidth - el.clientWidth - 4 });
-  };
-
-  useEffect(sync, [ref]);
-
-  const page = (dir: 1 | -1) => {
-    const el = ref.current;
-    if (!el) return;
-    const from = el.scrollLeft;
-    const target = from + dir * el.clientWidth * 0.8;
-    el.scrollTo({ left: target, behavior: 'smooth' });
-    // If this view can't animate — reduced motion, a background tab — just land it.
-    window.setTimeout(() => {
-      if (Math.abs(el.scrollLeft - from) < 2) el.scrollLeft = target;
-    }, 140);
-  };
-
-  return (
-    <div className="plates-wrap">
-      <div className="plates" ref={ref} onScroll={sync} role="region" aria-label="photos" tabIndex={0}>
-    {photos.map((p) => (
-      <figure key={p.id} className="plate">
-        <img
-          src={asset(p.src)}
-          width={p.w}
-          height={p.h}
-          alt={[cameraOf(p), settingsOf(p)].filter(Boolean).join(' — ')}
-          loading="lazy"
-          decoding="async"
-          style={{ aspectRatio: `${p.w} / ${p.h}` }}
-        />
-        <figcaption>
-          <span>{cameraOf(p)}</span>
-          {settingsOf(p) && <span className="plate__exif">{settingsOf(p)}</span>}
-        </figcaption>
-        </figure>
-      ))}
-      </div>
-      <div className="plates__nav">
-        <button type="button" onClick={() => page(-1)} disabled={edge.start} aria-label="Previous photos">
-          ‹
-        </button>
-        <button type="button" onClick={() => page(1)} disabled={edge.end} aria-label="More photos">
-          ›
-        </button>
-      </div>
-    </div>
-  );
-};
-
 const Row: React.FC<{ photos: Photo[] }> = ({ photos }) => {
   const items = useMemo(() => itemsFor(photos), [photos]);
   return (
@@ -219,11 +91,10 @@ const Row: React.FC<{ photos: Photo[] }> = ({ photos }) => {
   );
 };
 
-const SubjectRow: React.FC<{ subject: string; photos: Photo[]; defaultOpen: boolean; plates?: boolean }> = ({
+const SubjectRow: React.FC<{ subject: string; photos: Photo[]; defaultOpen: boolean }> = ({
   subject,
   photos,
-  defaultOpen,
-  plates
+  defaultOpen
 }) => {
   const [open, setOpen] = useState(defaultOpen);
   // Mounted on first open and kept, so collapsing is a pure css transition and the
@@ -247,7 +118,7 @@ const SubjectRow: React.FC<{ subject: string; photos: Photo[]; defaultOpen: bool
           {label} <span className="gallery__count">{photos.length}</span>
         </h2>
       </button>
-      <Collapse open={open}>{mounted && (plates ? <Plates photos={photos} /> : <Row photos={photos} />)}</Collapse>
+      <Collapse open={open}>{mounted && <Row photos={photos} />}</Collapse>
     </section>
   );
 };
@@ -271,13 +142,7 @@ const Gallery: React.FC = () => {
     <div className="gallery container">
       <h1 className="sr-only">Photos</h1>
       {grouped.map((g, i) => (
-        <SubjectRow
-          key={g.subject}
-          subject={g.subject}
-          photos={g.photos}
-          defaultOpen={i === 0}
-          plates={PLATE_SUBJECTS.has(g.subject)}
-        />
+        <SubjectRow key={g.subject} subject={g.subject} photos={g.photos} defaultOpen={i === 0} />
       ))}
     </div>
   );

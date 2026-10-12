@@ -86,69 +86,6 @@ img.gallery__mark {
   margin: 0 calc(50% - 50vw / var(--zoom));
 }
 
-/* Plates: one card per photo, full-bleed sideways. No repeats, no canvas. */
-.plates {
-  display: flex;
-  gap: 56px;
-  padding: 16px var(--gutter) 10px;
-  margin: 0 calc(50% - 50vw / var(--zoom));
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  cursor: grab;
-  scrollbar-width: none;
-}
-
-.plates::-webkit-scrollbar {
-  display: none;
-}
-
-.plates.is-dragging {
-  cursor: grabbing;
-}
-
-.plates img {
-  -webkit-user-drag: none;
-  user-select: none;
-}
-
-.plate {
-  flex: 0 0 auto;
-  margin: 0;
-}
-
-.plate img {
-  display: block;
-  height: 520px;
-  width: auto;
-  max-width: none;
-  border-radius: 10px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 18px 48px rgba(42, 37, 32, 0.12);
-}
-
-.plate figcaption {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-top: 12px;
-  font-size: 11px;
-  color: var(--ink-55);
-}
-
-.plate__exif {
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-40);
-}
-
-@media (max-width: 760px) {
-  .plates {
-    gap: 28px;
-  }
-  .plate img {
-    height: 360px;
-  }
-}
-
 .gallery__rail .flex-carousel__caption {
   color: var(--ink-70);
 }
@@ -368,38 +305,4 @@ img.gallery__mark {
 .gallery__simple-btn:active,
 .gallery__simple-btn:hover {
   color: var(--ink-90);
-}
-
-/* The strip's own controls, so it never depends on a wheel gesture. */
-.plates-wrap {
-  position: relative;
-}
-
-.plates__nav {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 6px 0 2px;
-}
-
-.plates__nav button {
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  box-shadow: inset 0 0 0 1px var(--black-08);
-  color: var(--ink-70);
-  font-size: 15px;
-  line-height: 1;
-  background: rgba(255, 255, 255, 0.6);
-  transition: color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-}
-
-.plates__nav button:hover:not(:disabled) {
-  color: var(--ink-95);
-  box-shadow: inset 0 0 0 1px var(--ink-40);
-}
-
-.plates__nav button:disabled {
-  opacity: 0.35;
-  cursor: default;
 }
