@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import FlexCarousel, { FlexCarouselItem } from '../components/reactbits/FlexCarousel';
 import manifest from './data/gallery.json';
 import { subjectOf, SUBJECT_ORDER, SUBJECT_LABEL, F1_SUBJECTS } from './data/gallerySubjects';
@@ -72,35 +72,10 @@ const F1Mark: React.FC = () => {
   );
 };
 
-/**
- * The carousel opens a card on click and closes it on the next click, drag or
- * escape — but it only reports the opening. It does keep a --flex-carousel-lift
- * variable on its container, 1 at rest and higher while a card is open, so
- * watching that tells the page when to get out of the way and when to come back.
- */
-const Row: React.FC<{ photos: Photo[]; onZoom: (open: boolean) => void }> = ({ photos, onZoom }) => {
+const Row: React.FC<{ photos: Photo[]; onOpen: (photo: Photo) => void }> = ({ photos, onOpen }) => {
   const items = useMemo(() => itemsFor(photos), [photos]);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
-    const read = () => {
-      const car = el.querySelector<HTMLElement>('.flex-carousel');
-      const lift = parseFloat(car?.style.getPropertyValue('--flex-carousel-lift') || '1');
-      onZoom(lift > 1.02);
-    };
-    const mo = new MutationObserver(read);
-    mo.observe(el, { subtree: true, childList: true, attributes: true, attributeFilter: ['style'] });
-    read();
-    return () => {
-      mo.disconnect();
-      onZoom(false);
-    };
-  }, [onZoom]);
-
   return (
-    <div className="gallery__rail" ref={ref}>
+    <div className="gallery__rail">
       <FlexCarousel
         items={items}
         preset="liquid"
@@ -111,7 +86,40 @@ const Row: React.FC<{ photos: Photo[]; onZoom: (open: boolean) => void }> = ({ p
         lensWidth={0.2}
         bend={0}
         squeeze={0.2}
+        focusOnClick={false}
+        onSelect={(i) => onOpen(photos[i])}
       />
+    </div>
+  );
+};
+
+/** The clicked photo, full size and full resolution. Click or escape to close. */
+const Viewer: React.FC<{ photo: Photo; onClose: () => void }> = ({ photo, onClose }) => {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    const { overflow } = document.body.style;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = overflow;
+    };
+  }, [onClose]);
+
+  return (
+    <div className="viewer" role="dialog" aria-modal="true" aria-label="photo" onClick={onClose}>
+      <figure className="viewer__frame">
+        <img src={asset(photo.src)} alt={[cameraOf(photo), settingsOf(photo)].filter(Boolean).join(' — ')} />
+        <figcaption>
+          <span>{cameraOf(photo)}</span>
+          {settingsOf(photo) && <span className="viewer__exif">{settingsOf(photo)}</span>}
+        </figcaption>
+      </figure>
+      <button type="button" className="viewer__close" aria-label="Close">
+        ✕
+      </button>
     </div>
   );
 };
@@ -120,9 +128,8 @@ const SubjectRow: React.FC<{
   subject: string;
   photos: Photo[];
   defaultOpen: boolean;
-  dim: boolean;
-  onZoom: (open: boolean) => void;
-}> = ({ subject, photos, defaultOpen, dim, onZoom }) => {
+  onOpen: (photo: Photo) => void;
+}> = ({ subject, photos, defaultOpen, onOpen }) => {
   const [open, setOpen] = useState(defaultOpen);
   // Mounted on first open and kept, so collapsing is a pure css transition and the
   // carousel never has to boot its canvas twice.
@@ -135,7 +142,7 @@ const SubjectRow: React.FC<{
   };
 
   return (
-    <section className={`gallery__group${open ? ' is-open' : ''}${dim ? ' is-dim' : ''}`}>
+    <section className={`gallery__group${open ? ' is-open' : ''}`}>
       <button type="button" className="gallery__toggle" aria-expanded={open} onClick={toggle}>
         <span className="gallery__chev" aria-hidden>
           ›
@@ -145,13 +152,13 @@ const SubjectRow: React.FC<{
           {label} <span className="gallery__count">{photos.length}</span>
         </h2>
       </button>
-      <Collapse open={open}>{mounted && <Row photos={photos} onZoom={onZoom} />}</Collapse>
+      <Collapse open={open}>{mounted && <Row photos={photos} onOpen={onOpen} />}</Collapse>
     </section>
   );
 };
 
 const Gallery: React.FC = () => {
-  const [zoomed, setZoomed] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<Photo | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -168,18 +175,12 @@ const Gallery: React.FC = () => {
   }, []);
 
   return (
-    <div className={`gallery container${zoomed ? ' is-zoomed' : ''}`}>
+    <div className="gallery container">
       <h1 className="sr-only">Photos</h1>
       {grouped.map((g, i) => (
-        <SubjectRow
-          key={g.subject}
-          subject={g.subject}
-          photos={g.photos}
-          defaultOpen={i === 0}
-          dim={Boolean(zoomed) && zoomed !== g.subject}
-          onZoom={(open) => setZoomed((cur) => (open ? g.subject : cur === g.subject ? null : cur))}
-        />
+        <SubjectRow key={g.subject} subject={g.subject} photos={g.photos} defaultOpen={i === 0} onOpen={setViewing} />
       ))}
+      {viewing && <Viewer photo={viewing} onClose={() => setViewing(null)} />}
     </div>
   );
 };

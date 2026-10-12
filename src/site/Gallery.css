@@ -82,7 +82,7 @@ img.gallery__mark {
 /* Tall enough that the caption under the row isn't clipped by the canvas. */
 .gallery__rail {
   position: relative;
-  height: 460px;
+  height: 560px;
   margin: 0 calc(50% - 50vw / var(--zoom));
 }
 
@@ -96,7 +96,7 @@ img.gallery__mark {
 
 @media (max-width: 760px) {
   .gallery__rail {
-    height: 400px;
+    height: 440px;
   }
 }
 
@@ -307,30 +307,101 @@ img.gallery__mark {
   color: var(--ink-90);
 }
 
-/* One photo open: everything else steps back until you click it again. */
-.gallery__group {
-  transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+/* The viewer: one photo, centred both ways, as big as the window allows. */
+.viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 3%;
+  background: rgba(245, 241, 236, 0.97);
+  cursor: zoom-out;
+  animation: viewer-in 0.3s ease both;
 }
 
-.gallery__group.is-dim {
-  opacity: 0.08;
-  transform: scale(0.985);
-  pointer-events: none;
+@keyframes viewer-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.gallery.is-zoomed .gallery__group .gallery__toggle {
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
+.viewer__frame {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  max-height: 100%;
+  min-height: 0;
 }
 
-.gallery.is-zoomed .gallery__group {
-  border-bottom-color: transparent;
+.viewer__frame img {
+  display: block;
+  max-width: 100%;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08), 0 30px 80px rgba(42, 37, 32, 0.22);
+  animation: viewer-rise 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes viewer-rise {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.viewer__frame figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--ink-55);
+}
+
+.viewer__exif {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-40);
+}
+
+.viewer__close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--ink-60);
+  box-shadow: inset 0 0 0 1px var(--black-08);
+  transition: color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.viewer__close:hover {
+  color: var(--ink-95);
+  box-shadow: inset 0 0 0 1px var(--ink-40);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gallery__group,
-  .gallery.is-zoomed .gallery__group .gallery__toggle {
-    transition: none;
+  .viewer,
+  .viewer__frame img {
+    animation: none;
   }
 }
