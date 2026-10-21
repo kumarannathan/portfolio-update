@@ -4,10 +4,14 @@
     {
       "name": "portfolio-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["start"],
-      "port": 3100,
+      "runtimeArgs": [
+        "start"
+      ],
+      "port": 3000,
       "autoPort": true,
-      "env": { "BROWSER": "none" }
+      "env": {
+        "BROWSER": "none"
+      }
     }
   ]
 }

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kumaran Nathan — WindBorne written submission</title>
+  <meta name="description" content="Written submission for the Full Stack Security Software Engineer role at WindBorne Systems." />
+  <meta name="robots" content="noindex" />
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    :root {
+      --bg: #f5f1ec; --ink: #2a2520;
+      --ink-70: rgba(42,37,32,.7); --ink-55: rgba(42,37,32,.55); --ink-25: rgba(42,37,32,.25);
+      --font: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: underline; text-decoration-color: var(--ink-25); text-underline-offset: 3px; }
+    a:hover { text-decoration-color: var(--ink); }
+    .wrap { max-width: 680px; margin: 0 auto; padding: 56px 20px 96px; }
+    .meta { font-family: var(--mono); font-size: 11px; letter-spacing: .02em; color: var(--ink-55); text-transform: uppercase; }
+    .meta a { text-decoration: none; }
+    .meta span + span::before { content: "·"; margin: 0 8px; }
+    h1 { font-size: 22px; font-weight: 600; letter-spacing: -.01em; margin: 10px 0 4px; }
+    .sub { color: var(--ink-70); margin: 0 0 40px; }
+    h2 { font-size: 15px; font-weight: 600; margin: 40px 0 10px; padding-top: 24px; border-top: 1px solid var(--ink-25); }
+    h2 .q { font-family: var(--mono); font-size: 11px; color: var(--ink-55); display: block; margin-bottom: 6px; font-weight: 400; }
+    p { margin: 0 0 14px; }
+    ul { padding-left: 18px; margin: 0 0 14px; }
+    li { margin-bottom: 6px; }
+    code { font-family: var(--mono); font-size: .9em; background: rgba(0,0,0,.05); padding: 1px 5px; border-radius: 4px; }
+    .foot { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--ink-25); color: var(--ink-55); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="meta"><span><a href="/">kmrnn.dev</a></span><span>WindBorne Systems</span><span>Full Stack Security Software Engineer</span></div>
+    <h1>Written submission</h1>
+    <p class="sub">Kumaran Nathan · <a href="mailto:kumarann@umich.edu">kumarann@umich.edu</a> · <a href="https://kumi.tiiny.site">resume</a> · <a href="https://github.com/kumarannathan">github</a></p>
+
+    <h2><span class="q">Question 1</span>The most pain I've had running a 24/7 production system</h2>
+    <p>Yogger is a movement assessment app that clinicians and coaches run on real patients. It's on Android and iOS, backed by Firebase, and at the time of this story it was growing fast: monthly actives had doubled to about 16.8K while I was rebuilding most of the Android app. I had shipped a big redesign over the summer, a new flagship assessment flow, and a pose tracking rewrite, all in a few months, with a team of basically two.</p>
+    <p>Then version 6.01 went out and Crashlytics lit up. Not one bug. A cluster of them, and every one was the same shape: the app was fine on the happy path and fell over on lifecycle edges that only happen on a real phone in a real clinic. Rotating to landscape mid-assessment crashed the navigation host on the config change. If Android killed the process in the background and a user came back, the graph fragment couldn't restore because I'd added constructor args to fragments that the framework needs to recreate with no-arg constructors. The Google sign-in flow called <code>requireActivity()</code> on a fragment that was already detached. The recording manager had its own lifecycle bugs. Each crash looked like a one-line fix, and that was the actual problem: they were all cheap to fix and I had shipped all of them, because nothing in my process was looking for them.</p>
+    <p>The worst part was who it hit. A coach runs an assessment on an athlete, the app dies, and the recording is gone. You don't get to redo that moment. Firebase being managed meant I'd never had a database page me at 2am, but I learned that a client crashing during capture is a data loss bug with extra steps.</p>
+    <p>What I changed:</p>
+    <ul>
+      <li>Process death and config changes became a checklist item for any screen that holds state, not something I remembered sometimes. Fragments get no-arg constructors and arguments go through a bundle, period.</li>
+      <li>I stopped trusting "I tested it on my phone." I started killing the process from the debugger and rotating at the worst possible moment before every release, because that's what users do without trying.</li>
+      <li>Crash triage became part of the release, not a reaction to one. I read Crashlytics the morning after every rollout and treat a new crash signature as a blocker for the next one.</li>
+      <li>When I built the next big feature (home exercise programs), I shipped it behind a rollout toggle and wrote the codebase's first automated tests for it. The tests cover the parts that don't change, like program assignment and adherence math, so they stay useful.</li>
+    </ul>
+    <p>The underlying lesson is that velocity on a small team is real and I don't want to give it up, but the thing I was skipping wasn't tests or process in the abstract. It was the specific, boring category of failure that only shows up outside my desk. Now I go looking for that category on purpose.</p>
+
+    <h2><span class="q">Question 2</span>A "best practice" I disagree with after real-world experience</h2>
+    <p><strong>"Write the tests first, and don't ship without coverage."</strong></p>
+    <p>I've now built most of a product with almost no tests and I'd do it again, with one caveat I'll get to. At an early stage startup the thing that's wrong is usually the feature, not the code. I shipped the first version of our flagship assessment flow and then rewrote the scoring and results screens three times in ten weeks based on what coaches actually did with it. Tests written against version one would have been deleted three times. The time I would have spent on them went into watching sessions, reading feedback, and shipping again, and that's the loop that got engagement per user up 60%.</p>
+    <p>What actually caught my bugs in that period was crash reporting, analytics on the funnel, and shipping behind toggles so I could pull something without a release. Those are cheap, they cover the whole app instead of the parts I thought to test, and they tell me about problems I didn't predict, which is most of them.</p>
+    <p>The caveat: the moment a piece of logic stops changing, it needs tests, and the moment someone else's money or data depends on it, it needs them yesterday. I wrote our first real tests for the home exercise program feature because it's gated to paid tiers and the adherence numbers show up on a clinician's screen. SSO got the same treatment, because a bug there isn't a bad screen, it's a security incident at a 47,000 person health system. So my version of the rule is: coverage is a function of how stable the code is and how expensive it is to be wrong, not a number you hold the whole codebase to. Coverage targets make people test the easy stuff to hit the number, and the easy stuff is never where it breaks.</p>
+
+    <div class="foot">Kumaran Nathan · October 2026 · <a href="/">kmrnn.dev</a></div>
+  </main>
+</body>
+</html>

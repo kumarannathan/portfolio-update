@@ -2,8 +2,8 @@ import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Nav from './site/Nav';
-import CaseStudy from './site/CaseStudy';
 import About from './site/About';
+import Project from './site/Project';
 
 const Gallery = React.lazy(() => import('./site/Gallery'));
 const Tanks = React.lazy(() => import('./site/Tanks'));
@@ -23,7 +23,7 @@ const Shell: React.FC = () => {
         <React.Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<About />} />
-            <Route path="/work/:id" element={<CaseStudy />} />
+            <Route path="/work/:id" element={<Project />} />
             <Route path="/about" element={<Navigate to="/" replace />} />
             <Route path="/work" element={<Navigate to="/" replace />} />
             <Route path="/photos" element={<Gallery />} />

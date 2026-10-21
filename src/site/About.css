@@ -1,113 +1,153 @@
-.about {
-  padding-top: 40px;
-  max-width: 640px;
-}
+/*
+ * One narrow column, read top to bottom: who i am, where i've worked, what i've
+ * shipped, what i built for fun, how to reach me.
+ */
 
-.about__head {
+.page {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 56px var(--gutter) 96px;
   display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 26px;
+  flex-direction: column;
+  gap: 56px;
 }
 
-.about__avatar {
-  width: 56px;
-  height: 56px;
+@media (max-width: 560px) {
+  .page {
+    padding-top: 32px;
+    gap: 44px;
+  }
+}
+
+/* intro */
+.intro__avatar {
+  width: 54px;
+  height: 54px;
   border-radius: 999px;
   object-fit: cover;
+  margin-bottom: 20px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
-.about__name {
-  margin: 0;
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--ink-90);
+.intro__head {
+  margin: 0 0 20px;
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--ink-95);
+  text-wrap: balance;
 }
 
-.about__role {
-  margin: 2px 0 0;
-  font-size: 12px;
-  color: var(--ink-55);
+@media (max-width: 560px) {
+  .intro__head {
+    font-size: 27px;
+  }
 }
 
-.about__bio p,
-.about__blurb {
+.intro__body {
   margin: 0 0 12px;
-  font-size: 13.5px;
-  line-height: 1.7;
+  font-size: 14px;
+  line-height: 1.75;
   color: var(--ink-70);
 }
 
-.about__bio strong,
-.about__blurb strong {
+.intro__body:last-child {
+  margin-bottom: 0;
+}
+
+.intro__body strong {
   font-weight: 500;
-  color: var(--ink-90);
+  color: var(--ink-95);
 }
 
-.about__bio a {
-  color: var(--ink-90);
-  border-bottom: 1px solid var(--ink-25);
-  transition: border-color 0.2s ease;
+/* a labelled band of rows */
+.band__label {
+  margin: 0 0 14px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--ink-40);
 }
 
-.about__bio a:hover {
-  border-color: var(--ink-70);
+.band__note {
+  margin: -6px 0 14px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-55);
 }
 
-.about__section {
-  padding: 36px 0 0;
-}
-
-.xp {
+.lrows {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.xp__row {
-  display: grid;
-  grid-template-columns: 28px 1fr auto;
+/* name ——————————————— note */
+.lrow {
+  display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   padding: 9px 0;
 }
 
-.xp__logo {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
+.lrow__logo {
+  width: 17px;
+  height: 17px;
+  border-radius: 4px;
   object-fit: cover;
   background: #fff;
   box-shadow: 0 0 0 1px var(--black-08);
+  flex-shrink: 0;
 }
 
-.xp__title {
-  font-size: 13.5px;
-  font-weight: 500;
-  color: var(--ink-90);
+.lrow__name {
+  font-size: 14px;
+  color: var(--ink-95);
+  white-space: nowrap;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.xp__title a:hover {
-  text-decoration: underline;
+.lrow__rule {
+  flex: 1 1 auto;
+  min-width: 14px;
+  height: 0;
+  border-bottom: 1px dashed var(--ink-25);
+  transform: translateY(1px);
 }
 
-.xp__role {
-  font-weight: 400;
-  color: var(--ink-60);
-}
-
-.xp__period {
-  font-size: 11px;
+.lrow__note {
+  flex-shrink: 0;
+  font-size: 12.5px;
+  font-style: italic;
   color: var(--ink-40);
   white-space: nowrap;
-  padding-top: 2px;
 }
 
-.about__links {
+.page__foot {
+  font-size: 11.5px;
+  color: var(--ink-40);
+}
+
+/* the four links sit right under the bio */
+.intro__social {
   display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.intro__social a {
+  color: var(--ink-40);
+  transition: color 0.2s ease;
+}
+
+.intro__social a:hover {
+  color: var(--ink-95);
 }
 
 /* An underline that draws itself in once, then reacts to hover. */
@@ -138,88 +178,5 @@ button:hover .uline {
   .uline {
     animation: none;
     background-size: 100% 1px;
-  }
-}
-
-/* Projects: a plain list of names. Click one and it opens underneath. */
-.plist {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.plist__row {
-  padding: 5px 0;
-}
-
-.plist__name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13.5px;
-  color: var(--ink-80, rgba(42, 37, 32, 0.8));
-  text-align: left;
-  padding: 3px 0;
-  transition: color 0.2s ease;
-}
-
-.plist__name:hover,
-.plist__name[aria-expanded='true'] {
-  color: var(--ink-95);
-}
-
-.plist__logo {
-  width: 15px;
-  height: 15px;
-  border-radius: 4px;
-  object-fit: cover;
-  background: #fff;
-  box-shadow: 0 0 0 1px var(--black-08);
-  flex-shrink: 0;
-}
-
-.plist__body {
-  max-width: 58ch;
-  padding: 6px 0 10px;
-}
-
-.plist__lead {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--ink-60);
-}
-
-.plist__tech {
-  margin: 8px 0 0;
-  font-family: var(--mono);
-  font-size: 10.5px;
-  color: var(--ink-40);
-}
-
-.plist__link {
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 12px;
-  color: var(--ink-70);
-}
-
-.plist__more {
-  margin-top: 14px;
-  font-size: 12px;
-  color: var(--ink-55);
-  transition: color 0.2s ease;
-}
-
-.plist__more:hover {
-  color: var(--ink-90);
-}
-
-@media (max-width: 560px) {
-  .xp__row {
-    grid-template-columns: 28px 1fr;
-  }
-  .xp__period {
-    grid-column: 2;
   }
 }

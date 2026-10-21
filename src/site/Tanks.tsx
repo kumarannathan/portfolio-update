@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import FadeContent from '../components/reactbits/FadeContent';
-import { TANKS, Tank, TankEntry, TankPhoto, TankStat } from './data/tanks';
-import Collapse from './Collapse';
+import { TANKS, Tank, TankEntry, TankStat } from './data/tanks';
+import FlexCarousel from '../components/reactbits/FlexCarousel';
 import './Tanks.css';
 
 const asset = (p: string) => `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}${p}`;
@@ -43,29 +43,9 @@ const EntryList: React.FC<{ entries: TankEntry[] }> = ({ entries }) => {
   );
 };
 
-/** Photos load lazily and show their own frame until they do. */
-const Photo: React.FC<{ photo: TankPhoto; lead?: boolean }> = ({ photo, lead }) => {
-  const [failed, setFailed] = useState(false);
-  return (
-    <figure className={`tshot${lead ? ' tshot--lead' : ''}`}>
-      {failed ? (
-        <div className="tshot__missing">
-          <code>{photo.src}</code>
-        </div>
-      ) : (
-        <img src={asset(photo.src)} alt={photo.caption ?? ''} loading="lazy" decoding="async" onError={() => setFailed(true)} />
-      )}
-      {photo.caption && <figcaption>{photo.caption}</figcaption>}
-    </figure>
-  );
-};
-
 const TankSection: React.FC<{ tank: Tank; index: number }> = ({ tank, index }) => {
   const tone = ['#e4572e', '#2a6f97', '#3f8f5f'][index % 3];
-  const main = tank.photos.find((p) => p.main);
-  const rest = tank.photos.filter((p) => p !== main);
   const schedule = tank.schedule.filter((row) => row.value);
-  const [shots, setShots] = useState(index === 0);
   return (
     <section className="tank" id={tank.id}>
       <header className="tank__head">
@@ -80,25 +60,22 @@ const TankSection: React.FC<{ tank: Tank; index: number }> = ({ tank, index }) =
       </header>
 
       {tank.photos.length > 0 && (
-        <div className={`tank__gallery${shots ? ' is-open' : ''}`}>
-          <button type="button" className="tank__toggle" aria-expanded={shots} onClick={() => setShots((v) => !v)}>
-            <span className="tank__chev" aria-hidden>
-              ›
-            </span>
-            <span className="tank__toggle-label">
-              photos <span className="tank__count">{tank.photos.length}</span>
-            </span>
-          </button>
-          <Collapse open={shots}>
-            {main && <Photo photo={main} lead />}
-            {rest.length > 0 && (
-              <div className="tank__shots">
-                {rest.map((p) => (
-                  <Photo key={p.src} photo={p} />
-                ))}
-              </div>
-            )}
-          </Collapse>
+        <div className="tank__reel">
+          <FlexCarousel
+            items={tank.photos.map((p) => ({
+              src: asset(p.src),
+              alt: p.caption ?? tank.name,
+              title: p.caption ?? tank.name
+            }))}
+            preset="liquid"
+            intro="rise"
+            cardHeight={0.5}
+            gap={12}
+            radius={10}
+            squeeze={0.2}
+            focusOnClick
+            captions
+          />
         </div>
       )}
 

@@ -13,6 +13,7 @@ export interface ExperienceEntry {
 export const EXPERIENCE: ExperienceEntry[] = [
   {
     company: 'Yogger',
+    companyUrl: 'https://apps.apple.com/us/app/yogger-movement-analysis/id1576592816',
     role: 'Software Engineer',
     period: 'Apr 2026 – Present',
     logo: yoggerLogo

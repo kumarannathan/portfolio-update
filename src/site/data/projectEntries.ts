@@ -51,7 +51,7 @@ export const PROJECTS: ProjectEntry[] = [
   },
   {
     id: 'toshi',
-    title: 'Toshi (年, “year”)',
+    title: 'Toshi',
     roleTag: 'Full Stack',
     technologies: ['React 19', 'TypeScript', 'Vite', 'visx', 'Firebase', 'Cloud Functions', 'Gemini'],
     summary: 'Paste a dealer quote and see what the car actually costs before you sign.',

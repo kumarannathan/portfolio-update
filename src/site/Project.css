@@ -1,0 +1,159 @@
+/* A Yogger project: the numbers first, then the screens, then what shipped. */
+
+.proj {
+  max-width: 1000px;
+}
+
+.proj__back {
+  align-self: flex-start;
+  font-size: 12.5px;
+  color: var(--ink-55);
+  transition: color 0.2s ease;
+}
+
+.proj__back:hover {
+  color: var(--ink-95);
+}
+
+/* the title and its numbers, then the screens underneath */
+.proj__lede {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.proj__logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  object-fit: cover;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--black-08);
+  margin-bottom: 14px;
+}
+
+.proj__title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ink-95);
+  text-wrap: balance;
+}
+
+.proj__blurb {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--ink-70);
+}
+
+/* the numbers */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 22px 28px;
+}
+
+.metric__value {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--ink-95);
+  font-variant-numeric: tabular-nums;
+}
+
+.metric__label {
+  margin: 9px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-55);
+}
+
+/* the screens — one carousel, every slide at the shape it was captured in */
+/* the carousel bleeds ~48px each side so the next slide peeks out —
+   pad for it so the bleed stays on the page */
+.proj__shots {
+  display: flex;
+  justify-content: center;
+  padding: 0 48px;
+}
+
+.shot-slide {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+/* contain, never cover: no cropping, and nothing is scaled past its own pixels */
+.shot-slide img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 10px 26px rgba(42, 37, 32, 0.1);
+}
+
+@media (max-width: 860px) {
+  .proj__shots {
+    padding: 0;
+  }
+}
+
+/* what shipped */
+.notes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px 32px;
+}
+
+.note__title {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink-95);
+}
+
+.note__detail {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-60);
+}
+
+.proj__stack {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  line-height: 1.8;
+  color: var(--ink-55);
+}
+
+.proj__next {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 26px;
+  border-top: 1px solid var(--black-08);
+  font-size: 14px;
+  color: var(--ink-90);
+}
+
+.proj__next-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-40);
+}

@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import FlexCarousel, { FlexCarouselItem } from '../components/reactbits/FlexCarousel';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import manifest from './data/gallery.json';
-import { subjectOf, SUBJECT_ORDER, SUBJECT_LABEL, F1_SUBJECTS } from './data/gallerySubjects';
-import Collapse from './Collapse';
+import { subjectOf, SUBJECT_ORDER, SUBJECT_LABEL } from './data/gallerySubjects';
+import Masonry from './Masonry';
 import './Gallery.css';
 
 interface Exif {
@@ -30,82 +30,135 @@ export interface Photo {
 const asset = (p: string) => `${(process.env.PUBLIC_URL || '').replace(/\/$/, '')}${p}`;
 const PHOTOS: Photo[] = (manifest as { photos: Photo[] }).photos;
 
-/** The camera that took it, or an honest note when the file carries no exif. */
-function cameraOf(p: Photo): string {
-  return p.exif.camera || 'no exif';
+const DASH = '—';
+
+/** "may 2024" → "2024". */
+function yearOf(p: Photo): string | undefined {
+  return p.exif.date?.match(/\b(19|20)\d{2}\b/)?.[0];
 }
 
-/** How it was shot, for the line under the camera. */
-function settingsOf(p: Photo): string {
-  const e = p.exif;
-  const parts = [e.lens, e.focal, e.aperture, e.shutter, e.iso].filter(Boolean);
-  return parts.join(' · ');
+function subjectLabel(p: Photo): string {
+  const s = subjectOf(p);
+  return SUBJECT_LABEL[s] ?? s;
 }
 
-function itemsFor(photos: Photo[]): FlexCarouselItem[] {
-  return photos.map((p) => ({
-    src: asset(p.srcSmall),
-    alt: [cameraOf(p), settingsOf(p)].filter(Boolean).join(' — '),
-    title: cameraOf(p),
-    subtitle: settingsOf(p) || undefined
-  }));
-}
+/* -------------------------------------------------------------------------- */
+/* filters                                                                     */
+/* -------------------------------------------------------------------------- */
 
-/** The series' mark if the file is there, otherwise a plain red chip. */
-const F1Mark: React.FC = () => {
-  const [missing, setMissing] = useState(false);
-  if (missing) {
-    return (
-      <span className="gallery__mark gallery__mark--text" aria-hidden>
-        f1
-      </span>
-    );
-  }
+type FacetKey = 'camera' | 'lens' | 'year' | 'subject';
+
+const FACETS: { key: FacetKey; label: string; of: (p: Photo) => string | undefined }[] = [
+  { key: 'camera', label: 'model', of: (p) => p.exif.camera },
+  { key: 'lens', label: 'lens', of: (p) => p.exif.lens },
+  { key: 'year', label: 'year', of: yearOf },
+  { key: 'subject', label: 'subject', of: subjectLabel }
+];
+
+type Picked = Partial<Record<FacetKey, string>>;
+
+const FilterBar: React.FC<{
+  photos: Photo[];
+  picked: Picked;
+  onPick: (key: FacetKey, value: string | undefined) => void;
+  count: number;
+}> = ({ photos, picked, onPick, count }) => {
+  const [open, setOpen] = useState<FacetKey | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const away = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(null);
+    };
+    document.addEventListener('mousedown', away);
+    return () => document.removeEventListener('mousedown', away);
+  }, []);
+
+  // Every value a facet actually has, with how many photos carry it.
+  const values = useMemo(() => {
+    const out: Record<string, { value: string; count: number }[]> = {};
+    for (const f of FACETS) {
+      const tally = new Map<string, number>();
+      for (const p of photos) {
+        const v = f.of(p);
+        if (v) tally.set(v, (tally.get(v) ?? 0) + 1);
+      }
+      const order = f.key === 'subject' ? SUBJECT_ORDER.map((s) => SUBJECT_LABEL[s] ?? s) : null;
+      out[f.key] = Array.from(tally.entries())
+        .map(([value, n]) => ({ value, count: n }))
+        .sort((a, b) =>
+          order ? order.indexOf(a.value) - order.indexOf(b.value) : b.count - a.count || a.value.localeCompare(b.value)
+        );
+    }
+    return out;
+  }, [photos]);
+
   return (
-    <img
-      className="gallery__mark"
-      src={asset('/logos/f1.png')}
-      alt=""
-      aria-hidden
-      onError={() => setMissing(true)}
-    />
-  );
-};
-
-const Row: React.FC<{ photos: Photo[]; onOpen: (photo: Photo) => void }> = ({ photos, onOpen }) => {
-  const items = useMemo(() => itemsFor(photos), [photos]);
-  return (
-    <div className="gallery__rail">
-      <FlexCarousel
-        items={items}
-        preset="liquid"
-        intro="deal"
-        cardHeight={0.5}
-        gap={12}
-        radius={8}
-        lensWidth={0.2}
-        bend={0}
-        squeeze={0.2}
-        focusOnClick={false}
-        onSelect={(i) => onOpen(photos[i])}
-      />
+    <div className="fbar" ref={ref}>
+      {FACETS.map((f) => (
+        <div key={f.key} className="fbar__slot">
+          {open === f.key && (
+            <div className="fmenu" role="listbox">
+              {picked[f.key] && (
+                <button type="button" className="fmenu__row" onClick={() => {
+                    onPick(f.key, undefined);
+                    setOpen(null);
+                  }}>
+                  <span>any {f.label}</span>
+                </button>
+              )}
+              {values[f.key].map((v) => (
+                <button
+                  key={v.value}
+                  type="button"
+                  className={`fmenu__row${picked[f.key] === v.value ? ' is-on' : ''}`}
+                  onClick={() => {
+                    onPick(f.key, v.value);
+                    setOpen(null);
+                  }}
+                >
+                  <span>{v.value}</span>
+                  <span className="fmenu__n">{v.count}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          <button
+            type="button"
+            className={`fchip${picked[f.key] ? ' is-on' : ''}`}
+            aria-expanded={open === f.key}
+            onClick={() => setOpen((cur) => (cur === f.key ? null : f.key))}
+          >
+            {picked[f.key] ?? f.label}
+          </button>
+        </div>
+      ))}
+      <span className="fbar__count">{count}</span>
     </div>
   );
 };
 
-/** The clicked photo, full size and full resolution. Click or escape to close. */
-const Viewer: React.FC<{ photo: Photo; onClose: () => void }> = ({ photo, onClose }) => {
-  const [closing, setClosing] = useState(false);
+/* -------------------------------------------------------------------------- */
+/* detail                                                                      */
+/* -------------------------------------------------------------------------- */
 
-  // Animate out before unmounting, so closing reads as smoothly as opening.
-  const close = useCallback(() => {
-    setClosing(true);
-    window.setTimeout(onClose, 260);
-  }, [onClose]);
+const Row: React.FC<{ label: string; value?: string }> = ({ label, value }) => (
+  <div className="meta__row">
+    <span className="meta__value">{value || DASH}</span>
+    <span className="meta__label">{label}</span>
+  </div>
+);
 
+const Detail: React.FC<{ photo: Photo; onClose: () => void; onStep: (dir: 1 | -1) => void }> = ({
+  photo,
+  onClose,
+  onStep
+}) => {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') onStep(1);
+      if (e.key === 'ArrowLeft') onStep(-1);
     };
     window.addEventListener('keydown', onKey);
     const { overflow } = document.body.style;
@@ -114,87 +167,154 @@ const Viewer: React.FC<{ photo: Photo; onClose: () => void }> = ({ photo, onClos
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
     };
-  }, [close]);
+  }, [onClose, onStep]);
 
   return (
-    <div
-      className={`viewer${closing ? ' is-closing' : ''}`}
-      role="dialog"
-      aria-modal="true"
-      aria-label="photo"
-      onClick={close}
+    <motion.div
+      className="detail"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.28 }}
+      onClick={onClose}
     >
-      <figure className="viewer__frame">
-        <img src={asset(photo.src)} alt={[cameraOf(photo), settingsOf(photo)].filter(Boolean).join(' — ')} />
-        <figcaption>
-          <span>{cameraOf(photo)}</span>
-          {settingsOf(photo) && <span className="viewer__exif">{settingsOf(photo)}</span>}
-        </figcaption>
-      </figure>
-      <button type="button" className="viewer__close" aria-label="Close">
+      <motion.img
+        layoutId={`shot-${photo.id}`}
+        className="detail__img"
+        src={asset(photo.src)}
+        alt=""
+        transition={{ type: 'spring', stiffness: 220, damping: 28 }}
+        onClick={(e) => e.stopPropagation()}
+      />
+
+      <motion.aside
+        className="meta"
+        initial={{ opacity: 0, x: 18 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 18 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Row label="Subject" value={subjectLabel(photo)} />
+        <Row label="Taken on" value={photo.exif.date} />
+        <div className="meta__gap" />
+        <Row label="Camera" value={photo.exif.camera} />
+        <Row label="Lens" value={photo.exif.lens} />
+        <Row label="Focal length" value={photo.exif.focal} />
+        <Row label="Aperture" value={photo.exif.aperture} />
+        <Row label="Shutter speed" value={photo.exif.shutter} />
+        <Row label="ISO" value={photo.exif.iso} />
+        <div className="meta__gap" />
+        <Row label="Pixels" value={`${photo.w} × ${photo.h}`} />
+      </motion.aside>
+
+      <button type="button" className="detail__close" onClick={onClose} aria-label="Close">
         ✕
       </button>
-    </div>
+    </motion.div>
   );
 };
 
-const SubjectRow: React.FC<{
-  subject: string;
-  photos: Photo[];
-  defaultOpen: boolean;
-  onOpen: (photo: Photo) => void;
-}> = ({ subject, photos, defaultOpen, onOpen }) => {
-  const [open, setOpen] = useState(defaultOpen);
-  // Mounted on first open and kept, so collapsing is a pure css transition and the
-  // carousel never has to boot its canvas twice.
-  const [mounted, setMounted] = useState(defaultOpen);
-  const label = SUBJECT_LABEL[subject] ?? subject;
-
-  const toggle = () => {
-    setMounted(true);
-    setOpen((v) => !v);
-  };
-
-  return (
-    <section className={`gallery__group${open ? ' is-open' : ''}`}>
-      <button type="button" className="gallery__toggle" aria-expanded={open} onClick={toggle}>
-        <span className="gallery__chev" aria-hidden>
-          ›
-        </span>
-        {F1_SUBJECTS.has(subject) && <F1Mark />}
-        <h2 className="gallery__subject">
-          {label} <span className="gallery__count">{photos.length}</span>
-        </h2>
-      </button>
-      <Collapse open={open}>{mounted && <Row photos={photos} onOpen={onOpen} />}</Collapse>
-    </section>
-  );
-};
+/* -------------------------------------------------------------------------- */
 
 const Gallery: React.FC = () => {
-  const [viewing, setViewing] = useState<Photo | null>(null);
+  const [picked, setPicked] = useState<Picked>({});
+  const [openId, setOpenId] = useState<string | null>(null);
+  // Which tile is allowed to be a shared element. Held past the close so the
+  // photo has something to morph back into, then released.
+  const [morphId, setMorphId] = useState<string | null>(null);
+  const release = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, []);
 
-  const grouped = useMemo(() => {
-    const bySubject = new Map<string, Photo[]>();
-    for (const p of PHOTOS) {
-      const s = subjectOf(p);
-      if (!bySubject.has(s)) bySubject.set(s, []);
-      bySubject.get(s)!.push(p);
-    }
-    return SUBJECT_ORDER.filter((s) => bySubject.has(s)).map((s) => ({ subject: s, photos: bySubject.get(s)! }));
+  const shown = useMemo(
+    () =>
+      PHOTOS.filter((p) =>
+        FACETS.every((f) => {
+          const want = picked[f.key];
+          return !want || f.of(p) === want;
+        })
+      ),
+    [picked]
+  );
+
+  const opened = shown.find((p) => p.id === openId) ?? null;
+
+  const open = useCallback((photoId: string) => {
+    window.clearTimeout(release.current);
+    setMorphId(photoId);
+    setOpenId(photoId);
+  }, []);
+
+  const close = useCallback(() => {
+    setOpenId(null);
+    release.current = window.setTimeout(() => setMorphId(null), 450);
+  }, []);
+
+  useEffect(() => () => window.clearTimeout(release.current), []);
+
+  const step = useCallback(
+    (dir: 1 | -1) => {
+      setOpenId((cur) => {
+        const i = shown.findIndex((p) => p.id === cur);
+        if (i < 0) return cur;
+        const nextId = shown[(i + dir + shown.length) % shown.length].id;
+        setMorphId(nextId);
+        return nextId;
+      });
+    },
+    [shown]
+  );
+
+  const pick = useCallback((key: FacetKey, value: string | undefined) => {
+    setPicked((cur) => ({ ...cur, [key]: value }));
   }, []);
 
   return (
-    <div className="gallery container">
-      <h1 className="sr-only">Photos</h1>
-      {grouped.map((g, i) => (
-        <SubjectRow key={g.subject} subject={g.subject} photos={g.photos} defaultOpen={i === 0} onOpen={setViewing} />
-      ))}
-      {viewing && <Viewer photo={viewing} onClose={() => setViewing(null)} />}
+    <div className="shots">
+      <Masonry items={shown.map((p) => ({ ...p, key: p.id }))} minColumn={250} maxColumns={4} gap={16}>
+        {(p) => (
+          <figure className="tile">
+            {morphId === p.id ? (
+              <motion.img
+                layoutId={`shot-${p.id}`}
+                className="tile__img"
+                src={asset(p.srcSmall)}
+                style={{ aspectRatio: `${p.w} / ${p.h}` }}
+                alt=""
+                onClick={() => open(p.id)}
+                transition={{ type: 'spring', stiffness: 240, damping: 30 }}
+              />
+            ) : (
+              <img
+                className="tile__img"
+                src={asset(p.srcSmall)}
+                width={p.w}
+                height={p.h}
+                style={{ aspectRatio: `${p.w} / ${p.h}` }}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                onClick={() => open(p.id)}
+              />
+            )}
+            <figcaption className="tile__cap">
+              <span>{p.exif.date ?? subjectLabel(p)}</span>
+              <span className="tile__sub">{p.exif.camera ?? 'no exif'}</span>
+            </figcaption>
+          </figure>
+        )}
+      </Masonry>
+
+      {shown.length === 0 && <p className="shots__empty">nothing matches those filters.</p>}
+
+      <FilterBar photos={PHOTOS} picked={picked} onPick={pick} count={shown.length} />
+
+      <AnimatePresence>
+        {opened && <Detail key={opened.id} photo={opened} onClose={close} onStep={step} />}
+      </AnimatePresence>
     </div>
   );
 };
