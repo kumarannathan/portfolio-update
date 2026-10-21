@@ -308,6 +308,17 @@
       els.forEach(function (el) { io.observe(el); });
     } else { els.forEach(function (el) { el.classList.add('in'); }); }
 
+    // ---------- analytics: one view per session + download clicks ----------
+    function hit(event) {
+      try {
+        var body = JSON.stringify({ event: event });
+        if (navigator.sendBeacon) navigator.sendBeacon('/api/countertop/hit', new Blob([body], { type: 'application/json' }));
+        else fetch('/api/countertop/hit', { method: 'POST', headers: { 'content-type': 'application/json' }, body: body, keepalive: true }).catch(function () {});
+      } catch (e) {}
+    }
+    try { if (!sessionStorage.getItem('ct_v')) { sessionStorage.setItem('ct_v', '1'); hit('view'); } } catch (e) { hit('view'); }
+    document.querySelectorAll('a[href*="/releases/latest"]').forEach(function (a) { a.addEventListener('click', function () { hit('download'); }); });
+
     // ---------- pill nav: hide on scroll down, show on scroll up ----------
     var top = document.getElementById('top'), lastY = 0;
     window.addEventListener('scroll', function () {

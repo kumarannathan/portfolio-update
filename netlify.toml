@@ -6,3 +6,7 @@
 [build.environment]
   NODE_VERSION = "20"
   NPM_CONFIG_LEGACY_PEER_DEPS = "true"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
