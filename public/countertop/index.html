@@ -38,17 +38,19 @@
     .r.d1 { transition-delay: .08s } .r.d2 { transition-delay: .16s } .r.d3 { transition-delay: .24s } .r.d4 { transition-delay: .32s } .r.d5 { transition-delay: .40s }
     @media (prefers-reduced-motion: reduce) { .r { transition: none; opacity: 1; filter: none; transform: none; } }
 
-    /* ---------- header ---------- */
-    header.top { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); background: rgba(0,0,0,.55); border-bottom: 1px solid var(--ink-06); }
-    header.top .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; }
-    .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; font-size: 15px; }
-    .brand img { width: 26px; height: 26px; }
-    .top nav a { text-decoration: none; color: var(--ink-70); font-size: 13.5px; margin-left: 20px; transition: color .2s; }
-    .top nav a:hover { color: var(--ink); }
-    .top nav a.pill { background: var(--ink); color: #000; padding: 6px 12px; border-radius: 999px; font-weight: 600; }
+    /* ---------- header (centered pill) ---------- */
+    header.top { position: fixed; top: 16px; left: 0; right: 0; z-index: 50; display: flex; justify-content: center; pointer-events: none; }
+    .pillnav { pointer-events: auto; display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 12px; border-radius: 999px; background: rgba(20,20,24,.62); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); box-shadow: 0 10px 40px -10px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.09), inset 0 1px 0 rgba(255,255,255,.08); transition: transform .5s var(--ease), background .3s; }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; font-size: 14px; padding-right: 10px; margin-right: 4px; border-right: 1px solid var(--ink-12); }
+    .brand img { width: 22px; height: 22px; }
+    .pillnav a.lnk { text-decoration: none; color: var(--ink-70); font-size: 13.5px; padding: 7px 12px; border-radius: 999px; transition: color .2s, background .2s; }
+    .pillnav a.lnk:hover { color: var(--ink); background: var(--ink-06); }
+    .pillnav a.pill { text-decoration: none; background: var(--ink); color: #000; padding: 7px 14px; border-radius: 999px; font-weight: 600; font-size: 13.5px; margin-left: 4px; transition: transform .25s var(--ease); }
+    .pillnav a.pill:hover { transform: translateY(-1px); }
+    header.top.hide .pillnav { transform: translateY(-80px); }
 
     /* ---------- hero ---------- */
-    .hero { position: relative; padding: 110px 0 40px; text-align: center; overflow: hidden; }
+    .hero { position: relative; padding: 140px 0 40px; text-align: center; overflow: hidden; }
     .hero::before { content: ""; position: absolute; left: 50%; top: 0; width: 1100px; height: 700px; transform: translateX(-50%); background: radial-gradient(ellipse at center top, rgba(255,255,255,.10) 0%, rgba(255,255,255,.03) 35%, transparent 70%); pointer-events: none; }
     .hero img.icon { width: 132px; height: 132px; margin: 0 auto 26px; filter: drop-shadow(0 20px 40px rgba(0,0,0,.6)); }
     h1 { font-size: clamp(40px, 7.5vw, 76px); line-height: 1.0; letter-spacing: -.035em; margin: 0 0 20px; font-weight: 650; }
@@ -133,22 +135,20 @@
       .ghost { margin: 12px 0 0; }
       .privacy { padding: 36px 24px; }
       section { padding-top: 90px; }
-      .top nav a { margin-left: 14px; }
-      .top nav a.nohide-sm { display: none; }
+      .pillnav .nohide-sm { display: none; }
+      .brand { padding-right: 8px; }
     }
   </style>
 </head>
 <body>
-  <header class="top">
-    <div class="wrap">
+  <header class="top" id="top">
+    <nav class="pillnav">
       <a class="brand" href="/countertop/"><img src="/projects/countertop/icon-64.png" srcset="/projects/countertop/icon-64.png 1x, /projects/countertop/icon-512.png 2x" alt="" />Countertop</a>
-      <nav>
-        <a class="nohide-sm" href="#how">How it works</a>
-        <a class="nohide-sm" href="#privacy">Privacy</a>
-        <a href="https://github.com/kumarannathan/Countertop" target="_blank" rel="noopener">GitHub</a>
-        <a class="pill" href="https://github.com/kumarannathan/Countertop/releases/latest" target="_blank" rel="noopener">Download</a>
-      </nav>
-    </div>
+      <a class="lnk nohide-sm" href="#how">How it works</a>
+      <a class="lnk nohide-sm" href="#privacy">Privacy</a>
+      <a class="lnk" href="https://github.com/kumarannathan/Countertop" target="_blank" rel="noopener">GitHub</a>
+      <a class="pill" href="https://github.com/kumarannathan/Countertop/releases/latest" target="_blank" rel="noopener">Download</a>
+    </nav>
   </header>
 
   <main>
@@ -307,6 +307,12 @@
       }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
       els.forEach(function (el) { io.observe(el); });
     } else { els.forEach(function (el) { el.classList.add('in'); }); }
+
+    // ---------- pill nav: hide on scroll down, show on scroll up ----------
+    var top = document.getElementById('top'), lastY = 0;
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY; top.classList.toggle('hide', y > lastY && y > 120); lastY = y;
+    }, { passive: true });
 
     // ---------- carousel (port of the reactbits tilt carousel) ----------
     var items = [
