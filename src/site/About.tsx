@@ -99,11 +99,7 @@ const About: React.FC = () => {
             <Link to="/photos">
               <span className="uline">photos</span>
             </Link>
-            , or setting up{' '}
-            <Link to="/fish-tanks">
-              <span className="uline">fish tanks</span>
-            </Link>
-            .
+            , or setting up fish tanks.
           </p>
         </header>
         <div className="intro__social">

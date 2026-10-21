@@ -32,9 +32,6 @@ const Nav: React.FC = () => {
           <NavLink to="/photos" className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
             photos
           </NavLink>
-          <NavLink to="/fish-tanks" className={({ isActive }) => `nav__link${isActive ? ' is-active' : ''}`}>
-            fish tanks
-          </NavLink>
         </nav>
       </div>
     </header>

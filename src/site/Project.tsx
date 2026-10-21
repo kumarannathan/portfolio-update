@@ -54,6 +54,18 @@ const Project: React.FC = () => {
         </div>
       </FadeContent>
 
+      <section className="band">
+        <h2 className="band__label">what shipped</h2>
+        <ul className="notes">
+          {page.notes.map((n) => (
+            <li key={n.title} className="note">
+              <h3 className="note__title">{n.title}</h3>
+              <p className="note__detail">{n.detail}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {page.shots.length > 0 && (
         <div className="proj__shots">
           <Carousel
@@ -75,18 +87,6 @@ const Project: React.FC = () => {
           />
         </div>
       )}
-
-      <section className="band">
-        <h2 className="band__label">what shipped</h2>
-        <ul className="notes">
-          {page.notes.map((n) => (
-            <li key={n.title} className="note">
-              <h3 className="note__title">{n.title}</h3>
-              <p className="note__detail">{n.detail}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
 
       <section className="band">
         <h2 className="band__label">built with</h2>
