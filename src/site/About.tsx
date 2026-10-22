@@ -9,7 +9,7 @@ import yoggerLogo from '../assets/yogger-logo.png';
 import toshiLogo from '../assets/toshi-logo.svg';
 import countertopLogo from '../assets/countertop-logo.png';
 import lumenLogo from '../assets/lumen-logo.png';
-import miloLogo from '../assets/logo.png';
+import miloLogo from '../assets/milo-logo.png';
 import './About.css';
 
 /** Product marks shown beside a project name. */
@@ -33,14 +33,20 @@ const WORK_IDS = [
   'rag-gemini'
 ];
 
-/** Built for myself, on my own time. */
-const SIDE_IDS = ['lumen', 'countertop', 'milo-mission-control'];
+/** Built for myself, on my own time. Shown as favorites, and again in the list. */
+const FAVORITE_IDS = ['milo-mission-control', 'lumen', 'countertop'];
 
 const byIds = (ids: string[]) =>
   ids.map((id) => ALL_WORK.find((w) => w.id === id)).filter((w): w is WorkItem => Boolean(w));
 
-const WORK = byIds(WORK_IDS);
-const SIDE = byIds(SIDE_IDS);
+const FAVORITES = byIds(FAVORITE_IDS);
+/** One short line each; the full blurb is on the product page. */
+const FAVORITE_LINES: Record<string, string> = {
+  'milo-mission-control': 'agents that do outbound',
+  lumen: 'a light meter for film',
+  countertop: 'downloads, put away'
+};
+const WORK = byIds([...FAVORITE_IDS, ...WORK_IDS]);
 
 /** A name on the left, a year or a link on the right, a dashed rule between. */
 const GitHubMark: React.FC = () => (
@@ -155,48 +161,46 @@ const About: React.FC = () => {
         </ul>
       </Section>
 
-      <Section label="work">
-        <ul className="lrows">
-          {WORK.map((item) => (
-            <LeaderRow
-              key={item.id}
-              logo={logoFor(item)}
-              name={
-                PROJECT_PAGES[item.id] ? (
-                  <Link to={`/work/${item.id}`}>
-                    <span className="uline">{item.title}</span>
-                  </Link>
-                ) : (
-                  item.title
-                )
-              }
-              note={item.year}
-            />
-          ))}
+      <Section label="favorites">
+        <ul className="favs">
+          {FAVORITES.map((item) => {
+            const link = linkFor(item);
+            return (
+              <li key={item.id} className="fav">
+                <a className="fav__main" href={link?.href ?? '#'} target="_blank" rel="noreferrer">
+                  <img className="fav__icon" src={logoFor(item)} alt="" aria-hidden />
+                  <span className="fav__text">
+                    <span className="fav__name">{item.title}</span>
+                    <span className="fav__blurb">{FAVORITE_LINES[item.id] ?? item.blurb}</span>
+                  </span>
+                </a>
+                {item.github && (
+                  <a className="fav__gh" href={item.github} target="_blank" rel="noreferrer" aria-label={`${item.title} source on GitHub`} title="Source on GitHub">
+                    <GitHubMark />
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </Section>
 
-      <Section label="side projects">
+      <Section label="work">
         <ul className="lrows">
-          {SIDE.map((item) => {
-            const link = linkFor(item);
-            return (
-              <LeaderRow
-                key={item.id}
-                logo={logoFor(item)}
-                github={link?.label === 'live' ? item.github : undefined}
-                name={
-                  link ? (
-                    <a href={link.href} target="_blank" rel="noreferrer">
-                      <span className="uline">{item.title}</span>
-                    </a>
-                  ) : (
-                    item.title
-                  )
-                }
-                note={item.year}
-              />
+          {WORK.map((item) => {
+            const link = item.kind === 'project' ? linkFor(item) : null;
+            const name = link ? (
+              <a href={link.href} target="_blank" rel="noreferrer">
+                <span className="uline">{item.title}</span>
+              </a>
+            ) : PROJECT_PAGES[item.id] ? (
+              <Link to={`/work/${item.id}`}>
+                <span className="uline">{item.title}</span>
+              </Link>
+            ) : (
+              item.title
             );
+            return <LeaderRow key={item.id} logo={logoFor(item)} github={link?.label === 'live' ? item.github : undefined} name={name} note={item.year} />;
           })}
         </ul>
       </Section>
