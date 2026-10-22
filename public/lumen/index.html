@@ -10,188 +10,214 @@
   <meta property="og:image" content="https://kmrnn.dev/projects/lumen/meter.png" />
   <meta property="og:url" content="https://kmrnn.dev/lumen/" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#0a0a0a" />
   <link rel="icon" type="image/png" sizes="64x64" href="/projects/lumen/icon-64.png" />
   <link rel="apple-touch-icon" sizes="512x512" href="/projects/lumen/icon-512.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" />
   <style>
+    /* Lumen's own world: near-black, warm amber, numerals that read in the dark. */
     :root {
-      --bg: #000; --ink: #f5f5f7; --ink-70: rgba(245,245,247,.7); --ink-55: rgba(245,245,247,.55); --ink-30: rgba(245,245,247,.3); --ink-12: rgba(255,255,255,.12); --ink-06: rgba(255,255,255,.06);
-      --card: #0d0d0f; --card-2: #141416; --amber: #f5a524;
-      --font: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-      --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
-      --maxw: 980px; --radius: 18px; --ease: cubic-bezier(.22,1,.36,1);
+      --bg: #0a0a0a; --panel: #141414; --panel-2: #1b1b1b; --line: #262626; --line-2: #333;
+      --ink: #f2efe8; --ink-2: #b8b3a8; --muted: #7d786f; --amber: #f5a524; --amber-2: #ffc457; --amber-dim: rgba(245,165,36,.16);
+      --sans: 'Instrument Sans', system-ui, -apple-system, sans-serif; --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+      --r: 16px; --ease: cubic-bezier(.16,1,.3,1); --maxw: 1080px;
     }
     * { box-sizing: border-box; }
     html { background: var(--bg); scroll-behavior: smooth; }
-    body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-    a { color: inherit; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
     img { max-width: 100%; height: auto; display: block; }
-    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
-    .mono { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--ink-55); text-transform: uppercase; }
-    .r { opacity: 0; filter: blur(14px); transform: translateY(28px); transition: opacity 1.1s var(--ease), filter 1.1s var(--ease), transform 1.1s var(--ease); }
-    .r.in { opacity: 1; filter: blur(0); transform: none; }
-    .r.d1 { transition-delay: .08s } .r.d2 { transition-delay: .16s } .r.d3 { transition-delay: .24s } .r.d4 { transition-delay: .32s } .r.d5 { transition-delay: .40s }
-    @media (prefers-reduced-motion: reduce) { .r { transition: none; opacity: 1; filter: none; transform: none; } }
-    header.top { position: fixed; top: 16px; left: 0; right: 0; z-index: 50; display: flex; justify-content: center; pointer-events: none; }
-    .pillnav { pointer-events: auto; display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 12px; border-radius: 999px; background: rgba(20,20,24,.62); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); box-shadow: 0 10px 40px -10px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.09); transition: transform .5s var(--ease); }
-    .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; font-size: 14px; padding-right: 10px; margin-right: 4px; border-right: 1px solid var(--ink-12); }
-    .brand img { width: 22px; height: 22px; border-radius: 6px; }
-    .pillnav a.lnk { text-decoration: none; color: var(--ink-70); font-size: 13.5px; padding: 7px 12px; border-radius: 999px; transition: color .2s, background .2s; }
-    .pillnav a.lnk:hover { color: var(--ink); background: var(--ink-06); }
-    .pillnav a.pill { text-decoration: none; background: var(--amber); color: #000; padding: 7px 14px; border-radius: 999px; font-weight: 600; font-size: 13.5px; margin-left: 4px; transition: transform .25s var(--ease); }
-    .pillnav a.pill:hover { transform: translateY(-1px); }
-    header.top.hide .pillnav { transform: translateY(-80px); }
-    .hero { position: relative; padding: 140px 0 40px; text-align: center; overflow: hidden; }
-    .hero::before { content: ""; position: absolute; left: 50%; top: 0; width: 1100px; height: 700px; transform: translateX(-50%); background: radial-gradient(ellipse at center top, rgba(245,165,36,.12) 0%, rgba(245,165,36,.03) 35%, transparent 70%); pointer-events: none; }
-    .hero img.icon { width: 112px; height: 112px; border-radius: 28px; margin: 0 auto 26px; filter: drop-shadow(0 20px 40px rgba(0,0,0,.6)); }
-    h1 { font-size: clamp(40px, 7.5vw, 76px); line-height: 1.0; letter-spacing: -.035em; margin: 0 0 20px; font-weight: 650; }
-    .lede { font-size: clamp(18px, 2.4vw, 23px); color: var(--ink-70); max-width: 620px; margin: 0 auto 34px; line-height: 1.4; }
-    .cta { display: inline-flex; align-items: center; gap: 10px; background: var(--amber); color: #000; text-decoration: none; padding: 15px 24px; border-radius: 999px; font-weight: 600; font-size: 16px; transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
-    .cta:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(245,165,36,.28); }
-    .cta svg { width: 18px; height: 18px; }
-    .req { margin-top: 18px; }
-    .req span + span::before { content: "·"; margin: 0 10px; }
-    .phones { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin: 64px auto 0; max-width: 860px; }
-    .phones img { width: 30%; border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,.9), 0 0 0 1px var(--ink-12); }
-    .phones img:nth-child(2) { width: 34%; }
-    section { padding: 120px 0 0; }
-    .eyebrow { margin-bottom: 14px; }
-    h2 { font-size: clamp(30px, 4.6vw, 48px); letter-spacing: -.03em; line-height: 1.05; margin: 0 0 14px; font-weight: 650; }
-    .sub { color: var(--ink-70); margin: 0 0 44px; max-width: 620px; font-size: 18px; }
-    .center { text-align: center; } .center .sub { margin-left: auto; margin-right: auto; }
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .step { background: linear-gradient(180deg, var(--card-2), var(--card)); border: 1px solid var(--ink-06); border-radius: var(--radius); padding: 28px 24px; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; }
-    .step .n { font-family: var(--mono); font-size: 44px; letter-spacing: -.04em; color: var(--ink-30); margin-bottom: auto; line-height: 1; }
-    .step h3 { margin: 18px 0 6px; font-size: 18px; letter-spacing: -.01em; }
-    .step p { margin: 0; color: var(--ink-70); font-size: 15px; }
-    code { font-family: var(--mono); font-size: .88em; background: var(--ink-06); padding: 1px 6px; border-radius: 6px; color: var(--ink); }
-    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .feat { background: var(--card); border: 1px solid var(--ink-06); border-radius: var(--radius); padding: 26px 22px; transition: border-color .3s, transform .5s var(--ease); }
-    .feat:hover { border-color: var(--ink-12); transform: translateY(-3px); }
-    .feat .ic { width: 34px; height: 34px; border-radius: 10px; background: var(--ink-06); display: grid; place-items: center; margin-bottom: 16px; }
-    .feat .ic svg { width: 18px; height: 18px; stroke: var(--amber); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .feat h3 { margin: 0 0 6px; font-size: 16.5px; letter-spacing: -.01em; }
-    .feat p { margin: 0; color: var(--ink-70); font-size: 14.5px; }
+    h1, h2, h3 { margin: 0; font-weight: 500; letter-spacing: -.02em; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+    .cap { font: 500 11px/16px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+    .r { opacity: 0; transform: translateY(16px); transition: opacity .9s var(--ease), transform .9s var(--ease); }
+    .r.in { opacity: 1; transform: none; }
+    .r.d1 { transition-delay: .08s } .r.d2 { transition-delay: .16s } .r.d3 { transition-delay: .24s }
+    @media (prefers-reduced-motion: reduce) { .r { transition: none; opacity: 1; transform: none; } }
+
+    .top { position: fixed; top: 0; left: 0; right: 0; z-index: 20; }
+    .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; font: 500 15px/1 var(--sans); letter-spacing: .02em; }
+    .brand img { width: 26px; height: 26px; border-radius: 7px; }
+    .nav { display: flex; gap: 22px; font: 500 13px/1 var(--mono); letter-spacing: .04em; color: var(--ink-2); }
+    .nav a:hover { color: var(--amber); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 46px; padding: 0 22px; border-radius: 999px; font: 500 14px/1 var(--sans); background: var(--amber); color: #1a1000; transition: background .15s, transform .15s; }
+    .btn:hover { background: var(--amber-2); transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: var(--ink); border: 1px solid var(--line-2); }
+    .btn-ghost:hover { background: var(--panel); border-color: var(--ink-2); }
+
+    /* hero: the dial */
+    .hero { min-height: 100svh; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; padding: 96px 0 56px; }
+    .hero-copy { display: flex; flex-direction: column; gap: 24px; }
+    h1 { font-size: clamp(40px, 5.6vw, 66px); line-height: 1.02; font-weight: 500; letter-spacing: -.03em; }
+    h1 em { font-style: normal; color: var(--amber); }
+    .lede { color: var(--ink-2); font-size: 18px; max-width: 42ch; margin: 0; }
+    .facts { display: flex; gap: 18px; flex-wrap: wrap; font: 400 12px/1 var(--mono); color: var(--muted); letter-spacing: .04em; }
+    .meter { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 28px; padding: 26px 26px 22px; display: flex; flex-direction: column; gap: 18px; user-select: none; -webkit-user-select: none; touch-action: none; }
+    .meter .hd { display: flex; justify-content: space-between; align-items: baseline; }
+    .meter .ev { font: 500 34px/1 var(--mono); letter-spacing: -.03em; }
+    .meter .ev small { font-size: 14px; color: var(--muted); margin-left: 6px; letter-spacing: 0; }
+    .dial { position: relative; aspect-ratio: 2 / 1.15; overflow: hidden; cursor: ew-resize; }
+    .dial svg { width: 100%; height: auto; display: block; }
+    .dial .needle { transform-origin: 200px 200px; transition: transform .35s var(--ease); }
+    .read { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .read .box { background: var(--panel-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+    .read .box.hot { border-color: var(--amber); box-shadow: inset 0 0 0 1px var(--amber); }
+    .read b { font: 500 26px/1.1 var(--mono); letter-spacing: -.02em; }
+    .read b sup { font-size: 12px; color: var(--amber); vertical-align: top; margin-left: 4px; font-weight: 500; }
+    .read span { font-size: 12px; color: var(--muted); }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chip { font: 500 12px/1 var(--mono); padding: 8px 11px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--ink-2); cursor: pointer; background: transparent; transition: border-color .15s, color .15s, background .15s; }
+    .chip:hover { color: var(--ink); border-color: var(--ink-2); }
+    .chip.on { background: var(--amber-dim); border-color: var(--amber); color: var(--amber-2); }
+    .meter .hint { font-size: 12px; color: var(--muted); text-align: center; }
+    .meter .corr { font: 400 12px/1.4 var(--mono); color: var(--amber-2); min-height: 17px; }
+
+    section { padding: 110px 0 0; }
+    .head { margin-bottom: 36px; max-width: 60ch; }
+    h2 { font-size: clamp(28px, 3.8vw, 44px); line-height: 1.06; }
+    .sub { color: var(--ink-2); margin: 12px 0 0; font-size: 17px; max-width: 54ch; }
+
+    /* three steps as a film strip */
+    .strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
+    .frame { background: var(--panel); padding: 28px 24px 26px; display: flex; flex-direction: column; gap: 14px; min-height: 230px; }
+    .frame .n { font: 700 12px/1 var(--mono); color: var(--amber); letter-spacing: .1em; }
+    .frame h3 { font-size: 20px; margin-top: auto; }
+    .frame p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+    .two img { border-radius: 30px; border: 1px solid var(--line-2); max-width: 320px; margin: 0 auto; box-shadow: 0 40px 100px -40px rgba(245,165,36,.25); }
+    .list { display: flex; flex-direction: column; }
+    .li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 18px 0; border-top: 1px solid var(--line); }
+    .li:last-child { border-bottom: 1px solid var(--line); }
+    .li .k { font: 500 13px/1.3 var(--mono); color: var(--amber); padding-top: 3px; }
+    .li b { display: block; font-weight: 500; font-size: 16px; margin-bottom: 3px; }
+    .li p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+
+    /* films */
+    .films { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 48px; }
+    .film { display: grid; grid-template-columns: 1fr auto auto; gap: 16px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
+    .film .mk { color: var(--muted); font-size: 12px; font-family: var(--mono); }
+    .film .iso { font-family: var(--mono); font-size: 13px; color: var(--ink-2); }
+    .film .rp { font-family: var(--mono); font-size: 12px; color: var(--amber); min-width: 52px; text-align: right; }
+    .film .rp.none { color: var(--muted); }
+
     .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
     .gallery figure { margin: 0; }
-    .gallery img { border-radius: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.8), 0 0 0 1px var(--ink-06); }
-    .gallery figcaption { font-family: var(--mono); font-size: 12px; letter-spacing: .03em; color: var(--ink-55); padding: 12px 4px 0; }
-    .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px; }
-    .cat { display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--ink-06); font-size: 15px; }
-    .cat b { font-weight: 600; white-space: nowrap; }
-    .cat span { font-family: var(--mono); font-size: 12.5px; color: var(--ink-55); text-align: right; }
-    .pro { border-radius: 26px; padding: 56px 48px; background: radial-gradient(ellipse at top left, rgba(245,165,36,.14), transparent 60%), var(--card); border: 1px solid var(--ink-06); display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
-    .pro ul { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 14px; color: var(--ink-70); font-size: 15px; }
-    .pro li { padding-left: 22px; position: relative; }
-    .pro li::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 99px; background: var(--amber); }
-    .pro img { border-radius: 22px; box-shadow: 0 30px 80px rgba(0,0,0,.8), 0 0 0 1px var(--ink-06); max-width: 300px; margin: 0 auto; }
-    .privacy { border-radius: 26px; padding: 56px 48px; background: var(--card); border: 1px solid var(--ink-06); }
-    .privacy ul { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 32px; color: var(--ink-70); font-size: 15px; }
-    .privacy li { padding-left: 22px; position: relative; }
-    .privacy li::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 99px; background: var(--ink); }
-    .final { text-align: center; padding: 140px 0 40px; }
-    .final img { width: 84px; height: 84px; border-radius: 22px; margin: 0 auto 22px; }
-    footer { margin-top: 60px; padding: 28px 0 56px; border-top: 1px solid var(--ink-06); color: var(--ink-55); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; justify-content: space-between; }
-    footer a { color: var(--ink-70); text-decoration: none; }
-    footer a:hover { color: var(--ink); }
-    @media (max-width: 760px) {
-      .steps, .features, .cats, .privacy ul, .pro { grid-template-columns: 1fr; }
+    .gallery img { border-radius: 22px; border: 1px solid var(--line-2); }
+    .gallery figcaption { font: 400 12px/1.4 var(--mono); color: var(--muted); padding: 12px 4px 0; letter-spacing: .02em; }
+
+    .pro { border: 1px solid var(--line-2); border-radius: 28px; padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; background: radial-gradient(ellipse at top left, var(--amber-dim), transparent 55%), var(--panel); }
+    .pro .price { font: 500 56px/1 var(--mono); letter-spacing: -.04em; color: var(--amber); margin: 20px 0 6px; }
+    .pro .price small { font-size: 14px; color: var(--muted); letter-spacing: 0; margin-left: 10px; }
+    .pro ul { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 12px; color: var(--ink-2); font-size: 15px; }
+    .pro li b { color: var(--ink); font-weight: 500; }
+    .pro img { border-radius: 26px; border: 1px solid var(--line-2); max-width: 280px; margin: 0 auto; }
+
+    .quiet { text-align: center; padding: 120px 0 60px; }
+    .quiet p { color: var(--ink-2); margin: 10px auto 26px; max-width: 46ch; }
+    footer { border-top: 1px solid var(--line); padding: 24px 0 56px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 400 12px/1 var(--mono); color: var(--muted); letter-spacing: .04em; }
+    footer a:hover { color: var(--amber); }
+
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 88px; }
+      .strip, .two, .pro, .films { grid-template-columns: 1fr; }
       .gallery { grid-template-columns: repeat(2, 1fr); }
-      .phones { gap: 10px; } .phones img, .phones img:nth-child(2) { width: 32%; border-radius: 16px; }
-      .privacy, .pro { padding: 36px 24px; }
-      section { padding-top: 90px; }
-      .pillnav .nohide-sm { display: none; }
+      .nav .hide-sm { display: none; }
+      section { padding-top: 80px; }
     }
   </style>
 </head>
 <body>
-  <header class="top" id="top">
-    <nav class="pillnav">
-      <a class="brand" href="/lumen/"><img src="/projects/lumen/icon-64.png" srcset="/projects/lumen/icon-64.png 1x, /projects/lumen/icon-512.png 2x" alt="" />Lumen</a>
-      <a class="lnk nohide-sm" href="#how">How it works</a>
-      <a class="lnk nohide-sm" href="#films">Films</a>
-      <a class="lnk" href="#pro">Pro</a>
-      <a class="pill" href="#gallery">See the app</a>
-    </nav>
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="/lumen/"><img src="/projects/lumen/icon-64.png" alt="" />Lumen</a>
+      <nav class="nav">
+        <a class="hide-sm" href="#how">HOW</a>
+        <a class="hide-sm" href="#films">FILMS</a>
+        <a href="#pro">PRO</a>
+      </nav>
+    </div>
   </header>
 
   <main>
-    <section class="hero">
-      <div class="wrap">
-        <img class="icon r" src="/projects/lumen/icon-512.png" alt="Lumen app icon" />
-        <h1 class="r d1">A light meter<br />that stays out of your way.</h1>
-        <p class="lede r d2">Point your iPhone at the scene, pick a film, drag the dial. Lumen gives you the aperture and shutter speed, with reciprocity already applied. Then you put the phone away.</p>
-        <div class="r d3">
-          <a class="cta" href="#gallery">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M3 12s3.5-7 9-7 9 7 9 7-3.5 7-9 7-9-7-9-7z"/></svg>
-            See it in action
-          </a>
+    <section class="hero wrap">
+      <div class="hero-copy">
+        <span class="cap r">Light meter · iPhone</span>
+        <h1 class="r d1">A light meter that <em>stays out of your way.</em></h1>
+        <p class="lede r d2">Point the phone at the scene, pick a film, drag the dial. Lumen hands you the aperture and shutter with reciprocity already applied. Then you put it away and shoot.</p>
+        <div class="r d3" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="#gallery">See the app</a><a class="btn btn-ghost" href="#how">How it meters</a></div>
+        <div class="facts r d3"><span>30 FILM STOCKS</span><span>ND TO 20 STOPS</span><span>RECIPROCITY BUILT IN</span></div>
+      </div>
+
+      <div class="meter r d1" id="meter" aria-label="Interactive exposure dial">
+        <div class="hd"><span class="cap">Metered</span><span class="ev"><span id="ev">11.8</span><small>EV</small></span></div>
+        <div class="dial" id="dial">
+          <svg viewBox="0 0 400 230" aria-hidden="true">
+            <defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#333"/><stop offset="1" stop-color="#f5a524"/></linearGradient></defs>
+            <path d="M40 200 A160 160 0 0 1 360 200" fill="none" stroke="#262626" stroke-width="2"/>
+            <path id="arc" d="M40 200 A160 160 0 0 1 360 200" fill="none" stroke="url(#g)" stroke-width="3" stroke-dasharray="503" stroke-dashoffset="503"/>
+            <g id="ticks" stroke="#4a4a4a" stroke-width="2"></g>
+            <g id="labels" font-family="JetBrains Mono, monospace" font-size="11" fill="#7d786f" text-anchor="middle"></g>
+            <g class="needle" id="needle"><line x1="200" y1="200" x2="200" y2="62" stroke="#f5a524" stroke-width="3" stroke-linecap="round"/><circle cx="200" cy="200" r="7" fill="#0a0a0a" stroke="#f5a524" stroke-width="3"/></g>
+          </svg>
         </div>
-        <div class="req mono r d4"><span>iPhone</span><span>30 film stocks</span><span>Free, Pro is one purchase</span></div>
-        <div class="phones r d5">
-          <img src="/projects/lumen/long-exposure.png" alt="Lumen metering a long exposure at ƒ/724 for 2 minutes" />
-          <img src="/projects/lumen/meter.png" alt="Lumen's meter: EV 11.8, FP4+ at ISO 125 behind an ND1000, 2 minutes with reciprocity" />
-          <img src="/projects/lumen/kits.png" alt="Saved kits in Lumen" />
+        <div class="read">
+          <div class="box hot"><span>Aperture · locked</span><b class="num" id="ap">ƒ/8</b></div>
+          <div class="box"><span>Shutter · FP4+ 125</span><b class="num" id="sh">1/15</b></div>
         </div>
+        <div class="corr num" id="corr"></div>
+        <div class="chips" id="aps" role="radiogroup" aria-label="Aperture"></div>
+        <div class="chips" id="nds" role="radiogroup" aria-label="ND filter"></div>
+        <p class="hint">Drag across the dial to change the light. Pick an aperture and a filter.</p>
       </div>
     </section>
 
     <section id="how">
       <div class="wrap">
-        <div class="mono eyebrow r">How it works</div>
-        <h2 class="r d1">Meter. Set the camera. Shoot.</h2>
-        <p class="sub r d2">The camera on your phone is the meter. Everything else is the arithmetic you used to do in your head.</p>
-        <div class="steps">
-          <div class="step r"><div class="n">01</div><h3>Point and read</h3><p>A live reading in EV, average or spot. Tap <em>Hold</em> to lock it while you recompose.</p></div>
-          <div class="step r d1"><div class="n">02</div><h3>Pick your film</h3><p>Ilford, Kodak, Fujifilm, Kentmere, CineStill. The ISO is set, and so is the reciprocity curve for exposures that run long.</p></div>
-          <div class="step r d2"><div class="n">03</div><h3>Drag the dial</h3><p>Lock the aperture and the shutter follows, or the other way round. Full, half or third stops, your call.</p></div>
+        <div class="head r"><span class="cap">How it meters</span><h2>Three moves. No menus.</h2><p class="sub">The camera on your phone is the meter. Everything else is the arithmetic you used to do in your head.</p></div>
+        <div class="strip r d1">
+          <div class="frame"><span class="n">01 — READ</span><h3>Point and hold</h3><p>A live reading in EV, average or spot. Tap Hold to lock it while you recompose, or while the light is changing.</p></div>
+          <div class="frame"><span class="n">02 — FILM</span><h3>Pick the stock</h3><p>The ISO is set, and so is the reciprocity curve for exposures that run long. Thirty films from Ilford, Kodak, Fujifilm, Kentmere and CineStill.</p></div>
+          <div class="frame"><span class="n">03 — DIAL</span><h3>Drag to the exposure</h3><p>Lock the aperture and the shutter follows, or the other way round. Full, half or third stops, with a click under your thumb at every one.</p></div>
         </div>
       </div>
     </section>
 
     <section>
-      <div class="wrap">
-        <div class="mono eyebrow r">Details</div>
-        <h2 class="r d1">The parts that matter on a tripod at dusk.</h2>
-        <p class="sub r d2">Long exposures are where meters go wrong. Lumen does the maths film makers publish and most apps skip.</p>
-        <div class="features">
-          <div class="feat r"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Reciprocity, built in</h3><p>FP4+ at a metered 30 seconds is really a minute and a half. Lumen shows the corrected time, and how much it added.</p></div>
-          <div class="feat r d1"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" opacity=".5"/></svg></div><h3>ND filters to 20 stops</h3><p>ND2 to ND1000 and beyond. Minutes-long exposures come out exact, not "about two minutes".</p></div>
-          <div class="feat r d2"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><h3>Saved kits</h3><p>Camera, lens and film as one preset. Switch between the Nikon with HP5 and the Hasselblad with Portra in a tap.</p></div>
-          <div class="feat r"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 20v-6M6 20v-10M18 20v-14"/></svg></div><h3>Compensation and calibration</h3><p>Dial in exposure compensation, and an offset so Lumen agrees with the meter or camera you already trust.</p></div>
-          <div class="feat r d1"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg></div><h3>Haptics on every stop</h3><p>The dial clicks under your thumb, so you can set it without looking down.</p></div>
-          <div class="feat r d2"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><h3>Account optional</h3><p>Sign in to sync kits across devices. Don't, and everything stays on the phone.</p></div>
+      <div class="wrap two">
+        <div>
+          <div class="head r"><span class="cap">Long exposures</span><h2>Where other meters stop being honest.</h2><p class="sub">Past a second, film slows down. Lumen does the maths the makers publish and most apps skip.</p></div>
+          <div class="list r d1">
+            <div class="li"><span class="k">×1.26</span><div><b>Reciprocity, per stock</b><p>FP4+ at a metered 30 seconds is really 73. HP5+ is 87. Lumen shows the corrected time and how much it added.</p></div></div>
+            <div class="li"><span class="k">ND1000</span><div><b>Filters to 20 stops</b><p>ND2 through ND1000 and beyond. A two-minute exposure comes out as two minutes, not "about two".</p></div></div>
+            <div class="li"><span class="k">±0.0</span><div><b>Calibration</b><p>Compare against a meter or camera you trust, then nudge the offset until the readings agree.</p></div></div>
+            <div class="li"><span class="k">EC</span><div><b>Compensation</b><p>Exposure compensation on the readout, so overexposing Portra by a stop is one tap, not a recalculation.</p></div></div>
+          </div>
         </div>
+        <img class="r d2" src="/projects/lumen/long-exposure.png" alt="Lumen metering a long exposure: ƒ/724 for 2 minutes, reciprocity 7 minutes 22 seconds" />
       </div>
     </section>
 
-    <section class="center" id="gallery">
+    <section id="gallery">
       <div class="wrap">
-        <div class="mono eyebrow r">A look around</div>
-        <h2 class="r d1">Dark, quiet, one thumb.</h2>
-        <p class="sub r d2">Built to be used at night without lighting up the room.</p>
+        <div class="head r"><span class="cap">The app</span><h2>Dark, quiet, one thumb.</h2><p class="sub">Built to be used at night without lighting up the room.</p></div>
         <div class="gallery">
           <figure class="r"><img src="/projects/lumen/welcome.png" alt="Lumen's welcome screen" /><figcaption>welcome</figcaption></figure>
-          <figure class="r d1"><img src="/projects/lumen/meter.png" alt="The meter with FP4+ behind an ND1000" /><figcaption>fp4+ · nd1000 · 2 min</figcaption></figure>
-          <figure class="r d2"><img src="/projects/lumen/settings.png" alt="Settings: account, stop increments, lens, calibration" /><figcaption>settings — stops, lens, calibration</figcaption></figure>
-          <figure class="r d3"><img src="/projects/lumen/account.png" alt="Create an account to sync kits" /><figcaption>optional account — sync kits</figcaption></figure>
+          <figure class="r d1"><img src="/projects/lumen/meter.png" alt="The meter: FP4+ behind an ND1000, 2 minutes" /><figcaption>fp4+ · nd1000 · 2 min</figcaption></figure>
+          <figure class="r d2"><img src="/projects/lumen/kits.png" alt="Saved kits" /><figcaption>kits — camera, lens, film</figcaption></figure>
+          <figure class="r d3"><img src="/projects/lumen/settings.png" alt="Settings" /><figcaption>stops · lens · calibration</figcaption></figure>
         </div>
       </div>
     </section>
 
     <section id="films">
       <div class="wrap">
-        <div class="mono eyebrow r">Films</div>
-        <h2 class="r d1">Thirty stocks, with their curves.</h2>
-        <p class="sub r d2">Where a maker publishes reciprocity data, Lumen uses it. Where they don't, it tells you the time is uncorrected.</p>
-        <div class="cats">
-          <div class="cat r"><b>Ilford</b><span>Pan F+, FP4+, HP5+, Delta 100 / 400 / 3200, XP2, SFX, Ortho+</span></div>
-          <div class="cat r"><b>Kodak</b><span>Portra 160 / 400 / 800, Ektar, Gold, UltraMax, Tri-X, T-Max 100 / 400</span></div>
-          <div class="cat r d1"><b>Fujifilm</b><span>Velvia 50, Provia 100F, Acros II</span></div>
-          <div class="cat r d1"><b>Kentmere</b><span>100, 400</span></div>
-          <div class="cat r d2"><b>CineStill</b><span>800T, 50D</span></div>
-          <div class="cat r d2"><b>Anything else</b><span>set the ISO by hand</span></div>
-        </div>
+        <div class="head r"><span class="cap">Films</span><h2>Thirty stocks, with their curves.</h2><p class="sub">The number on the right is the reciprocity exponent Lumen applies past one second. A dash means the maker publishes none, and the time stays uncorrected.</p></div>
+        <div class="films r d1" id="film-list"></div>
       </div>
     </section>
 
@@ -199,13 +225,13 @@
       <div class="wrap">
         <div class="pro r">
           <div>
-            <div class="mono eyebrow">Lumen Pro</div>
+            <span class="cap">Lumen Pro</span>
             <h2>One purchase. Yours for good.</h2>
-            <p class="sub" style="margin-bottom:0">The meter is free. Pro adds the two things long-exposure shooters asked for, and it never renews.</p>
+            <div class="price">$9.99<small>ONE TIME · NO SUBSCRIPTION</small></div>
             <ul>
               <li><b>ND filters.</b> Meter through anything from ND2 to 20 stops, with exact long exposures.</li>
               <li><b>Saved kits.</b> Camera, lens and film setups one tap away, synced to your account.</li>
-              <li><b>Support an independent app.</b> Everything else in Lumen stays free.</li>
+              <li><b>Everything else stays free.</b> The meter, the films, the dial.</li>
             </ul>
           </div>
           <img src="/projects/lumen/pro.png" alt="The Lumen Pro screen" />
@@ -213,36 +239,17 @@
       </div>
     </section>
 
-    <section>
+    <section class="quiet">
       <div class="wrap">
-        <div class="privacy r">
-          <div class="mono eyebrow">Privacy</div>
-          <h2>The camera is a meter, not a camera.</h2>
-          <p class="sub" style="margin-bottom:0">Lumen reads light. It never saves or uploads a frame.</p>
-          <ul>
-            <li>No photos are stored. The preview is only there so you can see what you're metering.</li>
-            <li>No account is needed. With one, the only thing synced is your list of kits.</li>
-            <li>No analytics, no ads, no tracking.</li>
-            <li>Purchases go through the App Store. Lumen never sees a card.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="final">
-      <div class="wrap">
-        <img class="r" src="/projects/lumen/icon-512.png" alt="" />
-        <h2 class="r d1">Meter it. Shoot it.</h2>
-        <p class="r d2" style="margin:0 0 28px; color: var(--ink-70)">Lumen is in testing on iPhone. The App Store release is next.</p>
-        <div class="mono r d3"><span>iOS 17+</span> · <span>Free</span> · <span>Pro is one purchase</span></div>
+        <span class="cap r">Privacy</span>
+        <h2 class="r d1">The camera is a meter, not a camera.</h2>
+        <p class="r d2">Lumen reads light. It never saves or uploads a frame. No account is needed; with one, the only thing synced is your list of kits. No analytics, no ads.</p>
+        <div class="facts r d3" style="justify-content:center"><span>IOS 17+</span><span>FREE · PRO IS ONE PURCHASE</span><span>IN TESTING · APP STORE NEXT</span></div>
       </div>
     </section>
 
     <div class="wrap">
-      <footer>
-        <span>Lumen © 2026 Kumaran Nathan</span>
-        <span><a href="/">kmrnn.dev</a></span>
-      </footer>
+      <footer><span>LUMEN © 2026 KUMARAN NATHAN</span><a href="/">KMRNN.DEV</a></footer>
     </div>
   </main>
 
@@ -250,15 +257,71 @@
   (function () {
     var els = document.querySelectorAll('.r');
     if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+      var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { rootMargin: '0px 0px -8% 0px', threshold: .05 });
       els.forEach(function (el) { io.observe(el); });
     } else { els.forEach(function (el) { el.classList.add('in'); }); }
-    var top = document.getElementById('top'), lastY = 0;
-    window.addEventListener('scroll', function () {
-      var y = window.scrollY; top.classList.toggle('hide', y > lastY && y > 120); lastY = y;
-    }, { passive: true });
+
+    // ---- the dial: real exposure arithmetic, FP4+ 125 with its reciprocity exponent ----
+    var ISO = 125, P = 1.26, EV_MIN = -2, EV_MAX = 17;
+    var ev = 11.8, ap = 8, nd = 0;
+    var APS = [1.4, 2, 2.8, 4, 5.6, 8, 11, 16, 22], NDS = [[0, 'none'], [3, 'ND8'], [6, 'ND64'], [10, 'ND1000'], [15, 'ND32K']];
+    var ticks = document.getElementById('ticks'), labels = document.getElementById('labels');
+    var tk = '', lb = '';
+    for (var e = EV_MIN; e <= EV_MAX; e++) {
+      var a = ang(e), big = e % 5 === 0, r1 = big ? 142 : 150, r2 = 160;
+      tk += '<line x1="' + px(a, r1) + '" y1="' + py(a, r1) + '" x2="' + px(a, r2) + '" y2="' + py(a, r2) + '"' + (big ? ' stroke="#8a8578"' : '') + '/>';
+      if (big) lb += '<text x="' + px(a, 128) + '" y="' + (py(a, 128) + 4) + '">' + e + '</text>';
+    }
+    ticks.innerHTML = tk; labels.innerHTML = lb;
+    function ang(v) { return Math.PI - (v - EV_MIN) / (EV_MAX - EV_MIN) * Math.PI; }
+    function px(a, r) { return (200 + Math.cos(a) * r).toFixed(1); }
+    function py(a, r) { return (200 - Math.sin(a) * r).toFixed(1); }
+
+    function shutter(t) {
+      if (t >= 60) { var m = Math.floor(t / 60), s = Math.round(t - m * 60); return s ? m + 'm ' + s + 's' : m + 'm'; }
+      if (t >= 1) return (t < 10 ? t.toFixed(1) : Math.round(t)) + 's';
+      var d = 1 / t; var stops = [2, 4, 8, 15, 30, 60, 125, 250, 500, 1000, 2000, 4000, 8000];
+      var best = stops[0]; stops.forEach(function (s) { if (Math.abs(Math.log2(s / d)) < Math.abs(Math.log2(best / d))) best = s; });
+      return '1/' + best;
+    }
+    function render() {
+      var deg = (ev - EV_MIN) / (EV_MAX - EV_MIN) * 180 - 90;
+      document.getElementById('needle').style.transform = 'rotate(' + deg + 'deg)';
+      document.getElementById('arc').setAttribute('stroke-dashoffset', 503 - (ev - EV_MIN) / (EV_MAX - EV_MIN) * 503);
+      document.getElementById('ev').textContent = ev.toFixed(1);
+      var evIso = ev + Math.log2(ISO / 100) - nd;
+      var t = ap * ap / Math.pow(2, evIso);
+      var corrected = t > 1 ? Math.pow(t, P) : t;
+      document.getElementById('ap').textContent = 'ƒ/' + ap;
+      document.getElementById('sh').innerHTML = shutter(corrected) + (t > 1 ? '<sup>RECIP</sup>' : '');
+      document.getElementById('corr').textContent = t > 1 ? 'metered ' + shutter(t) + ' → ' + shutter(corrected) + ' with FP4+ reciprocity' + (nd ? ' · ' + nd + ' stops of ND' : '') : (nd ? nd + ' stops of ND' : '');
+    }
+    function chips(id, list, get, set, label) {
+      var el = document.getElementById(id);
+      el.innerHTML = list.map(function (v) { var val = Array.isArray(v) ? v[0] : v, txt = Array.isArray(v) ? v[1] : label(v); return '<button type="button" class="chip' + (val === get() ? ' on' : '') + '" data-v="' + val + '" role="radio" aria-checked="' + (val === get()) + '">' + txt + '</button>'; }).join('');
+      el.onclick = function (e) { var b = e.target.closest('.chip'); if (!b) return; set(+b.dataset.v); chips(id, list, get, set, label); render(); };
+    }
+    chips('aps', APS, function () { return ap; }, function (v) { ap = v; }, function (v) { return 'ƒ/' + v; });
+    chips('nds', NDS, function () { return nd; }, function (v) { nd = v; });
+
+    // drag across the dial to change the light
+    var dial = document.getElementById('dial'), drag = null;
+    dial.addEventListener('pointerdown', function (e) { drag = { x: e.clientX, ev: ev }; dial.setPointerCapture(e.pointerId); });
+    dial.addEventListener('pointermove', function (e) { if (!drag) return; var w = dial.clientWidth; ev = Math.max(EV_MIN, Math.min(EV_MAX, drag.ev + (e.clientX - drag.x) / w * (EV_MAX - EV_MIN))); render(); });
+    dial.addEventListener('pointerup', function () { drag = null; });
+    dial.addEventListener('pointercancel', function () { drag = null; });
+    dial.addEventListener('wheel', function (e) { e.preventDefault(); ev = Math.max(EV_MIN, Math.min(EV_MAX, ev - e.deltaY / 240)); render(); }, { passive: false });
+    render();
+
+    // ---- films ----
+    var films = [
+      ['Ilford', 'Pan F+ 50', 50, 1.33], ['Ilford', 'FP4+ 125', 125, 1.26], ['Ilford', 'HP5+ 400', 400, 1.31], ['Ilford', 'Delta 100', 100, 1.26], ['Ilford', 'Delta 400', 400, 1.41], ['Ilford', 'Delta 3200', 3200, 1.33], ['Ilford', 'XP2 Super', 400, 1.31], ['Ilford', 'SFX 200', 200, 1.43], ['Ilford', 'Ortho+ 80', 80, 1.25],
+      ['Kentmere', 'Kentmere 100', 100, 1.26], ['Kentmere', 'Kentmere 400', 400, 1.30],
+      ['Kodak', 'Portra 160', 160, 0], ['Kodak', 'Portra 400', 400, 0], ['Kodak', 'Portra 800', 800, 0], ['Kodak', 'Ektar 100', 100, 0], ['Kodak', 'Gold 200', 200, 0], ['Kodak', 'UltraMax 400', 400, 0], ['Kodak', 'Tri-X 400', 400, 0], ['Kodak', 'T-Max 100', 100, 0], ['Kodak', 'T-Max 400', 400, 0],
+      ['Fujifilm', 'Velvia 50', 50, 0], ['Fujifilm', 'Provia 100F', 100, 0], ['Fujifilm', 'Acros II 100', 100, 0],
+      ['CineStill', '800T', 800, 0], ['CineStill', '50D', 50, 0]
+    ];
+    document.getElementById('film-list').innerHTML = films.map(function (f) { return '<div class="film"><span><span class="mk">' + f[0] + '</span> &nbsp;' + f[1] + '</span><span class="iso">ISO ' + f[2] + '</span><span class="rp' + (f[3] ? '' : ' none') + '">' + (f[3] ? '^' + f[3].toFixed(2) : '—') + '</span></div>'; }).join('');
   })();
   </script>
 </body>
