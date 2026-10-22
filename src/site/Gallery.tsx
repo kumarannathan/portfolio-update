@@ -145,6 +145,58 @@ const FilterBar: React.FC<{
 };
 
 /* -------------------------------------------------------------------------- */
+/* tile: the blurred thumbnail sits underneath and the real image fades over it */
+/* -------------------------------------------------------------------------- */
+
+const Tile: React.FC<{ photo: Photo; morph: boolean; eager: boolean; onOpen: (id: string) => void }> = ({ photo: p, morph, eager, onOpen }) => {
+  const [loaded, setLoaded] = useState(false);
+  const ref = useRef<HTMLImageElement>(null);
+
+  // An image the browser already had is complete before onLoad can fire.
+  useEffect(() => {
+    if (ref.current?.complete && ref.current.naturalWidth > 0) setLoaded(true);
+  }, []);
+
+  const img = morph ? (
+    <motion.img
+      layoutId={`shot-${p.id}`}
+      className="tile__img is-loaded"
+      src={asset(p.srcSmall)}
+      alt=""
+      transition={{ type: 'spring', stiffness: 240, damping: 30 }}
+    />
+  ) : (
+    <img
+      ref={ref}
+      className={`tile__img${loaded ? ' is-loaded' : ''}`}
+      src={asset(p.srcSmall)}
+      width={p.w}
+      height={p.h}
+      alt=""
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+      onLoad={() => setLoaded(true)}
+    />
+  );
+
+  return (
+    <figure className="tile">
+      <div
+        className={`tile__frame${loaded || morph ? ' is-loaded' : ''}`}
+        style={{ aspectRatio: `${p.w} / ${p.h}`, backgroundImage: `url(${p.blur})` }}
+        onClick={() => onOpen(p.id)}
+      >
+        {img}
+      </div>
+      <figcaption className="tile__cap">
+        <span>{p.exif.date ?? subjectLabel(p)}</span>
+        <span className="tile__sub">{p.exif.camera ?? 'no exif'}</span>
+      </figcaption>
+    </figure>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
 /* detail                                                                      */
 /* -------------------------------------------------------------------------- */
 
@@ -294,37 +346,7 @@ const Gallery: React.FC = () => {
   return (
     <div className="shots">
       <Masonry items={shown.map((p) => ({ ...p, key: p.id }))} minColumn={narrow ? 140 : 250} maxColumns={4} gap={narrow ? 8 : 16}>
-        {(p) => (
-          <figure className="tile">
-            {morphId === p.id ? (
-              <motion.img
-                layoutId={`shot-${p.id}`}
-                className="tile__img"
-                src={asset(p.srcSmall)}
-                style={{ aspectRatio: `${p.w} / ${p.h}` }}
-                alt=""
-                onClick={() => open(p.id)}
-                transition={{ type: 'spring', stiffness: 240, damping: 30 }}
-              />
-            ) : (
-              <img
-                className="tile__img"
-                src={asset(p.srcSmall)}
-                width={p.w}
-                height={p.h}
-                style={{ aspectRatio: `${p.w} / ${p.h}` }}
-                alt=""
-                loading="lazy"
-                decoding="async"
-                onClick={() => open(p.id)}
-              />
-            )}
-            <figcaption className="tile__cap">
-              <span>{p.exif.date ?? subjectLabel(p)}</span>
-              <span className="tile__sub">{p.exif.camera ?? 'no exif'}</span>
-            </figcaption>
-          </figure>
-        )}
+        {(p) => <Tile photo={p} morph={morphId === p.id} eager={shown.indexOf(p) < 16} onOpen={open} />}
       </Masonry>
 
       {shown.length === 0 && <p className="shots__empty">nothing matches those filters.</p>}

@@ -13,19 +13,63 @@
 
 .tile {
   margin: 0;
-  /* off-screen tiles aren't laid out or decoded until they're near the viewport */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 320px;
+}
+
+/* The frame already has the photo's exact shape, so nothing moves when the image arrives.
+   Underneath: the tiny blurred thumbnail from the manifest, with a soft shimmer until the real one lands. */
+.tile__frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: zoom-in;
+  background-color: var(--black-04);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 10px 28px rgba(42, 37, 32, 0.08);
+  transform: translateZ(0);
+}
+
+.tile__frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0) 70%);
+  background-size: 250% 100%;
+  animation: tile-shimmer 1.6s ease-in-out infinite;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.tile__frame.is-loaded::before {
+  opacity: 0;
+  animation: none;
+}
+
+@keyframes tile-shimmer {
+  from { background-position: 120% 0; }
+  to { background-position: -130% 0; }
 }
 
 .tile__img {
   display: block;
   width: 100%;
-  height: auto;
-  border-radius: 8px;
-  cursor: zoom-in;
-  background: var(--black-04);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 10px 28px rgba(42, 37, 32, 0.08);
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.015);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tile__img.is-loaded {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile__frame::before { animation: none; }
+  .tile__img { transition: none; transform: none; }
 }
 
 .tile__cap {
@@ -263,7 +307,7 @@
   .tile__cap {
     display: none;
   }
-  .tile__img {
+  .tile__frame {
     border-radius: 6px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
