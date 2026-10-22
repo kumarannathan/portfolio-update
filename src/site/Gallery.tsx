@@ -127,7 +127,13 @@ const FilterBar: React.FC<{
             type="button"
             className={`fchip${picked[f.key] ? ' is-on' : ''}`}
             aria-expanded={open === f.key}
-            onClick={() => setOpen((cur) => (cur === f.key ? null : f.key))}
+            title={picked[f.key] ? `clear ${f.label}` : undefined}
+            onClick={() => {
+              if (picked[f.key]) {
+                onPick(f.key, undefined);
+                setOpen(null);
+              } else setOpen((cur) => (cur === f.key ? null : f.key));
+            }}
           >
             {picked[f.key] ?? f.label}
           </button>
@@ -217,7 +223,20 @@ const Detail: React.FC<{ photo: Photo; onClose: () => void; onStep: (dir: 1 | -1
 
 /* -------------------------------------------------------------------------- */
 
+/** Phones get two tight columns; everything else keeps the airy layout. */
+function useNarrow() {
+  const [narrow, setNarrow] = useState(() => typeof window !== 'undefined' && window.innerWidth < 640);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 639px)');
+    const on = () => setNarrow(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  return narrow;
+}
+
 const Gallery: React.FC = () => {
+  const narrow = useNarrow();
   const [picked, setPicked] = useState<Picked>({});
   const [openId, setOpenId] = useState<string | null>(null);
   // Which tile is allowed to be a shared element. Held past the close so the
@@ -274,7 +293,7 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="shots">
-      <Masonry items={shown.map((p) => ({ ...p, key: p.id }))} minColumn={250} maxColumns={4} gap={16}>
+      <Masonry items={shown.map((p) => ({ ...p, key: p.id }))} minColumn={narrow ? 140 : 250} maxColumns={4} gap={narrow ? 8 : 16}>
         {(p) => (
           <figure className="tile">
             {morphId === p.id ? (

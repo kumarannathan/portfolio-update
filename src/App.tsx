@@ -10,7 +10,7 @@ const Tanks = React.lazy(() => import('./site/Tanks'));
 const A16zAlpha = React.lazy(() => import('./components/A16ZAlpha'));
 
 /** Routes that bring their own full-screen chrome and skip the site nav. */
-const BARE_ROUTES = new Set(['/a16z']);
+const BARE_ROUTES = new Set(['/a16z', '/photography']);
 
 const Shell: React.FC = () => {
   const location = useLocation();
@@ -27,6 +27,8 @@ const Shell: React.FC = () => {
             <Route path="/about" element={<Navigate to="/" replace />} />
             <Route path="/work" element={<Navigate to="/" replace />} />
             <Route path="/photos" element={<Gallery />} />
+            {/* The photos on their own, with no way back to the rest of the site: kmrnn.dev/photography */}
+            <Route path="/photography" element={<Gallery />} />
             <Route path="/fish-tanks" element={<Tanks />} />
             <Route path="/a16z" element={<A16zAlpha />} />
             <Route path="*" element={<Navigate to="/" replace />} />
