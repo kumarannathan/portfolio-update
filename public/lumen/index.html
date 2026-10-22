@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lumen — a light meter for film that stays out of your way</title>
+  <meta name="description" content="Lumen turns your iPhone into a light meter for film. Thirty film stocks with reciprocity, ND filters to 20 stops, and a dial you drag. Meter, set the camera, put the phone away." />
+  <meta property="og:title" content="Lumen" />
+  <meta property="og:description" content="A light meter for film that stays out of your way." />
+  <meta property="og:image" content="https://kmrnn.dev/projects/lumen/meter.png" />
+  <meta property="og:url" content="https://kmrnn.dev/lumen/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/projects/lumen/icon-64.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="/projects/lumen/icon-512.png" />
+  <style>
+    :root {
+      --bg: #000; --ink: #f5f5f7; --ink-70: rgba(245,245,247,.7); --ink-55: rgba(245,245,247,.55); --ink-30: rgba(245,245,247,.3); --ink-12: rgba(255,255,255,.12); --ink-06: rgba(255,255,255,.06);
+      --card: #0d0d0f; --card-2: #141416; --amber: #f5a524;
+      --font: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --maxw: 980px; --radius: 18px; --ease: cubic-bezier(.22,1,.36,1);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+    .mono { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--ink-55); text-transform: uppercase; }
+    .r { opacity: 0; filter: blur(14px); transform: translateY(28px); transition: opacity 1.1s var(--ease), filter 1.1s var(--ease), transform 1.1s var(--ease); }
+    .r.in { opacity: 1; filter: blur(0); transform: none; }
+    .r.d1 { transition-delay: .08s } .r.d2 { transition-delay: .16s } .r.d3 { transition-delay: .24s } .r.d4 { transition-delay: .32s } .r.d5 { transition-delay: .40s }
+    @media (prefers-reduced-motion: reduce) { .r { transition: none; opacity: 1; filter: none; transform: none; } }
+    header.top { position: fixed; top: 16px; left: 0; right: 0; z-index: 50; display: flex; justify-content: center; pointer-events: none; }
+    .pillnav { pointer-events: auto; display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 12px; border-radius: 999px; background: rgba(20,20,24,.62); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); box-shadow: 0 10px 40px -10px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.09); transition: transform .5s var(--ease); }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; font-size: 14px; padding-right: 10px; margin-right: 4px; border-right: 1px solid var(--ink-12); }
+    .brand img { width: 22px; height: 22px; border-radius: 6px; }
+    .pillnav a.lnk { text-decoration: none; color: var(--ink-70); font-size: 13.5px; padding: 7px 12px; border-radius: 999px; transition: color .2s, background .2s; }
+    .pillnav a.lnk:hover { color: var(--ink); background: var(--ink-06); }
+    .pillnav a.pill { text-decoration: none; background: var(--amber); color: #000; padding: 7px 14px; border-radius: 999px; font-weight: 600; font-size: 13.5px; margin-left: 4px; transition: transform .25s var(--ease); }
+    .pillnav a.pill:hover { transform: translateY(-1px); }
+    header.top.hide .pillnav { transform: translateY(-80px); }
+    .hero { position: relative; padding: 140px 0 40px; text-align: center; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; left: 50%; top: 0; width: 1100px; height: 700px; transform: translateX(-50%); background: radial-gradient(ellipse at center top, rgba(245,165,36,.12) 0%, rgba(245,165,36,.03) 35%, transparent 70%); pointer-events: none; }
+    .hero img.icon { width: 112px; height: 112px; border-radius: 28px; margin: 0 auto 26px; filter: drop-shadow(0 20px 40px rgba(0,0,0,.6)); }
+    h1 { font-size: clamp(40px, 7.5vw, 76px); line-height: 1.0; letter-spacing: -.035em; margin: 0 0 20px; font-weight: 650; }
+    .lede { font-size: clamp(18px, 2.4vw, 23px); color: var(--ink-70); max-width: 620px; margin: 0 auto 34px; line-height: 1.4; }
+    .cta { display: inline-flex; align-items: center; gap: 10px; background: var(--amber); color: #000; text-decoration: none; padding: 15px 24px; border-radius: 999px; font-weight: 600; font-size: 16px; transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(245,165,36,.28); }
+    .cta svg { width: 18px; height: 18px; }
+    .req { margin-top: 18px; }
+    .req span + span::before { content: "·"; margin: 0 10px; }
+    .phones { display: flex; justify-content: center; align-items: flex-end; gap: 18px; margin: 64px auto 0; max-width: 860px; }
+    .phones img { width: 30%; border-radius: 28px; box-shadow: 0 40px 100px rgba(0,0,0,.9), 0 0 0 1px var(--ink-12); }
+    .phones img:nth-child(2) { width: 34%; }
+    section { padding: 120px 0 0; }
+    .eyebrow { margin-bottom: 14px; }
+    h2 { font-size: clamp(30px, 4.6vw, 48px); letter-spacing: -.03em; line-height: 1.05; margin: 0 0 14px; font-weight: 650; }
+    .sub { color: var(--ink-70); margin: 0 0 44px; max-width: 620px; font-size: 18px; }
+    .center { text-align: center; } .center .sub { margin-left: auto; margin-right: auto; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .step { background: linear-gradient(180deg, var(--card-2), var(--card)); border: 1px solid var(--ink-06); border-radius: var(--radius); padding: 28px 24px; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .step .n { font-family: var(--mono); font-size: 44px; letter-spacing: -.04em; color: var(--ink-30); margin-bottom: auto; line-height: 1; }
+    .step h3 { margin: 18px 0 6px; font-size: 18px; letter-spacing: -.01em; }
+    .step p { margin: 0; color: var(--ink-70); font-size: 15px; }
+    code { font-family: var(--mono); font-size: .88em; background: var(--ink-06); padding: 1px 6px; border-radius: 6px; color: var(--ink); }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .feat { background: var(--card); border: 1px solid var(--ink-06); border-radius: var(--radius); padding: 26px 22px; transition: border-color .3s, transform .5s var(--ease); }
+    .feat:hover { border-color: var(--ink-12); transform: translateY(-3px); }
+    .feat .ic { width: 34px; height: 34px; border-radius: 10px; background: var(--ink-06); display: grid; place-items: center; margin-bottom: 16px; }
+    .feat .ic svg { width: 18px; height: 18px; stroke: var(--amber); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .feat h3 { margin: 0 0 6px; font-size: 16.5px; letter-spacing: -.01em; }
+    .feat p { margin: 0; color: var(--ink-70); font-size: 14.5px; }
+    .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .gallery figure { margin: 0; }
+    .gallery img { border-radius: 22px; box-shadow: 0 20px 60px rgba(0,0,0,.8), 0 0 0 1px var(--ink-06); }
+    .gallery figcaption { font-family: var(--mono); font-size: 12px; letter-spacing: .03em; color: var(--ink-55); padding: 12px 4px 0; }
+    .cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px; }
+    .cat { display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--ink-06); font-size: 15px; }
+    .cat b { font-weight: 600; white-space: nowrap; }
+    .cat span { font-family: var(--mono); font-size: 12.5px; color: var(--ink-55); text-align: right; }
+    .pro { border-radius: 26px; padding: 56px 48px; background: radial-gradient(ellipse at top left, rgba(245,165,36,.14), transparent 60%), var(--card); border: 1px solid var(--ink-06); display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; }
+    .pro ul { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 14px; color: var(--ink-70); font-size: 15px; }
+    .pro li { padding-left: 22px; position: relative; }
+    .pro li::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 99px; background: var(--amber); }
+    .pro img { border-radius: 22px; box-shadow: 0 30px 80px rgba(0,0,0,.8), 0 0 0 1px var(--ink-06); max-width: 300px; margin: 0 auto; }
+    .privacy { border-radius: 26px; padding: 56px 48px; background: var(--card); border: 1px solid var(--ink-06); }
+    .privacy ul { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 32px; color: var(--ink-70); font-size: 15px; }
+    .privacy li { padding-left: 22px; position: relative; }
+    .privacy li::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 99px; background: var(--ink); }
+    .final { text-align: center; padding: 140px 0 40px; }
+    .final img { width: 84px; height: 84px; border-radius: 22px; margin: 0 auto 22px; }
+    footer { margin-top: 60px; padding: 28px 0 56px; border-top: 1px solid var(--ink-06); color: var(--ink-55); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; justify-content: space-between; }
+    footer a { color: var(--ink-70); text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+    @media (max-width: 760px) {
+      .steps, .features, .cats, .privacy ul, .pro { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+      .phones { gap: 10px; } .phones img, .phones img:nth-child(2) { width: 32%; border-radius: 16px; }
+      .privacy, .pro { padding: 36px 24px; }
+      section { padding-top: 90px; }
+      .pillnav .nohide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top" id="top">
+    <nav class="pillnav">
+      <a class="brand" href="/lumen/"><img src="/projects/lumen/icon-64.png" srcset="/projects/lumen/icon-64.png 1x, /projects/lumen/icon-512.png 2x" alt="" />Lumen</a>
+      <a class="lnk nohide-sm" href="#how">How it works</a>
+      <a class="lnk nohide-sm" href="#films">Films</a>
+      <a class="lnk" href="#pro">Pro</a>
+      <a class="pill" href="#gallery">See the app</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <img class="icon r" src="/projects/lumen/icon-512.png" alt="Lumen app icon" />
+        <h1 class="r d1">A light meter<br />that stays out of your way.</h1>
+        <p class="lede r d2">Point your iPhone at the scene, pick a film, drag the dial. Lumen gives you the aperture and shutter speed, with reciprocity already applied. Then you put the phone away.</p>
+        <div class="r d3">
+          <a class="cta" href="#gallery">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M3 12s3.5-7 9-7 9 7 9 7-3.5 7-9 7-9-7-9-7z"/></svg>
+            See it in action
+          </a>
+        </div>
+        <div class="req mono r d4"><span>iPhone</span><span>30 film stocks</span><span>Free, Pro is one purchase</span></div>
+        <div class="phones r d5">
+          <img src="/projects/lumen/long-exposure.png" alt="Lumen metering a long exposure at ƒ/724 for 2 minutes" />
+          <img src="/projects/lumen/meter.png" alt="Lumen's meter: EV 11.8, FP4+ at ISO 125 behind an ND1000, 2 minutes with reciprocity" />
+          <img src="/projects/lumen/kits.png" alt="Saved kits in Lumen" />
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="wrap">
+        <div class="mono eyebrow r">How it works</div>
+        <h2 class="r d1">Meter. Set the camera. Shoot.</h2>
+        <p class="sub r d2">The camera on your phone is the meter. Everything else is the arithmetic you used to do in your head.</p>
+        <div class="steps">
+          <div class="step r"><div class="n">01</div><h3>Point and read</h3><p>A live reading in EV, average or spot. Tap <em>Hold</em> to lock it while you recompose.</p></div>
+          <div class="step r d1"><div class="n">02</div><h3>Pick your film</h3><p>Ilford, Kodak, Fujifilm, Kentmere, CineStill. The ISO is set, and so is the reciprocity curve for exposures that run long.</p></div>
+          <div class="step r d2"><div class="n">03</div><h3>Drag the dial</h3><p>Lock the aperture and the shutter follows, or the other way round. Full, half or third stops, your call.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="mono eyebrow r">Details</div>
+        <h2 class="r d1">The parts that matter on a tripod at dusk.</h2>
+        <p class="sub r d2">Long exposures are where meters go wrong. Lumen does the maths film makers publish and most apps skip.</p>
+        <div class="features">
+          <div class="feat r"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><h3>Reciprocity, built in</h3><p>FP4+ at a metered 30 seconds is really a minute and a half. Lumen shows the corrected time, and how much it added.</p></div>
+          <div class="feat r d1"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" opacity=".5"/></svg></div><h3>ND filters to 20 stops</h3><p>ND2 to ND1000 and beyond. Minutes-long exposures come out exact, not "about two minutes".</p></div>
+          <div class="feat r d2"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><h3>Saved kits</h3><p>Camera, lens and film as one preset. Switch between the Nikon with HP5 and the Hasselblad with Portra in a tap.</p></div>
+          <div class="feat r"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 20v-6M6 20v-10M18 20v-14"/></svg></div><h3>Compensation and calibration</h3><p>Dial in exposure compensation, and an offset so Lumen agrees with the meter or camera you already trust.</p></div>
+          <div class="feat r d1"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg></div><h3>Haptics on every stop</h3><p>The dial clicks under your thumb, so you can set it without looking down.</p></div>
+          <div class="feat r d2"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div><h3>Account optional</h3><p>Sign in to sync kits across devices. Don't, and everything stays on the phone.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="center" id="gallery">
+      <div class="wrap">
+        <div class="mono eyebrow r">A look around</div>
+        <h2 class="r d1">Dark, quiet, one thumb.</h2>
+        <p class="sub r d2">Built to be used at night without lighting up the room.</p>
+        <div class="gallery">
+          <figure class="r"><img src="/projects/lumen/welcome.png" alt="Lumen's welcome screen" /><figcaption>welcome</figcaption></figure>
+          <figure class="r d1"><img src="/projects/lumen/meter.png" alt="The meter with FP4+ behind an ND1000" /><figcaption>fp4+ · nd1000 · 2 min</figcaption></figure>
+          <figure class="r d2"><img src="/projects/lumen/settings.png" alt="Settings: account, stop increments, lens, calibration" /><figcaption>settings — stops, lens, calibration</figcaption></figure>
+          <figure class="r d3"><img src="/projects/lumen/account.png" alt="Create an account to sync kits" /><figcaption>optional account — sync kits</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="films">
+      <div class="wrap">
+        <div class="mono eyebrow r">Films</div>
+        <h2 class="r d1">Thirty stocks, with their curves.</h2>
+        <p class="sub r d2">Where a maker publishes reciprocity data, Lumen uses it. Where they don't, it tells you the time is uncorrected.</p>
+        <div class="cats">
+          <div class="cat r"><b>Ilford</b><span>Pan F+, FP4+, HP5+, Delta 100 / 400 / 3200, XP2, SFX, Ortho+</span></div>
+          <div class="cat r"><b>Kodak</b><span>Portra 160 / 400 / 800, Ektar, Gold, UltraMax, Tri-X, T-Max 100 / 400</span></div>
+          <div class="cat r d1"><b>Fujifilm</b><span>Velvia 50, Provia 100F, Acros II</span></div>
+          <div class="cat r d1"><b>Kentmere</b><span>100, 400</span></div>
+          <div class="cat r d2"><b>CineStill</b><span>800T, 50D</span></div>
+          <div class="cat r d2"><b>Anything else</b><span>set the ISO by hand</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pro">
+      <div class="wrap">
+        <div class="pro r">
+          <div>
+            <div class="mono eyebrow">Lumen Pro</div>
+            <h2>One purchase. Yours for good.</h2>
+            <p class="sub" style="margin-bottom:0">The meter is free. Pro adds the two things long-exposure shooters asked for, and it never renews.</p>
+            <ul>
+              <li><b>ND filters.</b> Meter through anything from ND2 to 20 stops, with exact long exposures.</li>
+              <li><b>Saved kits.</b> Camera, lens and film setups one tap away, synced to your account.</li>
+              <li><b>Support an independent app.</b> Everything else in Lumen stays free.</li>
+            </ul>
+          </div>
+          <img src="/projects/lumen/pro.png" alt="The Lumen Pro screen" />
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="privacy r">
+          <div class="mono eyebrow">Privacy</div>
+          <h2>The camera is a meter, not a camera.</h2>
+          <p class="sub" style="margin-bottom:0">Lumen reads light. It never saves or uploads a frame.</p>
+          <ul>
+            <li>No photos are stored. The preview is only there so you can see what you're metering.</li>
+            <li>No account is needed. With one, the only thing synced is your list of kits.</li>
+            <li>No analytics, no ads, no tracking.</li>
+            <li>Purchases go through the App Store. Lumen never sees a card.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="wrap">
+        <img class="r" src="/projects/lumen/icon-512.png" alt="" />
+        <h2 class="r d1">Meter it. Shoot it.</h2>
+        <p class="r d2" style="margin:0 0 28px; color: var(--ink-70)">Lumen is in testing on iPhone. The App Store release is next.</p>
+        <div class="mono r d3"><span>iOS 17+</span> · <span>Free</span> · <span>Pro is one purchase</span></div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <footer>
+        <span>Lumen © 2026 Kumaran Nathan</span>
+        <span><a href="/">kmrnn.dev</a></span>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+  (function () {
+    var els = document.querySelectorAll('.r');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+      els.forEach(function (el) { io.observe(el); });
+    } else { els.forEach(function (el) { el.classList.add('in'); }); }
+    var top = document.getElementById('top'), lastY = 0;
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY; top.classList.toggle('hide', y > lastY && y > 120); lastY = y;
+    }, { passive: true });
+  })();
+  </script>
+</body>
+</html>

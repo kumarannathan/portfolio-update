@@ -27,6 +27,26 @@ export interface ProjectEntry {
 
 export const PROJECTS: ProjectEntry[] = [
   {
+    id: 'lumen',
+    title: 'Lumen',
+    roleTag: 'iOS',
+    technologies: ['Swift', 'SwiftUI', 'AVFoundation', 'StoreKit 2', 'Supabase'],
+    summary: 'A light meter for film that stays out of your way.',
+    metaLine: '2026 • Swift, SwiftUI, AVFoundation, StoreKit, Supabase',
+    cover: '/projects/lumen/meter.png',
+    link: '/lumen/',
+    description:
+      'Point your iPhone at the scene and Lumen reads the light. Pick a film stock, drag the dial to the aperture or shutter you want, and the other side follows — with reciprocity failure already applied for long exposures, so a two-minute exposure on FP4+ comes out as two minutes, not the number the back of the box says.',
+    highlights: [
+      'The camera is the meter: a live reading in EV, with average or spot, and a hold button for when you want to recompose.',
+      'Thirty film stocks from Ilford, Kodak, Fujifilm, Kentmere and CineStill, each with its own reciprocity curve where the maker publishes one.',
+      'Exposure compensation, full, half or third stops, and a calibration offset so it agrees with the meter or camera you already trust.',
+      'Lumen Pro, one purchase: ND filters from ND2 to 20 stops with exact long exposures, and saved kits — camera, lens and film setups synced to your account.',
+      'An account is optional. Without one, everything stays on the phone.'
+    ],
+    detailText: 'Built for the way I shoot: meter, set the camera, put the phone away.'
+  },
+  {
     id: 'countertop',
     title: 'Countertop',
     roleTag: 'macOS',
@@ -34,7 +54,7 @@ export const PROJECTS: ProjectEntry[] = [
     summary: 'A quiet menu bar app that puts your downloads away.',
     metaLine: '2026 • Swift, SwiftUI, App Sandbox, Sparkle',
     cover: '/projects/countertop/hero.png',
-    link: 'https://github.com/kumarannathan/Countertop/releases/latest',
+    link: '/countertop/',
     github: 'https://github.com/kumarannathan/Countertop',
     description:
       'Your Downloads folder fills up like a kitchen counter. Countertop clears it for you: when a download finishes, it moves the file into a folder that matches what it is — images to Images, installers to Applications, .fbx models to 3D. You never open it. Download something, and a moment later it is sorted.',
@@ -73,12 +93,14 @@ export const PROJECTS: ProjectEntry[] = [
   },
   {
     id: 'milo-mission-control',
-    title: 'Milo — Mission Control',
-    roleTag: 'OpenClaw',
-    technologies: ['React', 'Netlify Functions', 'Supabase', 'Python', 'Ollama', 'RapidAPI'],
-    summary:
-      'Run a fleet of specialized AI agents from one Mission Control dashboard—live status, shared memory, and a task bus you can actually watch.',
-    metaLine: '2026 • React, Netlify Functions, Supabase, Python, Ollama, RapidAPI',
+    title: 'Milo',
+    roleTag: 'Agents',
+    technologies: ['React', 'Node', 'Supabase', 'Ollama', 'Anthropic', 'OpenAI'],
+    summary: 'A control room for a sales development team of AI agents. Bring your keys, approve every email before it goes out.',
+    metaLine: '2026 • React, Node, Supabase, Ollama, Anthropic, OpenAI',
+    cover: '/projects/milo/control-room.jpg',
+    link: '/milo/',
+    github: 'https://github.com/kumarannathan/Milo',
     description:
       'Run a fleet of specialized AI agents from one Mission Control dashboard—live status, shared memory, and a task bus you can actually watch instead of guessing what your bots are doing. I wired end-to-end pipelines from research and drafts through publish and social, with Milo orchestrating handoffs across agents in production. The whole stack is serverless APIs plus Supabase-backed state, tuned so cheap local inference (Ollama) keeps monthly costs trivial until you need to scale.',
     highlights: [
@@ -91,8 +113,6 @@ export const PROJECTS: ProjectEntry[] = [
       'Content Pipeline Agents: End-to-end automation (research → draft → optimize → publish) across multiple specialized bots',
       'Orchestrator (Milo): Manages task scheduling, agent coordination, and pipeline execution via shared agent_tasks'
     ],
-    media: '/milo.mp4',
-    autoplayVideo: true
   },
   {
     id: 'neetcode-redesign',

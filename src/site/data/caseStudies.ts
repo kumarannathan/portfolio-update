@@ -42,6 +42,7 @@ const PLATFORMS: Record<string, string> = {
   toshi: 'web and ios',
   'yogger-crm': 'web',
   countertop: 'macos',
+  lumen: 'ios',
   'saml-sso': 'web, android and ios',
   'rag-gemini': 'ios and cloud',
   'movement-age': 'android',

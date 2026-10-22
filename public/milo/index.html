@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Milo — a sales development team of agents, approved by you</title>
+  <meta name="description" content="Milo is an open-source control room for a team of AI sales agents. Bring your own keys, watch every run, and approve every email before it goes out." />
+  <meta property="og:title" content="Milo" />
+  <meta property="og:description" content="A sales development team of agents. Bring your own keys, approve every email before it goes out." />
+  <meta property="og:image" content="https://kmrnn.dev/projects/milo/control-room.jpg" />
+  <meta property="og:url" content="https://kmrnn.dev/milo/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/projects/milo/icon-64.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="/projects/milo/icon-512.png" />
+  <style>
+    :root {
+      --bg: #000; --ink: #f5f5f7; --ink-70: rgba(245,245,247,.7); --ink-55: rgba(245,245,247,.55); --ink-30: rgba(245,245,247,.3); --ink-12: rgba(255,255,255,.12); --ink-06: rgba(255,255,255,.06);
+      --card: #0d0d0f; --card-2: #141416; --lime: #c5f467;
+      --font: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --maxw: 980px; --radius: 18px; --ease: cubic-bezier(.22,1,.36,1);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 17px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { color: inherit; }
+    img { max-width: 100%; height: auto; display: block; }
+    .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+    .mono { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--ink-55); text-transform: uppercase; }
+    .r { opacity: 0; filter: blur(14px); transform: translateY(28px); transition: opacity 1.1s var(--ease), filter 1.1s var(--ease), transform 1.1s var(--ease); }
+    .r.in { opacity: 1; filter: blur(0); transform: none; }
+    .r.d1 { transition-delay: .08s } .r.d2 { transition-delay: .16s } .r.d3 { transition-delay: .24s } .r.d4 { transition-delay: .32s } .r.d5 { transition-delay: .40s }
+    @media (prefers-reduced-motion: reduce) { .r { transition: none; opacity: 1; filter: none; transform: none; } }
+    header.top { position: fixed; top: 16px; left: 0; right: 0; z-index: 50; display: flex; justify-content: center; pointer-events: none; }
+    .pillnav { pointer-events: auto; display: flex; align-items: center; gap: 4px; padding: 6px 6px 6px 12px; border-radius: 999px; background: rgba(20,20,24,.62); backdrop-filter: blur(22px) saturate(1.6); -webkit-backdrop-filter: blur(22px) saturate(1.6); box-shadow: 0 10px 40px -10px rgba(0,0,0,.8), inset 0 0 0 1px rgba(255,255,255,.09); transition: transform .5s var(--ease); }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; font-size: 14px; padding-right: 10px; margin-right: 4px; border-right: 1px solid var(--ink-12); }
+    .brand img { width: 22px; height: 22px; border-radius: 6px; }
+    .pillnav a.lnk { text-decoration: none; color: var(--ink-70); font-size: 13.5px; padding: 7px 12px; border-radius: 999px; transition: color .2s, background .2s; }
+    .pillnav a.lnk:hover { color: var(--ink); background: var(--ink-06); }
+    .pillnav a.pill { text-decoration: none; background: var(--lime); color: #000; padding: 7px 14px; border-radius: 999px; font-weight: 600; font-size: 13.5px; margin-left: 4px; transition: transform .25s var(--ease); }
+    .pillnav a.pill:hover { transform: translateY(-1px); }
+    header.top.hide .pillnav { transform: translateY(-80px); }
+    .hero { position: relative; padding: 140px 0 40px; text-align: center; overflow: hidden; }
+    .hero::before { content: ""; position: absolute; left: 50%; top: 0; width: 1100px; height: 700px; transform: translateX(-50%); background: radial-gradient(ellipse at center top, rgba(197,244,103,.10) 0%, rgba(197,244,103,.03) 35%, transparent 70%); pointer-events: none; }
+    .hero img.icon { width: 112px; height: 112px; border-radius: 28px; margin: 0 auto 26px; filter: drop-shadow(0 20px 40px rgba(0,0,0,.6)); }
+    h1 { font-size: clamp(40px, 7.5vw, 76px); line-height: 1.0; letter-spacing: -.035em; margin: 0 0 20px; font-weight: 650; }
+    h1 em { font-style: normal; color: var(--lime); }
+    .lede { font-size: clamp(18px, 2.4vw, 23px); color: var(--ink-70); max-width: 640px; margin: 0 auto 34px; line-height: 1.4; }
+    .cta { display: inline-flex; align-items: center; gap: 10px; background: var(--lime); color: #000; text-decoration: none; padding: 15px 24px; border-radius: 999px; font-weight: 600; font-size: 16px; transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 10px 40px rgba(197,244,103,.25); }
+    .cta svg { width: 18px; height: 18px; }
+    .ghost { display: inline-flex; align-items: center; gap: 8px; margin-left: 10px; color: var(--ink-70); text-decoration: none; padding: 15px 18px; font-size: 15px; border-radius: 999px; border: 1px solid var(--ink-12); transition: border-color .2s, color .2s; }
+    .ghost:hover { color: var(--ink); border-color: var(--ink-30); }
+    .req { margin-top: 18px; }
+    .req span + span::before { content: "·"; margin: 0 10px; }
+    .shot { margin: 64px auto 0; max-width: 860px; position: relative; }
+    .shot img { border-radius: 22px; box-shadow: 0 60px 140px rgba(0,0,0,.9), 0 0 0 1px var(--ink-06); }
+    .shot::after { content: ""; position: absolute; inset: auto 0 -1px 0; height: 160px; background: linear-gradient(to bottom, transparent, var(--bg)); pointer-events: none; }
+    section { padding: 120px 0 0; }
+    .eyebrow { margin-bottom: 14px; }
+    h2 { font-size: clamp(30px, 4.6vw, 48px); letter-spacing: -.03em; line-height: 1.05; margin: 0 0 14px; font-weight: 650; }
+    .sub { color: var(--ink-70); margin: 0 0 44px; max-width: 620px; font-size: 18px; }
+    .center { text-align: center; } .center .sub { margin-left: auto; margin-right: auto; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .step { background: linear-gradient(180deg, var(--card-2), var(--card)); border: 1px solid var(--ink-06); border-radius: var(--radius); padding: 28px 24px; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .step .n { font-family: var(--mono); font-size: 44px; letter-spacing: -.04em; color: var(--ink-30); margin-bottom: auto; line-height: 1; }
+    .step h3 { margin: 18px 0 6px; font-size: 18px; letter-spacing: -.01em; }
+    .step p { margin: 0; color: var(--ink-70); font-size: 15px; }
+    code { font-family: var(--mono); font-size: .88em; background: var(--ink-06); padding: 1px 6px; border-radius: 6px; color: var(--ink); }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .feat { background: var(--card); border: 1px solid var(--ink-06); border-radius: var(--radius); padding: 26px 22px; transition: border-color .3s, transform .5s var(--ease); }
+    .feat:hover { border-color: var(--ink-12); transform: translateY(-3px); }
+    .feat .ic { width: 34px; height: 34px; border-radius: 10px; background: var(--ink-06); display: grid; place-items: center; margin-bottom: 16px; }
+    .feat .ic svg { width: 18px; height: 18px; stroke: var(--lime); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .feat h3 { margin: 0 0 6px; font-size: 16.5px; letter-spacing: -.01em; }
+    .feat p { margin: 0; color: var(--ink-70); font-size: 14.5px; }
+    .team { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px; }
+    .agent { display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--ink-06); font-size: 15px; }
+    .agent .mk { width: 34px; height: 34px; border-radius: 10px; background: var(--ink-06); display: grid; place-items: center; font-family: var(--mono); font-size: 11px; color: var(--ink); }
+    .agent b { display: block; font-weight: 600; }
+    .agent span { color: var(--ink-55); font-size: 14px; }
+    .shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .shots figure { margin: 0; background: var(--card); border: 1px solid var(--ink-06); border-radius: var(--radius); padding: 10px; }
+    .shots img { border-radius: 10px; }
+    .shots figcaption { font-family: var(--mono); font-size: 12px; letter-spacing: .03em; color: var(--ink-55); padding: 12px 6px 4px; }
+    .privacy { border-radius: 26px; padding: 56px 48px; background: radial-gradient(ellipse at top left, rgba(197,244,103,.10), transparent 60%), var(--card); border: 1px solid var(--ink-06); }
+    .privacy ul { list-style: none; margin: 26px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 32px; color: var(--ink-70); font-size: 15px; }
+    .privacy li { padding-left: 22px; position: relative; }
+    .privacy li::before { content: ""; position: absolute; left: 0; top: 9px; width: 8px; height: 8px; border-radius: 99px; background: var(--lime); }
+    pre { background: var(--card); border: 1px solid var(--ink-06); padding: 18px 20px; border-radius: var(--radius); overflow-x: auto; font-family: var(--mono); font-size: 13.5px; color: var(--ink); line-height: 1.7; margin: 0; }
+    pre span { color: var(--ink-55); }
+    .final { text-align: center; padding: 140px 0 40px; }
+    .final img { width: 84px; height: 84px; border-radius: 22px; margin: 0 auto 22px; }
+    footer { margin-top: 60px; padding: 28px 0 56px; border-top: 1px solid var(--ink-06); color: var(--ink-55); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; justify-content: space-between; }
+    footer a { color: var(--ink-70); text-decoration: none; }
+    footer a:hover { color: var(--ink); }
+    @media (max-width: 760px) {
+      .steps, .features, .team, .shots, .privacy ul { grid-template-columns: 1fr; }
+      .ghost { margin: 12px 0 0; }
+      .privacy { padding: 36px 24px; }
+      section { padding-top: 90px; }
+      .pillnav .nohide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top" id="top">
+    <nav class="pillnav">
+      <a class="brand" href="/milo/"><img src="/projects/milo/icon-64.png" srcset="/projects/milo/icon-64.png 1x, /projects/milo/icon-512.png 2x" alt="" />Milo</a>
+      <a class="lnk nohide-sm" href="#how">How it works</a>
+      <a class="lnk nohide-sm" href="#team">The team</a>
+      <a class="lnk" href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">GitHub</a>
+      <a class="pill" href="#install">Run it</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <img class="icon r" src="/projects/milo/icon-512.png" alt="Milo app icon" />
+        <h1 class="r d1">A sales team of agents.<br /><em>Approved</em> by you.</h1>
+        <p class="lede r d2">Seven agents find accounts, research them, write the outreach and book the meetings. Nothing is sent until you say so. Open source, and your keys never leave your server.</p>
+        <div class="r d3">
+          <a class="cta" href="#install">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+            Run Milo
+          </a>
+          <a class="ghost" href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">View source</a>
+        </div>
+        <div class="req mono r d4"><span>Node 20+</span><span>Bring your own keys</span><span>MIT</span></div>
+        <div class="shot r d5"><img src="/projects/milo/control-room.jpg" alt="Milo's control room: today's numbers, the agent pipeline and the live activity feed" /></div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="wrap">
+        <div class="mono eyebrow r">How it works</div>
+        <h2 class="r d1">Work moves left to right.</h2>
+        <p class="sub r d2">Each agent hands off to the next through a task queue. You watch it happen, and you hold the send button.</p>
+        <div class="steps">
+          <div class="step r"><div class="n">01</div><h3>Find and research</h3><p>Scout finds companies that match your ideal customer. Researcher writes a brief with sources. Prospector finds the right people and verifies their email.</p></div>
+          <div class="step r d1"><div class="n">02</div><h3>Score and write</h3><p>Qualifier scores each lead and decides what happens next. Personalizer writes outreach from the brief, not a template.</p></div>
+          <div class="step r d2"><div class="n">03</div><h3>You approve, SDR sends</h3><p>Drafts wait in your inbox. Edit, approve or reject with a note the writer learns from. SDR sends, reads replies and books meetings.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="team">
+      <div class="wrap">
+        <div class="mono eyebrow r">The team</div>
+        <h2 class="r d1">Seven agents, one job each.</h2>
+        <p class="sub r d2">Turn any of them off, change their schedule, pick their model, or give them standing instructions.</p>
+        <div class="team">
+          <div class="agent r"><span class="mk">Sc</span><div><b>Scout</b><span>Finds companies that match your ICP</span></div></div>
+          <div class="agent r"><span class="mk">Re</span><div><b>Researcher</b><span>Writes an account brief: why now, pains, angles, with sources</span></div></div>
+          <div class="agent r d1"><span class="mk">Pr</span><div><b>Prospector</b><span>Finds and verifies the right people at each account</span></div></div>
+          <div class="agent r d1"><span class="mk">Qu</span><div><b>Qualifier</b><span>Scores each lead: outreach, research more, or skip</span></div></div>
+          <div class="agent r d2"><span class="mk">Pe</span><div><b>Personalizer</b><span>Writes outreach from the research brief</span></div></div>
+          <div class="agent r d2"><span class="mk">SD</span><div><b>SDR</b><span>Sends approved outreach, reads replies, books meetings, escalates</span></div></div>
+          <div class="agent r d3"><span class="mk">CR</span><div><b>CRM Agent</b><span>Keeps your CRM in sync with everything the team does</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="mono eyebrow r">Details</div>
+        <h2 class="r d1">Built to be trusted with your inbox.</h2>
+        <p class="sub r d2">Every run, tool call, token and dollar is visible.</p>
+        <div class="features">
+          <div class="feat r"><div class="ic"><svg viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></div><h3>An inbox for approvals</h3><p>Emails, replies and meeting invites wait for you. Raise the autonomy level when you trust it.</p></div>
+          <div class="feat r d1"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg></div><h3>Your own connections</h3><p>Anthropic, OpenAI or Ollama for the model. Apollo, Hunter, Tavily, HubSpot, Cal.com and your own inbox for the rest.</p></div>
+          <div class="feat r d2"><div class="ic"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></div><h3>Per-agent control</h3><p>On or off, cron or "when work arrives", a model per agent, settings and instructions that ride along with every prompt.</p></div>
+          <div class="feat r"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 4 4 5-5"/></svg></div><h3>Full visibility</h3><p>Duration, tokens and cost on every run. Status code and latency on every tool call. A live feed for the whole team.</p></div>
+          <div class="feat r d1"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12h8"/><path d="M12 8v8"/></svg></div><h3>Sample data</h3><p>Try the whole pipeline with made-up companies and a built-in sample model. No keys needed.</p></div>
+          <div class="feat r d2"><div class="ic"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M8 12h.01M12 12h.01M16 12h.01M7 16h10"/></svg></div><h3>Keyboard first</h3><p>⌘K jumps anywhere. The approvals inbox works with J, K, X, E, R and ⌘Enter.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="center">
+      <div class="wrap">
+        <div class="mono eyebrow r">A look around</div>
+        <h2 class="r d1">One control room.</h2>
+        <p class="sub r d2">Approvals, accounts, conversations, agents and connections. Nothing you have to guess at.</p>
+        <div class="shots">
+          <figure class="r"><img src="/projects/milo/approvals.jpg" alt="The approvals inbox with a draft email, the research brief and the lead score" /><figcaption>approvals — the draft, the brief it came from, the score</figcaption></figure>
+          <figure class="r d1"><img src="/projects/milo/accounts.jpg" alt="The accounts table with ICP match, stage and last activity" /><figcaption>accounts — icp match, stage, who touched it last</figcaption></figure>
+          <figure class="r d2"><img src="/projects/milo/agents.jpg" alt="An agent's page: schedule, model, what it needs and recent runs" /><figcaption>agents — schedule, model, what it needs, recent runs</figcaption></figure>
+          <figure class="r d3"><img src="/projects/milo/control-room.jpg" alt="The control room" /><figcaption>control room — today, the pipeline, the live feed</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacy">
+      <div class="wrap">
+        <div class="privacy r">
+          <div class="mono eyebrow">Your keys, your server</div>
+          <h2>Nothing goes anywhere you didn't connect.</h2>
+          <p class="sub" style="margin-bottom:0">Milo is one Node process you run yourself. There is no Milo cloud in the middle.</p>
+          <ul>
+            <li>API keys are stored on your server, only sent to the service they belong to, and never returned to the browser in full.</li>
+            <li>Every account gets its own workspace. Sign in with email and password, or plug in Supabase Auth.</li>
+            <li>Export everything as JSON at any time. Keys are left out.</li>
+            <li>MIT licensed. Read every line before you trust it with your inbox.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="install">
+      <div class="wrap">
+        <div class="mono eyebrow r">Install</div>
+        <h2 class="r d1">Four commands.</h2>
+        <p class="sub r d2">Requires Node 20 or later. Open <code>http://localhost:4400</code>, create your account, and start with sample data or your own keys.</p>
+        <pre class="r d3"><span>$</span> git clone https://github.com/kumarannathan/Milo.git
+<span>$</span> cd Milo &amp;&amp; npm install
+<span>$</span> npm run build
+<span>$</span> npm start</pre>
+      </div>
+    </section>
+
+    <section class="final">
+      <div class="wrap">
+        <img class="r" src="/projects/milo/icon-512.png" alt="" />
+        <h2 class="r d1">Put a team on it.</h2>
+        <p class="r d2" style="margin:0 0 28px">
+          <a class="cta" href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">Get Milo on GitHub</a>
+        </p>
+        <div class="mono r d3"><span>Open source</span> · <span>MIT</span> · <span>Node 20+</span></div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <footer>
+        <span>Milo · MIT © 2026 Kumaran Nathan</span>
+        <span>
+          <a href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">Source</a> &nbsp;·&nbsp;
+          <a href="https://github.com/kumarannathan/Milo/blob/main/docs/architecture.md" target="_blank" rel="noopener">Architecture</a> &nbsp;·&nbsp;
+          <a href="https://github.com/kumarannathan/Milo/issues" target="_blank" rel="noopener">Report a bug</a>
+        </span>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+  (function () {
+    var els = document.querySelectorAll('.r');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+      }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+      els.forEach(function (el) { io.observe(el); });
+    } else { els.forEach(function (el) { el.classList.add('in'); }); }
+    var top = document.getElementById('top'), lastY = 0;
+    window.addEventListener('scroll', function () {
+      var y = window.scrollY; top.classList.toggle('hide', y > lastY && y > 120); lastY = y;
+    }, { passive: true });
+  })();
+  </script>
+</body>
+</html>

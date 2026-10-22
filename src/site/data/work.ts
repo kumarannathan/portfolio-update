@@ -12,6 +12,7 @@ const CATEGORY_OF: Record<string, Category[]> = {
   'home-exercise-builder': ['web'],
   toshi: ['web', 'backend'],
   countertop: ['backend'],
+  lumen: ['mobile'],
   'yogger-crm': ['web'],
   'saml-sso': ['backend', 'mobile'],
   'rag-gemini': ['backend', 'mobile'],
@@ -74,6 +75,8 @@ const BACKDROPS = [
 const PROJECT_MEDIA: Record<string, CardMedia> = {
   toshi: { type: 'image', src: '/projects/toshi/cover.jpg' },
   countertop: { type: 'image', src: '/projects/countertop/hero.png' },
+  lumen: { type: 'image', src: '/projects/lumen/meter.png' },
+  'milo-mission-control': { type: 'image', src: '/projects/milo/control-room.jpg' },
   'neetcode-redesign': { type: 'video', src: '/neetcode.mp4' },
   'booking-platform': { type: 'video', src: '/mtm.mp4' },
   'soul-forest': { type: 'video', src: '/soul-of-the-forest.mp4' },
