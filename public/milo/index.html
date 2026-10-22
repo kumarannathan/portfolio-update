@@ -136,6 +136,11 @@
 
     pre { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px; font: 400 13.5px/1.8 var(--mono); overflow-x: auto; }
     pre span { color: var(--muted); }
+    .gate { margin-top: 20px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; font-size: 14px; color: var(--ink-2); }
+    .gate summary { cursor: pointer; font-weight: 500; color: var(--ink); list-style: none; }
+    .gate summary::-webkit-details-marker { display: none; }
+    .gate p { margin: 10px 0 0; }
+    .gate code { font: 400 12px/1 var(--mono); background: var(--soft); padding: 2px 6px; border-radius: 6px; }
     .install { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
 
     footer { margin-top: 72px; border-top: 1px solid var(--line); padding: 24px 0 56px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; font-size: 13px; color: var(--muted); }
@@ -161,7 +166,7 @@
         <a class="hide-sm" href="#keys">Your keys</a>
         <a href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">GitHub</a>
       </nav>
-      <a class="btn btn-lime" href="#install">Run it</a>
+      <a class="btn btn-lime" href="https://github.com/kumarannathan/Milo/releases/latest" target="_blank" rel="noopener">Download for Mac</a>
     </div>
   </header>
 
@@ -175,10 +180,10 @@
               <h1 class="r d1">Your outbound, run by agents. <mark>Sent by you.</mark></h1>
               <p class="lede r d2">Milo finds accounts, researches them, writes the email and books the meeting. Every send waits in your inbox first. Open source, your own keys, one Node process.</p>
               <div class="cta-row r d3">
-                <a class="btn btn-ink btn-lg" href="#install">Run it on your machine</a>
+                <a class="btn btn-ink btn-lg" href="https://github.com/kumarannathan/Milo/releases/latest" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Download for Mac</a>
                 <a class="btn btn-line btn-lg" href="#approve">Try the inbox</a>
               </div>
-              <div class="facts r d4"><span><b>MIT</b> licensed</span><span><b>Node 20+</b></span><span><b>Anthropic, OpenAI or Ollama</b></span></div>
+              <div class="facts r d4"><span><b>macOS 12+</b>, Apple silicon and Intel</span><span><b>Free</b>, MIT</span><span><b>Anthropic, OpenAI or Ollama</b></span></div>
             </div>
             <div class="hero-shot r d2">
               <span class="pill-count">24 waiting for review</span>
@@ -254,11 +259,14 @@
     <section id="install">
       <div class="wrap">
         <div class="install">
-          <div class="r"><span class="label">Install</span><h2>Four commands.</h2><p class="sub">Node 20 or later. Open <code>localhost:4400</code>, create your account, and start with sample data or your own keys.</p><p style="margin-top:18px"><a class="btn btn-lime" href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">Get Milo on GitHub</a></p></div>
-          <pre class="r d1"><span>$</span> git clone https://github.com/kumarannathan/Milo.git
+          <div class="r"><span class="label">Get Milo</span><h2>Download, drag to Applications, open.</h2><p class="sub">Milo for Mac runs the whole thing in one app: the agents, the control room, your workspace. First launch walks you through naming a workspace, connecting a model and describing what you sell. Or start with sample data and connect keys later.</p>
+            <p style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn-lime" href="https://github.com/kumarannathan/Milo/releases/latest" target="_blank" rel="noopener">Download for Mac</a><a class="btn btn-line" href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">Source on GitHub</a></p>
+            <details class="gate r d1"><summary>"Apple could not verify Milo is free of malware" — what to do</summary><p>Milo isn't notarized by Apple (that needs a paid developer membership), so macOS shows this once. It's open source. Click <b>Done</b>, open <b>System Settings › Privacy &amp; Security</b>, scroll to "Milo was blocked", click <b>Open Anyway</b>. Or from Terminal: <code>xattr -dr com.apple.quarantine /Applications/Milo.app</code></p></details>
+          </div>
+          <div class="r d1"><span class="label" style="display:block;margin-bottom:10px">Or run it yourself</span><pre><span>$</span> git clone https://github.com/kumarannathan/Milo.git
 <span>$</span> cd Milo &amp;&amp; npm install
 <span>$</span> npm run build
-<span>$</span> npm start</pre>
+<span>$</span> npm start   <span># then open localhost:4400</span></pre><p class="sub" style="font-size:14px;margin-top:10px">The server version adds accounts, so a team can share one deployment. Node 20 or later.</p></div>
         </div>
       </div>
     </section>
