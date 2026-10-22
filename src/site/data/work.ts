@@ -27,7 +27,7 @@ const CATEGORY_OF: Record<string, Category[]> = {
 };
 
 /** Older filler projects that don't earn their spot anymore. Data stays, they just don't render. */
-const ARCHIVED = new Set(['booking-platform', 'dance-ar', 'focus-zone', 'sipt']);
+const ARCHIVED = new Set(['booking-platform', 'dance-ar', 'focus-zone', 'sipt', 'toshi']);
 
 export interface WorkLink {
   label: string;
@@ -171,7 +171,6 @@ export const PROJECT_WORK: WorkItem[] = PROJECTS.filter((p) => !ARCHIVED.has(p.i
 export const ALL_WORK: WorkItem[] = [...PRODUCTION_WORK, ...PROJECT_WORK];
 
 const FEATURED_IDS = [
-  'toshi',
   'yogger-web-redesign',
   'home-exercise-builder',
   'yogger-crm',

@@ -34,7 +34,7 @@ const WORK_IDS = [
 ];
 
 /** Built for myself, on my own time. */
-const SIDE_IDS = ['toshi', 'lumen', 'countertop', 'milo-mission-control'];
+const SIDE_IDS = ['lumen', 'countertop', 'milo-mission-control'];
 
 const byIds = (ids: string[]) =>
   ids.map((id) => ALL_WORK.find((w) => w.id === id)).filter((w): w is WorkItem => Boolean(w));

@@ -15,7 +15,6 @@ export interface WorkEntry {
 /** The five strongest pieces — Web App Redesign and HEP builder lead. */
 /** Strongest pieces, in display order. */
 const FAVORITES = [
-  'toshi',
   'yogger-web-redesign',
   'home-exercise-builder',
   'yogger-crm',
