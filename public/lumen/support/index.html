@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lumen — Support</title>
+  <meta name="description" content="Help with Lumen, the light meter for film: common questions, how to get in touch, and how to delete your account." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/projects/lumen/icon-64.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <style>
+    :root { --bg: #0a0a0a; --panel: #141414; --line: #262626; --ink: #f2efe8; --ink-2: #b8b3a8; --muted: #7d786f; --amber: #f5a524; --sans: 'Instrument Sans', system-ui, sans-serif; --mono: 'JetBrains Mono', ui-monospace, monospace; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.65 var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: var(--amber); text-decoration: none; } a:hover { text-decoration: underline; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px 80px; }
+    .top { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 500; font-size: 15px; }
+    .brand img { width: 26px; height: 26px; border-radius: 7px; }
+    .nav { display: flex; gap: 22px; font: 500 12px/1 var(--mono); letter-spacing: .08em; }
+    .cap { font: 500 11px/16px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    h1 { font-size: clamp(32px, 5vw, 44px); font-weight: 500; letter-spacing: -.03em; line-height: 1.05; margin: 56px 0 24px; }
+    p, li { color: var(--ink-2); } p { margin: 0 0 14px; }
+    b { color: var(--ink); font-weight: 500; }
+    .box { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; margin: 0 0 40px; }
+    .box p:last-child { margin: 0; }
+    .btn { display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; background: var(--amber); color: #1a1000; font-weight: 500; font-size: 14px; }
+    .btn:hover { text-decoration: none; filter: brightness(1.08); }
+    details { border-top: 1px solid var(--line); padding: 16px 0; }
+    details:last-of-type { border-bottom: 1px solid var(--line); }
+    summary { cursor: pointer; font-weight: 500; color: var(--ink); list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; font-family: var(--mono); color: var(--amber); }
+    details[open] summary::after { content: "–"; }
+    details p { margin: 12px 0 0; }
+    code { font-family: var(--mono); font-size: .9em; background: var(--panel); border: 1px solid var(--line); padding: 1px 6px; border-radius: 6px; color: var(--ink); }
+    h2 { font-size: 20px; font-weight: 500; margin: 40px 0 10px; }
+    footer { border-top: 1px solid var(--line); padding-top: 24px; margin-top: 56px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font: 400 12px/1 var(--mono); color: var(--muted); letter-spacing: .04em; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <a class="brand" href="/lumen/"><img src="/projects/lumen/icon-64.png" alt="" />Lumen</a>
+      <nav class="nav"><a href="/lumen/">APP</a><a href="/lumen/privacy/">PRIVACY</a></nav>
+    </header>
+
+    <span class="cap">Lumen for iPhone</span>
+    <h1>Support</h1>
+
+    <div class="box">
+      <p><b>Something not working, or a film stock missing?</b> Email <a href="mailto:kumarannathann@gmail.com?subject=Lumen">kumarannathann@gmail.com</a> and include your iPhone model and iOS version. I read every message and usually reply within a day or two.</p>
+      <p style="margin-top:14px"><a class="btn" href="mailto:kumarannathann@gmail.com?subject=Lumen">Email support</a></p>
+    </div>
+
+    <h2>Common questions</h2>
+
+    <details><summary>The reading looks off compared to my camera</summary><p>Phone cameras and in-camera meters don't always agree, and neither is "right". Open <b>Settings → Calibration</b>, meter the same even-lit scene with both, and move the offset until Lumen matches the meter you trust. Also check the film: Lumen reads at the box ISO unless you set compensation.</p></details>
+    <details><summary>Why is my shutter speed longer than the EV suggests?</summary><p>Past one second, film loses sensitivity (reciprocity failure). Lumen applies the correction curve the film maker publishes and shows the corrected time, with the uncorrected metered time underneath. Kodak and Fujifilm stocks have no published curve, so those times stay uncorrected.</p></details>
+    <details><summary>Lumen asks for the camera. Does it take photos?</summary><p>No. The camera is the sensor the meter reads from. Nothing is captured, saved or uploaded. See the <a href="/lumen/privacy/">privacy policy</a>.</p></details>
+    <details><summary>Do I need an account?</summary><p>No. An account only syncs your saved kits between devices. Without one, kits stay on the phone and everything else works the same.</p></details>
+    <details><summary>I bought Lumen Pro on another phone</summary><p>Open <b>Settings → Pro → Restore purchase</b> on the new phone, signed into the same Apple ID. Pro is tied to your Apple ID, not to a Lumen account.</p></details>
+    <details><summary>How do I delete my account?</summary><p><b>Settings → Account → Delete account</b>. Your account and every synced kit are removed immediately and permanently. If you can't get into the app, email me from the address on the account and I'll delete it for you.</p></details>
+    <details><summary>Can you add a film?</summary><p>Probably. Email the stock, its box ISO, and a link to the maker's reciprocity data if there is any.</p></details>
+
+    <h2>Requirements</h2>
+    <p>iPhone running iOS 17 or later. Lumen Pro is a one-time in-app purchase; the meter, the films and the dial are free.</p>
+
+    <footer><span>LUMEN © 2026 KUMARAN NATHAN</span><span><a href="/lumen/">APP</a> &nbsp;·&nbsp; <a href="/lumen/privacy/">PRIVACY</a></span></footer>
+  </div>
+</body>
+</html>
