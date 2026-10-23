@@ -39,7 +39,7 @@ export const PROJECTS: ProjectEntry[] = [
       'Point your iPhone at the scene and Lumen reads the light. Pick a film stock, drag the dial to the aperture or shutter you want, and the other side follows — with reciprocity failure already applied for long exposures, so a two-minute exposure on FP4+ comes out as two minutes, not the number the back of the box says.',
     highlights: [
       'The camera is the meter: a live reading in EV, with average or spot, and a hold button for when you want to recompose.',
-      'Thirty film stocks from Ilford, Kodak, Fujifilm, Kentmere and CineStill, each with its own reciprocity curve where the maker publishes one.',
+      'Twenty-five film stocks from Ilford, Kodak, Fujifilm, Kentmere and CineStill, each with its own reciprocity curve where the maker publishes one.',
       'Exposure compensation, full, half or third stops, and a calibration offset so it agrees with the meter or camera you already trust.',
       'Lumen Pro, one purchase: ND filters from ND2 to 20 stops with exact long exposures, and saved kits — camera, lens and film setups synced to your account.',
       'An account is optional. Without one, everything stays on the phone.'

@@ -12,6 +12,15 @@ const A16zAlpha = React.lazy(() => import('./components/A16ZAlpha'));
 /** Routes that bring their own full-screen chrome and skip the site nav. */
 const BARE_ROUTES = new Set(['/a16z', '/photography']);
 
+/** App sites are static pages in public/ (kmrnn.dev/lumen/), so kmrnn.dev/#/lumen hands off to them. */
+const StaticSite: React.FC = () => {
+  const { pathname } = useLocation();
+  React.useEffect(() => {
+    window.location.replace(pathname.endsWith('/') ? pathname : `${pathname}/`);
+  }, [pathname]);
+  return null;
+};
+
 const Shell: React.FC = () => {
   const location = useLocation();
   const bare = BARE_ROUTES.has(location.pathname);
@@ -31,6 +40,7 @@ const Shell: React.FC = () => {
             <Route path="/photography" element={<Gallery />} />
             <Route path="/fish-tanks" element={<Tanks />} />
             <Route path="/a16z" element={<A16zAlpha />} />
+            <Route path="/lumen/*" element={<StaticSite />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </React.Suspense>
