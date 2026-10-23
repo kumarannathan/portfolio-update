@@ -123,9 +123,10 @@
     }
 
     if (error || errorCode) {
-      if (errorCode && errorCode !== 'otp_expired') {
+      // Only our own wording: text from the URL could be written by anyone.
+      if (errorCode !== 'otp_expired') {
         document.getElementById('failed-title').textContent = "This link didn't work";
-        document.getElementById('failed-text').textContent = param('error_description') || 'Something went wrong with this link.';
+        document.getElementById('failed-text').textContent = 'It may be incomplete, or it was meant for a different request. Ask for a new email from Lumen.';
       }
       show('failed');
     } else if (accessToken && type === 'recovery') {
