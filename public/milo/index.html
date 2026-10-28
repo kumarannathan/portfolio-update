@@ -147,6 +147,35 @@
     .gate code { font: 400 12px/1 var(--mono); background: var(--soft); padding: 2px 6px; border-radius: 6px; }
     .install { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
 
+    /* under the hood: an isometric drawing of the process */
+    .iso { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; align-items: stretch; }
+    .iso__stage { background: var(--paper); border: 1px solid var(--line); border-radius: var(--rl); padding: 10px; overflow: hidden; }
+    .iso__stage svg { width: 100%; height: auto; display: block; font-family: var(--body); }
+    .iso__panel { background: var(--paper); border: 1px solid var(--line); border-radius: var(--rl); padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    .iso__panel .label { display: flex; justify-content: space-between; gap: 10px; }
+    .iso__panel .label code { font: 400 11px/1 var(--mono); text-transform: none; letter-spacing: 0; color: var(--ink-2); background: var(--soft); padding: 3px 7px; border-radius: 6px; }
+    .iso__panel h3 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
+    .iso__panel p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+    .iso__panel pre { font-size: 12.5px; line-height: 1.6; padding: 14px 16px; margin-top: auto; }
+    .iso__panel pre b { font-weight: 500; color: var(--lime-ink); background: var(--lime-soft); border-radius: 4px; padding: 0 3px; }
+    .iso__nav { display: flex; gap: 6px; flex-wrap: wrap; }
+    .iso__nav button { font: 500 12px/1 var(--body); padding: 7px 10px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-2); cursor: pointer; }
+    .iso__nav button.on { background: var(--ink); color: var(--canvas); border-color: var(--ink); }
+    /* svg bits */
+    .blk { cursor: pointer; transition: transform .45s var(--ease), opacity .35s ease; outline: none; }
+    .blk:hover, .blk:focus-visible, .blk.on { transform: translateY(-7px); }
+    .blk.dim { opacity: .28; }
+    .lbl { font-size: 12.5px; font-weight: 600; fill: var(--ink); letter-spacing: -.01em; }
+    .lbl2 { font-size: 11px; fill: var(--muted); font-weight: 400; }
+    .lead { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; }
+    .edge { fill: none; stroke: #d7d7d0; stroke-width: 2; stroke-linecap: round; transition: stroke .3s, opacity .3s; }
+    .edge.on { stroke: var(--lime-2); stroke-dasharray: 6 8; animation: flow 1.2s linear infinite; }
+    .edge.dim { opacity: .2; }
+    @keyframes flow { to { stroke-dashoffset: -28; } }
+    .anchor { fill: var(--ink); }
+    @media (max-width: 900px) { .iso { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { .blk, .edge { transition: none; animation: none; } }
+
     footer { margin-top: 72px; border-top: 1px solid var(--line); padding: 24px 0 56px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; font-size: 13px; color: var(--muted); }
     footer a:hover { color: var(--ink); }
 
@@ -166,6 +195,7 @@
       <a class="brand" href="/milo/"><img src="/projects/milo/icon-64.png" alt="" />Milo</a>
       <nav class="nav">
         <a class="hide-sm" href="#pipeline">Pipeline</a>
+        <a class="hide-sm" href="#inside">Under the hood</a>
         <a class="hide-sm" href="#approve">Approvals</a>
         <a class="hide-sm" href="#keys">Your keys</a>
         <a href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">GitHub</a>
@@ -209,6 +239,16 @@
           <div class="agent r d2"><div class="hd"><span class="mono">Pe</span><b>Personalizer</b></div><span class="st"><i></i>Idle</span><p>Writes outreach from the brief, not a template</p><small>when work arrives</small></div>
           <div class="agent r d3"><div class="hd"><span class="mono">SD</span><b>SDR</b></div><span class="st"><i></i>Idle</span><p>Sends what you approved, reads replies, books meetings</p><small>every 10 min</small></div>
           <div class="agent r d3"><div class="hd"><span class="mono">CR</span><b>CRM Agent</b></div><span class="st"><i></i>Idle</span><p>Keeps the CRM in sync with everything the team does</p><small>when work arrives</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="inside">
+      <div class="wrap">
+        <div class="head r"><div><span class="label">Under the hood</span><h2>One Node process. Here's what's in it.</h2></div><p class="sub">Click a block. Everything below is lifted from the actual source, not a diagram I drew first and built second.</p></div>
+        <div class="iso r d1">
+          <div class="iso__stage"><svg id="isoSvg" viewBox="0 0 900 600" role="group" aria-label="How Milo is put together"></svg></div>
+          <aside class="iso__panel" id="isoPanel" aria-live="polite"></aside>
         </div>
       </div>
     </section>
@@ -282,6 +322,129 @@
       </footer>
     </div>
   </main>
+
+  <script>
+  (function () {
+    // ---- the drawing: isometric projection, every block is three polygons ----
+    var C = Math.cos(Math.PI / 6), S = Math.sin(Math.PI / 6), U = 46, OX = 450, OY = 190;
+    function iso(x, y, z) { return [OX + (x - y) * C * U, OY + (x + y) * S * U - (z || 0) * U]; }
+    function pt(x, y, z) { return iso(x, y, z).join(','); }
+    var NS = 'http://www.w3.org/2000/svg';
+    function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+
+    // Each block is a real piece of the server. Text is what I'd tell someone reading the code for the first time.
+    var BLOCKS = [
+      { id: 'runner', x: 0, y: 0, w: 8.4, d: 6.2, h: .55, base: true, name: 'The runner', sub: 'server/runner/runner.js',
+        label: { at: [4.2, 6.2, 0], to: [450, 560], anchor: 'middle', text: ['Runner', 'the loop everything hangs off'] },
+        body: 'One loop, every two seconds. For each enabled agent it asks three questions: is it a cron agent and due? is it event-driven with tasks waiting? did someone press Run now? At most three run at a time. A run claims a batch of tasks, calls the agent, and writes down duration, tokens, cost and every tool call. If the run throws, the tasks go back on the queue, three strikes, and the agent backs off. If a connection’s credentials are rejected, the work is held instead of retried, so nothing gets sent twice.',
+        code: 'timer = setInterval(tick, <b>2000</b>);\n// per agent, per tick:\nif (due(agent) || queued(agent) || agent.runNow) start(agent);\n// in start():\nstore.update(\'tasks\', t.id, { status: \'running\', attempts: t.attempts + 1 });' },
+      { id: 'agents', x: .5, y: .5, w: 2.1, d: 2.1, h: 1.1, name: 'Agents', sub: 'server/playbooks/sales/agents/',
+        label: { at: [.5, 1.55, 1.1], to: [150, 120], anchor: 'end', text: ['Agents', 'plain objects, one job each'] },
+        body: 'An agent is a plain object, no classes, no framework. It says what task types it consumes and produces, how it’s scheduled (cron, or “when work arrives”), which capabilities it needs, what settings it exposes, and a run function. The seven sales agents are seven files. Adding one is adding a file.',
+        code: 'export default {\n  id: \'researcher\',\n  consumes: [\'research_account\'],\n  produces: [\'find_contacts\'],\n  schedule: { type: \'event\' },\n  capabilities: [{ key: \'web.search\', required: true }],\n  async run(ctx) { /* … */ }\n};' },
+      { id: 'queue', x: 3.15, y: 2.05, w: 2.1, d: 2.1, h: .9, name: 'Task queue', sub: 'server/runner/context.js',
+        label: { at: [4.2, 2.05, .9], to: [450, 40], anchor: 'middle', text: ['Task queue', 'how agents talk to each other'] },
+        body: 'Agents never call each other. Scout emits a research_account task; whoever consumes that type picks it up next tick. That’s the whole hand-off. It means you can turn an agent off and the work just waits, and you can read the queue on the Control room instead of guessing where things are.',
+        code: '// inside Scout\nctx.<b>emit</b>(\'research_account\', { accountId });\n// inside Researcher, next tick\nfor (const t of ctx.tasks) await brief(t.payload.accountId);' },
+      { id: 'caps', x: 5.8, y: .5, w: 2.1, d: 2.1, h: 1.1, name: 'Capabilities → providers', sub: 'server/runner/bindings.js · server/providers/',
+        label: { at: [7.9, 1.55, 1.1], to: [750, 120], anchor: 'start', text: ['Capabilities', 'agents ask, providers answer'] },
+        body: 'Agents never touch a vendor. They ask for a capability like email.verify and Milo routes it: the connection you picked for that agent, else the workspace default, else the first provider that implements it. llm.complete follows the agent’s model setting the same way. One file per vendor in providers/, loaded by reading the folder, so Hunter and Apollo are interchangeable from the agent’s point of view.',
+        code: 'const r = await ctx.<b>call</b>(\'email.verify\', { email });\n// bindings.js decides who answers:\n// 1. the agent\'s own connection\n// 2. the workspace default\n// 3. first provider with the capability' },
+      { id: 'store', x: .5, y: 3.6, w: 2.1, d: 2.1, h: .9, name: 'The store', sub: 'server/store.js',
+        label: { at: [.5, 4.65, .9], to: [150, 430], anchor: 'end', text: ['Store', 'one JSON file per account'] },
+        body: 'No database. Each account’s workspace, connections, tasks, runs and tool calls live in memory and get written to one JSON file: debounced, written to a temp file then renamed so a crash can’t leave it half-written, mode 600 because the API keys are in there. Every write emits the names of the collections that changed, which is what the live UI listens for.',
+        code: 'fs.writeFileSync(tmp, JSON.stringify(data), { mode: <b>0o600</b> });\nfs.<b>renameSync</b>(tmp, filePath);   // atomic swap\nbus.emit(\'changed\', [\'tasks\', \'runs\']);' },
+      { id: 'approvals', x: 5.8, y: 3.6, w: 2.1, d: 2.1, h: 1.1, name: 'Approvals', sub: 'server/playbooks/sales/approvals.js',
+        label: { at: [7.9, 4.65, 1.1], to: [750, 430], anchor: 'start', text: ['Approvals', 'the part I care about most'] },
+        body: 'Anything that leaves your machine on your behalf, an email, a reply, a meeting invite, becomes an approval first. Approving runs the playbook’s approve hook, which queues the actual send for the SDR. Rejecting stores your note, and the Personalizer gets your recent notes in its next prompt, so it stops making the same mistake. You can raise the autonomy level later. Default is: nothing goes out without you.',
+        code: 'if (needsApproval(action, workspace.autonomy))\n  store.insert(\'approvals\', { kind: \'email\', draft, brief });\n// on reject\nstore.insert(\'notes\', { agent: \'personalizer\', text: note });' },
+      { id: 'events', x: 3.15, y: 4.4, w: 2.1, d: 1.5, h: .7, name: 'Events', sub: 'server/events.js',
+        label: { at: [3.4, 5.9, .7], to: [250, 560], anchor: 'middle', text: ['Events', 'the UI never polls'] },
+        body: 'The browser opens one server-sent-events stream and that’s it. When the store says tasks and runs changed, the UI refetches tasks and runs, nothing else. That’s why the activity feed and the pipeline cards update the moment an agent finishes, without a refresh and without hammering the API.',
+        code: 'res.write(\'data: \' + JSON.stringify({ changed: [\'runs\'] }) + \'\\n\\n\');\n// src/: subscribe once, refetch what changed\nfor (const c of msg.changed) refetch(c);' }
+    ];
+    var EDGES = [['agents', 'queue'], ['queue', 'approvals'], ['agents', 'caps'], ['agents', 'store'], ['store', 'events'], ['queue', 'store']];
+
+    var svg = document.getElementById('isoSvg'), panel = document.getElementById('isoPanel');
+    var defs = el('defs', {}, svg);
+    function grad(id, a, b, v) { var g = el('linearGradient', { id: id, x1: 0, y1: 0, x2: v ? 0 : 1, y2: v ? 1 : 0 }, defs); el('stop', { offset: 0, 'stop-color': a }, g); el('stop', { offset: 1, 'stop-color': b }, g); }
+    grad('gTop', '#ffffff', '#f4f4f0', true); grad('gL', '#e9e9e3', '#dcdcd5', true); grad('gR', '#d9d9d2', '#cacac2', true);
+    grad('gTopBase', '#f7f7f3', '#ecece6', true); grad('gLBase', '#e3e3dc', '#d5d5ce', true); grad('gRBase', '#d4d4cc', '#c3c3bb', true);
+    grad('gTopOn', '#f1fcd9', '#dff7ac', true);
+    var blur = el('filter', { id: 'soft', x: '-30%', y: '-30%', width: '160%', height: '160%' }, defs); el('feGaussianBlur', { stdDeviation: 6 }, blur);
+
+    var centers = {};
+    BLOCKS.forEach(function (b) { centers[b.id] = iso(b.x + b.w / 2, b.y + b.d / 2, b.h); });
+
+    // edges go on the base top face, under the blocks
+    var edgeLayer = el('g', {}, svg), edgeEls = {};
+    EDGES.forEach(function (e) {
+      var a = centers[e[0]], b = centers[e[1]];
+      var p = el('path', { d: 'M' + a.join(' ') + ' L' + b.join(' '), 'class': 'edge', 'data-a': e[0], 'data-b': e[1] }, edgeLayer);
+      edgeEls[e.join('|')] = p;
+    });
+
+    var blockLayer = el('g', {}, svg), blockEls = {};
+    BLOCKS.slice().sort(function (a, b) { return (a.base ? -1 : 0) - (b.base ? -1 : 0) || (a.x + a.y) - (b.x + b.y); }).forEach(function (b) {
+      var g = el('g', { 'class': 'blk', tabindex: 0, role: 'button', 'aria-label': b.name, 'data-id': b.id }, blockLayer);
+      if (!b.base) { var c = iso(b.x + b.w / 2, b.y + b.d / 2, 0); el('ellipse', { cx: c[0], cy: c[1] + 10, rx: b.w * U * .78, ry: b.d * U * .3, fill: 'rgba(22,22,20,.14)', filter: 'url(#soft)' }, g); }
+      var x = b.x, y = b.y, w = b.w, d = b.d, h = b.h, sfx = b.base ? 'Base' : '';
+      var faces = [
+        ['L', [pt(x, y + d, 0), pt(x + w, y + d, 0), pt(x + w, y + d, h), pt(x, y + d, h)]],
+        ['R', [pt(x + w, y, 0), pt(x + w, y + d, 0), pt(x + w, y + d, h), pt(x + w, y, h)]],
+        ['Top', [pt(x, y, h), pt(x + w, y, h), pt(x + w, y + d, h), pt(x, y + d, h)]]
+      ];
+      faces.forEach(function (f) { el('polygon', { points: f[1].join(' '), fill: 'url(#g' + f[0] + sfx + ')', stroke: f[0] === 'Top' ? '#e2e2db' : 'none', 'stroke-width': 1, 'stroke-linejoin': 'round', 'data-face': f[0] }, g); });
+      if (b.base) {
+        // the mark, flat on the slab
+        el('polygon', { points: [pt(.2,.2,h), pt(8.2,.2,h), pt(8.2,6,h), pt(.2,6,h)].join(' '), fill: 'none', stroke: '#c5f467', 'stroke-width': 1.2, 'stroke-dasharray': '4 6', opacity: .9 }, g);
+      } else {
+        // a little glyph on top: two letters in a tile, like the app
+        var tc = iso(x + w / 2, y + d / 2, h); var tile = el('g', { transform: 'translate(' + tc[0] + ',' + (tc[1] - 2) + ')' }, g);
+        el('rect', { x: -15, y: -15, width: 30, height: 30, rx: 8, fill: '#161614' }, tile);
+        var tt = el('text', { 'text-anchor': 'middle', y: 5, 'font-size': 12, 'font-weight': 700, fill: '#c5f467', 'font-family': 'ui-monospace, Menlo, monospace' }, tile); tt.textContent = b.name.slice(0, 2);
+      }
+      blockEls[b.id] = g;
+      g.addEventListener('click', function () { select(b.id); });
+      g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(b.id); } });
+      g.addEventListener('mouseenter', function () { focus(b.id); });
+      g.addEventListener('mouseleave', function () { focus(current); });
+    });
+
+    // flat labels with elbow leader lines, drawn last so they sit over everything
+    var labelLayer = el('g', {}, svg);
+    BLOCKS.forEach(function (b) {
+      var a = iso.apply(null, b.label.at), to = b.label.to, anchor = b.label.anchor, vertical = anchor === 'middle';
+      var d;
+      if (vertical) { d = 'M' + a[0] + ' ' + a[1] + ' L' + a[0] + ' ' + (to[1] + (to[1] > a[1] ? -30 : 30)) + ' L' + to[0] + ' ' + (to[1] + (to[1] > a[1] ? -30 : 30)); }
+      else { var ex = anchor === 'end' ? to[0] + 14 : to[0] - 14; d = 'M' + a[0] + ' ' + a[1] + ' L' + (ex + (anchor === 'end' ? 40 : -40)) + ' ' + a[1] + ' Q' + ex + ' ' + a[1] + ' ' + ex + ' ' + (a[1] + (to[1] > a[1] ? 14 : -14)) + ' L' + ex + ' ' + to[1]; }
+      el('path', { d: d, 'class': 'lead' }, labelLayer);
+      el('circle', { cx: a[0], cy: a[1], r: 3.5, 'class': 'anchor' }, labelLayer);
+      var ty = vertical ? (to[1] > a[1] ? to[1] + 4 : to[1] - 12) : (to[1] > a[1] ? to[1] + 14 : to[1] - 4);
+      var t1 = el('text', { x: to[0], y: ty, 'text-anchor': anchor, 'class': 'lbl' }, labelLayer); t1.textContent = b.label.text[0];
+      var t2 = el('text', { x: to[0], y: ty + 15, 'text-anchor': anchor, 'class': 'lbl2' }, labelLayer); t2.textContent = b.label.text[1];
+    });
+
+    var current = 'runner';
+    function focus(id) {
+      BLOCKS.forEach(function (b) {
+        var touches = b.id === id || b.base || EDGES.some(function (e) { return e.indexOf(id) > -1 && e.indexOf(b.id) > -1; });
+        blockEls[b.id].classList.toggle('dim', !touches);
+        blockEls[b.id].classList.toggle('on', b.id === id);
+        blockEls[b.id].querySelector('[data-face=Top]').setAttribute('fill', b.id === id ? 'url(#gTopOn)' : 'url(#gTop' + (b.base ? 'Base' : '') + ')');
+      });
+      for (var k in edgeEls) { var on = k.split('|').indexOf(id) > -1; edgeEls[k].classList.toggle('on', on); edgeEls[k].classList.toggle('dim', !on && id !== 'runner'); }
+    }
+    function select(id) {
+      current = id; focus(id);
+      var b = BLOCKS.filter(function (x) { return x.id === id; })[0];
+      panel.innerHTML = '<div class="label"><span>' + b.label.text[1] + '</span><code>' + b.sub + '</code></div><h3>' + b.name + '</h3><p>' + b.body + '</p><pre>' + b.code + '</pre>' +
+        '<div class="iso__nav">' + BLOCKS.map(function (x) { return '<button type="button" data-id="' + x.id + '"' + (x.id === id ? ' class="on"' : '') + '>' + x.label.text[0] + '</button>'; }).join('') + '</div>';
+    }
+    panel.addEventListener('click', function (e) { var btn = e.target.closest('[data-id]'); if (btn) select(btn.dataset.id); });
+    select('runner');
+  })();
+  </script>
 
   <script>
   (function () {
