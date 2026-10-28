@@ -148,10 +148,14 @@
     .install { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
 
     /* under the hood: an isometric drawing of the process */
-    .iso { display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; align-items: stretch; }
+    .iso { display: grid; grid-template-columns: 1fr; gap: 14px; }
     .iso__stage { background: var(--paper); border: 1px solid var(--line); border-radius: var(--rl); padding: 10px; overflow: hidden; }
     .iso__stage svg { width: 100%; height: auto; display: block; font-family: var(--body); }
-    .iso__panel { background: var(--paper); border: 1px solid var(--line); border-radius: var(--rl); padding: 22px 22px 20px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    .iso__panel { background: var(--paper); border: 1px solid var(--line); border-radius: var(--rl); padding: 22px 24px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; min-width: 0; align-items: start; }
+    .iso__panel .label, .iso__panel .iso__nav { grid-column: 1 / -1; }
+    .iso__panel pre { grid-row: 3; grid-column: 2; margin-top: 0; align-self: stretch; }
+    .iso__panel p { grid-row: 3; grid-column: 1; }
+    @media (max-width: 900px) { .iso__panel { grid-template-columns: 1fr; } .iso__panel pre, .iso__panel p { grid-row: auto; grid-column: 1; } }
     .iso__panel .label { display: flex; justify-content: space-between; gap: 10px; }
     .iso__panel .label code { font: 400 11px/1 var(--mono); text-transform: none; letter-spacing: 0; color: var(--ink-2); background: var(--soft); padding: 3px 7px; border-radius: 6px; }
     .iso__panel h3 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
@@ -168,12 +172,13 @@
     .lbl { font-size: 12.5px; font-weight: 600; fill: var(--ink); letter-spacing: -.01em; }
     .lbl2 { font-size: 11px; fill: var(--muted); font-weight: 400; }
     .lead { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; }
-    .edge { fill: none; stroke: #d7d7d0; stroke-width: 2; stroke-linecap: round; transition: stroke .3s, opacity .3s; }
-    .edge.on { stroke: var(--lime-2); stroke-dasharray: 6 8; animation: flow 1.2s linear infinite; }
-    .edge.dim { opacity: .2; }
+    .track { fill: none; stroke: #d7d7d0; stroke-width: 10; stroke-linecap: round; }
+    .flow { fill: none; stroke: var(--lime-2); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 10 14; animation: flow 1.4s linear infinite; transition: opacity .3s; }
+    .tie { fill: none; stroke: #d7d7d0; stroke-width: 1.5; stroke-dasharray: 3 5; transition: stroke .3s; }
+    .tie.on { stroke: var(--lime-2); }
     @keyframes flow { to { stroke-dashoffset: -28; } }
     .anchor { fill: var(--ink); }
-    @media (max-width: 900px) { .iso { grid-template-columns: 1fr; } }
+    
     @media (prefers-reduced-motion: reduce) { .blk, .edge { transition: none; animation: none; } }
 
     footer { margin-top: 72px; border-top: 1px solid var(--line); padding: 24px 0 56px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; font-size: 13px; color: var(--muted); }
@@ -245,9 +250,9 @@
 
     <section id="inside">
       <div class="wrap">
-        <div class="head r"><div><span class="label">Under the hood</span><h2>One Node process. Here's what's in it.</h2></div><p class="sub">Click a block. Everything below is lifted from the actual source, not a diagram I drew first and built second.</p></div>
+        <div class="head r"><div><span class="label">Under the hood</span><h2>One Node process. Here's what's in it.</h2></div><p class="sub">Work enters on the left and leaves on the right. Click any block; what you read is lifted from the source, not a diagram I drew first and built second.</p></div>
         <div class="iso r d1">
-          <div class="iso__stage"><svg id="isoSvg" viewBox="0 0 900 600" role="group" aria-label="How Milo is put together"></svg></div>
+          <div class="iso__stage"><svg id="isoSvg" viewBox="0 0 1100 600" role="group" aria-label="How Milo is put together"></svg></div>
           <aside class="iso__panel" id="isoPanel" aria-live="polite"></aside>
         </div>
       </div>
@@ -326,123 +331,149 @@
   <script>
   (function () {
     // ---- the drawing: isometric projection, every block is three polygons ----
-    var C = Math.cos(Math.PI / 6), S = Math.sin(Math.PI / 6), U = 46, OX = 450, OY = 190;
+    var C = Math.cos(Math.PI / 6), S = 0.38, U = 50, OX = 262, OY = 92;
     function iso(x, y, z) { return [OX + (x - y) * C * U, OY + (x + y) * S * U - (z || 0) * U]; }
     function pt(x, y, z) { return iso(x, y, z).join(','); }
     var NS = 'http://www.w3.org/2000/svg';
     function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
 
-    // Each block is a real piece of the server. Text is what I'd tell someone reading the code for the first time.
-    var BLOCKS = [
-      { id: 'runner', x: 0, y: 0, w: 8.4, d: 6.2, h: .55, base: true, name: 'The runner', sub: 'server/runner/runner.js',
-        label: { at: [4.2, 6.2, 0], to: [450, 560], anchor: 'middle', text: ['Runner', 'the loop everything hangs off'] },
-        body: 'One loop, every two seconds. For each enabled agent it asks three questions: is it a cron agent and due? is it event-driven with tasks waiting? did someone press Run now? At most three run at a time. A run claims a batch of tasks, calls the agent, and writes down duration, tokens, cost and every tool call. If the run throws, the tasks go back on the queue, three strikes, and the agent backs off. If a connection’s credentials are rejected, the work is held instead of retried, so nothing gets sent twice.',
-        code: 'timer = setInterval(tick, <b>2000</b>);\n// per agent, per tick:\nif (due(agent) || queued(agent) || agent.runNow) start(agent);\n// in start():\nstore.update(\'tasks\', t.id, { status: \'running\', attempts: t.attempts + 1 });' },
-      { id: 'agents', x: .5, y: .5, w: 2.1, d: 2.1, h: 1.1, name: 'Agents', sub: 'server/playbooks/sales/agents/',
-        label: { at: [.5, 1.55, 1.1], to: [150, 120], anchor: 'end', text: ['Agents', 'plain objects, one job each'] },
-        body: 'An agent is a plain object, no classes, no framework. It says what task types it consumes and produces, how it’s scheduled (cron, or “when work arrives”), which capabilities it needs, what settings it exposes, and a run function. The seven sales agents are seven files. Adding one is adding a file.',
-        code: 'export default {\n  id: \'researcher\',\n  consumes: [\'research_account\'],\n  produces: [\'find_contacts\'],\n  schedule: { type: \'event\' },\n  capabilities: [{ key: \'web.search\', required: true }],\n  async run(ctx) { /* … */ }\n};' },
-      { id: 'queue', x: 3.15, y: 2.05, w: 2.1, d: 2.1, h: .9, name: 'Task queue', sub: 'server/runner/context.js',
-        label: { at: [4.2, 2.05, .9], to: [450, 40], anchor: 'middle', text: ['Task queue', 'how agents talk to each other'] },
-        body: 'Agents never call each other. Scout emits a research_account task; whoever consumes that type picks it up next tick. That’s the whole hand-off. It means you can turn an agent off and the work just waits, and you can read the queue on the Control room instead of guessing where things are.',
-        code: '// inside Scout\nctx.<b>emit</b>(\'research_account\', { accountId });\n// inside Researcher, next tick\nfor (const t of ctx.tasks) await brief(t.payload.accountId);' },
-      { id: 'caps', x: 5.8, y: .5, w: 2.1, d: 2.1, h: 1.1, name: 'Capabilities → providers', sub: 'server/runner/bindings.js · server/providers/',
-        label: { at: [7.9, 1.55, 1.1], to: [750, 120], anchor: 'start', text: ['Capabilities', 'agents ask, providers answer'] },
-        body: 'Agents never touch a vendor. They ask for a capability like email.verify and Milo routes it: the connection you picked for that agent, else the workspace default, else the first provider that implements it. llm.complete follows the agent’s model setting the same way. One file per vendor in providers/, loaded by reading the folder, so Hunter and Apollo are interchangeable from the agent’s point of view.',
-        code: 'const r = await ctx.<b>call</b>(\'email.verify\', { email });\n// bindings.js decides who answers:\n// 1. the agent\'s own connection\n// 2. the workspace default\n// 3. first provider with the capability' },
-      { id: 'store', x: .5, y: 3.6, w: 2.1, d: 2.1, h: .9, name: 'The store', sub: 'server/store.js',
-        label: { at: [.5, 4.65, .9], to: [150, 430], anchor: 'end', text: ['Store', 'one JSON file per account'] },
-        body: 'No database. Each account’s workspace, connections, tasks, runs and tool calls live in memory and get written to one JSON file: debounced, written to a temp file then renamed so a crash can’t leave it half-written, mode 600 because the API keys are in there. Every write emits the names of the collections that changed, which is what the live UI listens for.',
-        code: 'fs.writeFileSync(tmp, JSON.stringify(data), { mode: <b>0o600</b> });\nfs.<b>renameSync</b>(tmp, filePath);   // atomic swap\nbus.emit(\'changed\', [\'tasks\', \'runs\']);' },
-      { id: 'approvals', x: 5.8, y: 3.6, w: 2.1, d: 2.1, h: 1.1, name: 'Approvals', sub: 'server/playbooks/sales/approvals.js',
-        label: { at: [7.9, 4.65, 1.1], to: [750, 430], anchor: 'start', text: ['Approvals', 'the part I care about most'] },
-        body: 'Anything that leaves your machine on your behalf, an email, a reply, a meeting invite, becomes an approval first. Approving runs the playbook’s approve hook, which queues the actual send for the SDR. Rejecting stores your note, and the Personalizer gets your recent notes in its next prompt, so it stops making the same mistake. You can raise the autonomy level later. Default is: nothing goes out without you.',
-        code: 'if (needsApproval(action, workspace.autonomy))\n  store.insert(\'approvals\', { kind: \'email\', draft, brief });\n// on reject\nstore.insert(\'notes\', { agent: \'personalizer\', text: note });' },
-      { id: 'events', x: 3.15, y: 4.4, w: 2.1, d: 1.5, h: .7, name: 'Events', sub: 'server/events.js',
-        label: { at: [3.4, 5.9, .7], to: [250, 560], anchor: 'middle', text: ['Events', 'the UI never polls'] },
-        body: 'The browser opens one server-sent-events stream and that’s it. When the store says tasks and runs changed, the UI refetches tasks and runs, nothing else. That’s why the activity feed and the pipeline cards update the moment an agent finishes, without a refresh and without hammering the API.',
-        code: 'res.write(\'data: \' + JSON.stringify({ changed: [\'runs\'] }) + \'\\n\\n\');\n// src/: subscribe once, refetch what changed\nfor (const c of msg.changed) refetch(c);' }
+    // The front lane is the pipeline, left to right, in the order work actually moves. The back lane is the plumbing it all runs on.
+    // Text is what I'd tell someone reading the code for the first time. Snippets are from the real files.
+    var LANE = 3.2, BACK = 0.5, W = 1.6, GAP = 2.05;
+    var STAGES = [
+      { id: 'scout', name: 'Scout', tag: 'Sc', sub: 'agents/scout.js · cron, every 4h', when: 'every 4 hours',
+        body: 'Starts the whole thing. Runs on a cron, asks the accounts provider for companies that match your ICP, skips anything your CRM already calls a customer, and emits one research_account task per company, up to the daily cap. The only agent that creates work out of nothing; everyone else waits for a task.',
+        code: "schedule: { type: 'cron', cron: '0 */4 * * *' },\ncapabilities: [{ key: 'accounts.search', required: true },\n               { key: 'crm.read', required: false }],\n// per match:\nctx.<b>emit</b>('research_account', { accountId });" },
+      { id: 'researcher', name: 'Researcher', tag: 'Re', sub: 'agents/researcher.js · event', when: 'when work arrives',
+        body: 'Picks up research_account, runs up to eight searches (news, hiring, funding, the company’s own site), and has the model write a brief: why now, likely pains, two or three angles, every claim with a source. That brief is what the Personalizer writes from later, which is the whole reason the emails don’t read like a template.',
+        code: "consumes: ['research_account'],\nproduces: ['find_contacts'],\nconst hits = await ctx.<b>call</b>('web.search', { q, max: ctx.config.sourcesPerBrief });\nconst brief = await ctx.llm({ system: BRIEF, prompt: sources });" },
+      { id: 'prospector', name: 'Prospector', tag: 'Pr', sub: 'agents/prospector.js · event', when: 'when work arrives',
+        body: 'Finds the people. Searches contacts at the seniority you set, optionally enriches them, then finds and verifies an email for each. Counts what it got back (verified, likely, catch-all, nothing) and that status becomes part of the lead score. Nothing is guessed; an unverified address is marked unverified.',
+        code: "capabilities: [{ key: 'contacts.search', required: true },\n               { key: 'email.find',  required: false },\n               { key: 'email.verify', required: false }],\nconst v = await ctx.call('email.verify', { email });\ncounts[v.status]++;" },
+      { id: 'qualifier', name: 'Qualifier', tag: 'Qu', sub: 'agents/qualifier.js · event', when: 'when work arrives',
+        body: 'Scores each lead out of 100 from five parts: ICP fit, growth signals, role relevance, buying signal, contact quality. Then it decides: 91 and up goes to outreach, 70 to 90 goes back to the Researcher for another pass, below that is parked. Both thresholds are yours to move on the Agents screen.',
+        code: "produces: ['write_outreach', 'research_account'],\nif (score >= ctx.config.outreachAt) ctx.emit('write_outreach', lead);\nelse if (score >= ctx.config.researchAt) ctx.emit('research_account', lead);" },
+      { id: 'personalizer', name: 'Personalizer', tag: 'Pe', sub: 'agents/personalizer.js · event', when: 'when work arrives',
+        body: 'Writes the email from the brief, under the word limit you set, plus the follow-ups for the sequence. Your recent rejection notes ride along in the prompt, so if you told it last week to stop opening with a compliment, it stops. The draft doesn’t go anywhere yet. It goes to you.',
+        code: "const notes = store.recentNotes('personalizer', 5);\nconst draft = await ctx.llm({ system: WRITE, prompt: { brief, lead, notes } });\nctx.emit('send_outreach', { draft, sequence });   // lands in Approvals first" },
+      { id: 'you', name: 'You', tag: 'Yo', sub: 'playbooks/sales/approvals.js', when: 'whenever you open the inbox', you: true,
+        body: 'The gate. Anything that leaves your machine on your behalf becomes an approval first. Approve runs the playbook’s approve hook and queues the real send. Edit changes the draft before it goes. Reject stores your note, and the Personalizer reads it next time. You can raise the autonomy level under Account when you trust it. Default is nothing goes out without you.',
+        code: "if (needsApproval('email', workspace.autonomy))\n  store.insert('approvals', { kind: 'email', draft, brief, leadId });\n// on reject:\nstore.insert('notes', { agent: 'personalizer', text: note });" },
+      { id: 'sdr', name: 'SDR', tag: 'SD', sub: 'agents/sdr.js · cron, every 10 min', when: 'every 10 minutes',
+        body: 'Sends what you approved, inside a sending window in the contact’s own time zone (inferred from their location). Reads the inbox over IMAP, matches replies to threads by header, and sorts them: interested, not now, out of office, wrong person. Interested gets a calendar slot offered and a meeting booked. Anything it isn’t sure about comes back to you.',
+        code: "consumes: ['send_outreach', 'handle_reply', 'follow_up'],\nproduces: ['book_meeting', 'sync_crm', 'follow_up'],\nif (now < nextSendTime(lead.tz, windowStart)) return hold();\nawait ctx.call('email.send', { to, subject, text, threadId });" },
+      { id: 'crm', name: 'CRM Agent', tag: 'CR', sub: 'agents/crm.js · event', when: 'when work arrives',
+        body: 'Last in line. Everything the team did gets written to your CRM: the company, the contacts, each email as an activity or a note, the meeting. Looks up existing records first so it doesn’t make duplicates. If you have no CRM connected it quietly does nothing and the pipeline still works.',
+        code: "consumes: ['sync_crm'],\nproduces: [],\nconst company = (await ctx.call('crm.read', { domain })) ?? (ctx.config.createCompanies && await ctx.call('crm.write', { company }));\nawait ctx.call('crm.write', { activity: { email, companyId: company.id } });" }
     ];
-    var EDGES = [['agents', 'queue'], ['queue', 'approvals'], ['agents', 'caps'], ['agents', 'store'], ['store', 'events'], ['queue', 'store']];
+    var PLUMBING = [
+      { id: 'runner', name: 'The runner', sub: 'server/runner/runner.js', base: true,
+        body: 'The slab everything sits on. One loop, every two seconds, for each enabled agent: is it cron and due? event-driven with tasks waiting? did someone press Run now? At most three run at once. A run claims a batch of tasks, calls the agent, records duration, tokens, cost and every tool call. If it throws, the tasks go back on the queue, three strikes, and the agent backs off.',
+        code: "timer = setInterval(tick, <b>2000</b>);\nif (due(agent) || queued(agent) || agent.runNow) start(agent);\nstore.update('tasks', t.id, { status: 'running', attempts: t.attempts + 1 });" },
+      { id: 'store', name: 'The store', sub: 'server/store.js', x: 1.6,
+        body: 'No database. Each account’s workspace, connections, tasks, runs and tool calls live in memory and get written to one JSON file: debounced, temp file then rename so a crash can’t half-write it, mode 600 because the API keys are in there. Every write emits the names of the collections that changed.',
+        code: "fs.writeFileSync(tmp, JSON.stringify(data), { mode: <b>0o600</b> });\nfs.<b>renameSync</b>(tmp, filePath);   // atomic swap\nbus.emit('changed', ['tasks', 'runs']);" },
+      { id: 'caps', name: 'Capabilities → providers', sub: 'server/runner/bindings.js · server/providers/', x: 7.3,
+        body: 'Agents never touch a vendor. They ask for a capability like email.verify and the runner routes it: the connection you chose for that agent, else the workspace default, else the first provider that implements it. One file per vendor in providers/, loaded by reading the folder, so Hunter and Apollo are interchangeable from the agent’s side.',
+        code: "const r = await ctx.<b>call</b>('email.verify', { email });\n// bindings.js: 1. the agent's connection  2. workspace default  3. first provider that can" },
+      { id: 'events', name: 'Events', sub: 'server/events.js', x: 13,
+        body: 'The browser opens one server-sent-events stream and that’s it. When the store says tasks and runs changed, the UI refetches tasks and runs, nothing else. That’s why the pipeline cards update the moment an agent finishes, without polling.',
+        code: "res.write('data: ' + JSON.stringify({ changed: ['runs'] }) + '\\n\\n');\nfor (const c of msg.changed) refetch(c);   // src/" }
+    ];
+    var ALL = STAGES.concat(PLUMBING), byId = {};
+    ALL.forEach(function (b) { byId[b.id] = b; });
 
     var svg = document.getElementById('isoSvg'), panel = document.getElementById('isoPanel');
     var defs = el('defs', {}, svg);
-    function grad(id, a, b, v) { var g = el('linearGradient', { id: id, x1: 0, y1: 0, x2: v ? 0 : 1, y2: v ? 1 : 0 }, defs); el('stop', { offset: 0, 'stop-color': a }, g); el('stop', { offset: 1, 'stop-color': b }, g); }
-    grad('gTop', '#ffffff', '#f4f4f0', true); grad('gL', '#e9e9e3', '#dcdcd5', true); grad('gR', '#d9d9d2', '#cacac2', true);
-    grad('gTopBase', '#f7f7f3', '#ecece6', true); grad('gLBase', '#e3e3dc', '#d5d5ce', true); grad('gRBase', '#d4d4cc', '#c3c3bb', true);
-    grad('gTopOn', '#f1fcd9', '#dff7ac', true);
-    var blur = el('filter', { id: 'soft', x: '-30%', y: '-30%', width: '160%', height: '160%' }, defs); el('feGaussianBlur', { stdDeviation: 6 }, blur);
+    function grad(id, a, b) { var g = el('linearGradient', { id: id, x1: 0, y1: 0, x2: 0, y2: 1 }, defs); el('stop', { offset: 0, 'stop-color': a }, g); el('stop', { offset: 1, 'stop-color': b }, g); }
+    grad('gTop', '#ffffff', '#f4f4f0'); grad('gL', '#e9e9e3', '#dcdcd5'); grad('gR', '#d9d9d2', '#cacac2');
+    grad('gTopBase', '#f7f7f3', '#ecece6'); grad('gLBase', '#e3e3dc', '#d5d5ce'); grad('gRBase', '#d4d4cc', '#c3c3bb');
+    grad('gTopOn', '#f1fcd9', '#dff7ac'); grad('gTopYou', '#2a2a27', '#161614'); grad('gLYou', '#1f1f1d', '#111'); grad('gRYou', '#171716', '#0b0b0b');
+    var blur = el('filter', { id: 'soft', x: '-30%', y: '-30%', width: '160%', height: '160%' }, defs); el('feGaussianBlur', { stdDeviation: 5 }, blur);
 
+    // geometry
+    STAGES.forEach(function (b, i) { b.x = 0.5 + i * GAP; b.y = LANE; b.w = W; b.d = W; b.h = b.you ? 1.2 : 0.95; });
+    PLUMBING.forEach(function (b) { if (b.base) { b.x = 0; b.y = 0; b.w = 0.5 + STAGES.length * GAP + 0.2; b.d = LANE + W + 0.5; b.h = 0.5; } else { b.y = BACK; b.w = 2.4; b.d = 1.3; b.h = 0.7; } });
     var centers = {};
-    BLOCKS.forEach(function (b) { centers[b.id] = iso(b.x + b.w / 2, b.y + b.d / 2, b.h); });
+    ALL.forEach(function (b) { centers[b.id] = iso(b.x + b.w / 2, b.y + b.d / 2, b.h); });
 
-    // edges go on the base top face, under the blocks
-    var edgeLayer = el('g', {}, svg), edgeEls = {};
-    EDGES.forEach(function (e) {
-      var a = centers[e[0]], b = centers[e[1]];
-      var p = el('path', { d: 'M' + a.join(' ') + ' L' + b.join(' '), 'class': 'edge', 'data-a': e[0], 'data-b': e[1] }, edgeLayer);
-      edgeEls[e.join('|')] = p;
+    // the lane: a track on the slab, under the blocks, with work flowing down it
+    var trackLayer = el('g', {}, svg);
+    var laneY = LANE + W / 2, x0 = 0.5 + W / 2, x1 = 0.5 + (STAGES.length - 1) * GAP + W / 2;
+    el('path', { d: 'M' + pt(x0, laneY, .5) + ' L' + pt(x1, laneY, .5), 'class': 'track' }, trackLayer);
+    var flow = el('path', { d: 'M' + pt(x0, laneY, .5) + ' L' + pt(x1, laneY, .5), 'class': 'flow' }, trackLayer);
+    // plumbing ties: thin lines from the back lane down to the track
+    PLUMBING.filter(function (b) { return !b.base; }).forEach(function (b) {
+      var p = el('path', { d: 'M' + pt(b.x + b.w / 2, b.y + b.d, .5) + ' L' + pt(b.x + b.w / 2, laneY, .5), 'class': 'tie', 'data-id': b.id }, trackLayer);
+      b.tie = p;
     });
 
     var blockLayer = el('g', {}, svg), blockEls = {};
-    BLOCKS.slice().sort(function (a, b) { return (a.base ? -1 : 0) - (b.base ? -1 : 0) || (a.x + a.y) - (b.x + b.y); }).forEach(function (b) {
+    ALL.slice().sort(function (a, b) { return (a.base ? -1 : 0) - (b.base ? -1 : 0) || (a.x + a.y) - (b.x + b.y); }).forEach(function (b) {
       var g = el('g', { 'class': 'blk', tabindex: 0, role: 'button', 'aria-label': b.name, 'data-id': b.id }, blockLayer);
-      if (!b.base) { var c = iso(b.x + b.w / 2, b.y + b.d / 2, 0); el('ellipse', { cx: c[0], cy: c[1] + 10, rx: b.w * U * .78, ry: b.d * U * .3, fill: 'rgba(22,22,20,.14)', filter: 'url(#soft)' }, g); }
-      var x = b.x, y = b.y, w = b.w, d = b.d, h = b.h, sfx = b.base ? 'Base' : '';
-      var faces = [
-        ['L', [pt(x, y + d, 0), pt(x + w, y + d, 0), pt(x + w, y + d, h), pt(x, y + d, h)]],
-        ['R', [pt(x + w, y, 0), pt(x + w, y + d, 0), pt(x + w, y + d, h), pt(x + w, y, h)]],
-        ['Top', [pt(x, y, h), pt(x + w, y, h), pt(x + w, y + d, h), pt(x, y + d, h)]]
-      ];
-      faces.forEach(function (f) { el('polygon', { points: f[1].join(' '), fill: 'url(#g' + f[0] + sfx + ')', stroke: f[0] === 'Top' ? '#e2e2db' : 'none', 'stroke-width': 1, 'stroke-linejoin': 'round', 'data-face': f[0] }, g); });
-      if (b.base) {
-        // the mark, flat on the slab
-        el('polygon', { points: [pt(.2,.2,h), pt(8.2,.2,h), pt(8.2,6,h), pt(.2,6,h)].join(' '), fill: 'none', stroke: '#c5f467', 'stroke-width': 1.2, 'stroke-dasharray': '4 6', opacity: .9 }, g);
-      } else {
-        // a little glyph on top: two letters in a tile, like the app
+      if (!b.base) { var c = iso(b.x + b.w / 2, b.y + b.d / 2, 0); el('ellipse', { cx: c[0], cy: c[1] + 8, rx: b.w * U * .75, ry: b.d * U * .28, fill: 'rgba(22,22,20,.14)', filter: 'url(#soft)' }, g); }
+      var x = b.x, y = b.y, w = b.w, d = b.d, h = b.h, sfx = b.base ? 'Base' : b.you ? 'You' : '';
+      [['L', [pt(x, y + d, 0), pt(x + w, y + d, 0), pt(x + w, y + d, h), pt(x, y + d, h)]],
+       ['R', [pt(x + w, y, 0), pt(x + w, y + d, 0), pt(x + w, y + d, h), pt(x + w, y, h)]],
+       ['Top', [pt(x, y, h), pt(x + w, y, h), pt(x + w, y + d, h), pt(x, y + d, h)]]
+      ].forEach(function (f) { el('polygon', { points: f[1].join(' '), fill: 'url(#g' + f[0] + sfx + ')', stroke: f[0] === 'Top' && !b.you ? '#e2e2db' : 'none', 'stroke-width': 1, 'stroke-linejoin': 'round', 'data-face': f[0] }, g); });
+      if (!b.base) {
         var tc = iso(x + w / 2, y + d / 2, h); var tile = el('g', { transform: 'translate(' + tc[0] + ',' + (tc[1] - 2) + ')' }, g);
-        el('rect', { x: -15, y: -15, width: 30, height: 30, rx: 8, fill: '#161614' }, tile);
-        var tt = el('text', { 'text-anchor': 'middle', y: 5, 'font-size': 12, 'font-weight': 700, fill: '#c5f467', 'font-family': 'ui-monospace, Menlo, monospace' }, tile); tt.textContent = b.name.slice(0, 2);
+        if (b.tag) {
+          el('rect', { x: -13, y: -13, width: 26, height: 26, rx: 7, fill: b.you ? '#c5f467' : '#161614' }, tile);
+          var tt = el('text', { 'text-anchor': 'middle', y: 4, 'font-size': 11, 'font-weight': 700, fill: b.you ? '#161614' : '#c5f467', 'font-family': 'ui-monospace, Menlo, monospace' }, tile); tt.textContent = b.tag;
+        } else {
+          el('circle', { r: 5, fill: '#161614' }, tile);
+        }
       }
       blockEls[b.id] = g;
       g.addEventListener('click', function () { select(b.id); });
       g.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(b.id); } });
-      g.addEventListener('mouseenter', function () { focus(b.id); });
+      g.addEventListener('mouseenter', function () { focus(b.id, true); });
       g.addEventListener('mouseleave', function () { focus(current); });
     });
 
-    // flat labels with elbow leader lines, drawn last so they sit over everything
+    // labels: pipeline stages get a name pill floating above; plumbing gets flat leader lines
     var labelLayer = el('g', {}, svg);
-    BLOCKS.forEach(function (b) {
-      var a = iso.apply(null, b.label.at), to = b.label.to, anchor = b.label.anchor, vertical = anchor === 'middle';
-      var d;
-      if (vertical) { d = 'M' + a[0] + ' ' + a[1] + ' L' + a[0] + ' ' + (to[1] + (to[1] > a[1] ? -30 : 30)) + ' L' + to[0] + ' ' + (to[1] + (to[1] > a[1] ? -30 : 30)); }
-      else { var ex = anchor === 'end' ? to[0] + 14 : to[0] - 14; d = 'M' + a[0] + ' ' + a[1] + ' L' + (ex + (anchor === 'end' ? 40 : -40)) + ' ' + a[1] + ' Q' + ex + ' ' + a[1] + ' ' + ex + ' ' + (a[1] + (to[1] > a[1] ? 14 : -14)) + ' L' + ex + ' ' + to[1]; }
-      el('path', { d: d, 'class': 'lead' }, labelLayer);
-      el('circle', { cx: a[0], cy: a[1], r: 3.5, 'class': 'anchor' }, labelLayer);
-      var ty = vertical ? (to[1] > a[1] ? to[1] + 4 : to[1] - 12) : (to[1] > a[1] ? to[1] + 14 : to[1] - 4);
-      var t1 = el('text', { x: to[0], y: ty, 'text-anchor': anchor, 'class': 'lbl' }, labelLayer); t1.textContent = b.label.text[0];
-      var t2 = el('text', { x: to[0], y: ty + 15, 'text-anchor': anchor, 'class': 'lbl2' }, labelLayer); t2.textContent = b.label.text[1];
+    STAGES.forEach(function (b, i) {
+      // from the block's front corner, straight down past the slab, label underneath; alternate rows so they don't collide
+      var a = iso(b.x + b.w / 2, b.y + b.d, 0), foot = iso(b.x + b.w / 2, LANE + W + 0.5, 0), ly = foot[1] + 30 + (i % 2) * 36;
+      el('path', { d: 'M' + a[0] + ' ' + a[1] + ' L' + a[0] + ' ' + (ly - 14), 'class': 'lead' }, labelLayer);
+      el('circle', { cx: a[0], cy: a[1], r: 3, 'class': 'anchor' }, labelLayer);
+      var t = el('text', { x: a[0], y: ly, 'text-anchor': 'middle', 'class': 'lbl' }, labelLayer); t.textContent = b.name;
+      var t2 = el('text', { x: a[0], y: ly + 12, 'text-anchor': 'middle', 'class': 'lbl2' }, labelLayer); t2.textContent = b.when;
+    });
+    PLUMBING.forEach(function (b, i) {
+      var a, to, anchor;
+      if (b.base) { a = iso(0.6, b.d, 0.25); to = [36, 560]; anchor = 'start'; }
+      else { a = iso(b.x + b.w / 2, b.y, b.h); to = [a[0] - 10, 34]; anchor = 'middle'; }
+      el('path', { d: b.base ? 'M' + a[0] + ' ' + a[1] + ' L' + a[0] + ' ' + (to[1] - 20) + ' L' + to[0] + ' ' + (to[1] - 20) : 'M' + a[0] + ' ' + a[1] + ' L' + a[0] + ' ' + (to[1] + 20), 'class': 'lead' }, labelLayer);
+      el('circle', { cx: a[0], cy: a[1], r: 3.2, 'class': 'anchor' }, labelLayer);
+      var t = el('text', { x: to[0], y: b.base ? to[1] - 2 : to[1], 'text-anchor': anchor, 'class': 'lbl' }, labelLayer); t.textContent = b.name;
+      var t2 = el('text', { x: to[0], y: (b.base ? to[1] - 2 : to[1]) + 12, 'text-anchor': anchor, 'class': 'lbl2' }, labelLayer); t2.textContent = b.sub.split(' · ')[0];
     });
 
-    var current = 'runner';
-    function focus(id) {
-      BLOCKS.forEach(function (b) {
-        var touches = b.id === id || b.base || EDGES.some(function (e) { return e.indexOf(id) > -1 && e.indexOf(b.id) > -1; });
-        blockEls[b.id].classList.toggle('dim', !touches);
-        blockEls[b.id].classList.toggle('on', b.id === id);
-        blockEls[b.id].querySelector('[data-face=Top]').setAttribute('fill', b.id === id ? 'url(#gTopOn)' : 'url(#gTop' + (b.base ? 'Base' : '') + ')');
+    var current = 'you';
+    function focus(id, hover) {
+      var b = byId[id], si = STAGES.indexOf(b);
+      ALL.forEach(function (x) {
+        var xi = STAGES.indexOf(x), near = x.id === id || x.base || (si > -1 && xi > -1 && Math.abs(xi - si) === 1) || (si === -1 && xi > -1);
+        blockEls[x.id].classList.toggle('dim', !!hover && !near);
+        blockEls[x.id].classList.toggle('on', x.id === id);
+        if (!x.you) blockEls[x.id].querySelector('[data-face=Top]').setAttribute('fill', x.id === id ? 'url(#gTopOn)' : 'url(#gTop' + (x.base ? 'Base' : '') + ')');
       });
-      for (var k in edgeEls) { var on = k.split('|').indexOf(id) > -1; edgeEls[k].classList.toggle('on', on); edgeEls[k].classList.toggle('dim', !on && id !== 'runner'); }
+      PLUMBING.forEach(function (x) { if (x.tie) x.tie.classList.toggle('on', x.id === id); });
+      flow.style.opacity = si > -1 || b.base ? 1 : .25;
     }
     function select(id) {
       current = id; focus(id);
-      var b = BLOCKS.filter(function (x) { return x.id === id; })[0];
-      panel.innerHTML = '<div class="label"><span>' + b.label.text[1] + '</span><code>' + b.sub + '</code></div><h3>' + b.name + '</h3><p>' + b.body + '</p><pre>' + b.code + '</pre>' +
-        '<div class="iso__nav">' + BLOCKS.map(function (x) { return '<button type="button" data-id="' + x.id + '"' + (x.id === id ? ' class="on"' : '') + '>' + x.label.text[0] + '</button>'; }).join('') + '</div>';
+      var b = byId[id], si = STAGES.indexOf(b);
+      var crumbs = si > -1 ? '<span>' + (si + 1) + ' of ' + STAGES.length + ' · ' + b.when + '</span>' : '<span>underneath</span>';
+      panel.innerHTML = '<div class="label">' + crumbs + '<code>' + b.sub.split(' · ')[0] + '</code></div><h3>' + b.name + '</h3><p>' + b.body + '</p><pre>' + b.code + '</pre>' +
+        '<div class="iso__nav">' + ALL.map(function (x) { return '<button type="button" data-id="' + x.id + '"' + (x.id === id ? ' class="on"' : '') + '>' + x.name + '</button>'; }).join('') + '</div>';
     }
     panel.addEventListener('click', function (e) { var btn = e.target.closest('[data-id]'); if (btn) select(btn.dataset.id); });
-    select('runner');
+    select('you');
   })();
   </script>
 
