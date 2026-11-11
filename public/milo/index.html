@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Milo · Agents that do outbound. You approve the sends.</title>
-  <meta name="description" content="Milo is an open-source control room for a team of AI sales agents. Bring your own keys, watch every run, and approve every email before it goes out." />
+  <title>Milo · sales agents that ask first</title>
+  <meta name="description" content="Milo is an open-source app that runs a team of AI sales agents on your own machine. Every email waits for your approval before it goes out." />
   <meta property="og:title" content="Milo" />
-  <meta property="og:description" content="A sales development team of agents. Bring your own keys, approve every email before it goes out." />
+  <meta property="og:description" content="Open-source sales agents. Every email waits for your approval." />
   <meta property="og:image" content="https://kmrnn.dev/projects/milo/control-room.jpg" />
   <meta property="og:url" content="https://kmrnn.dev/milo/" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -28,7 +28,7 @@
     body { margin: 0; background: var(--canvas); color: var(--ink); font: 400 16px/1.55 var(--body); -webkit-font-smoothing: antialiased; }
     a { color: inherit; text-decoration: none; }
     img { max-width: 100%; height: auto; display: block; }
-    h1, h2, h3 { font-family: var(--display); letter-spacing: -.025em; margin: 0; }
+    h1, h2, h3 { font-family: var(--display); letter-spacing: -.025em; margin: 0; text-wrap: balance; }
     .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
     .label { font: 500 11px/16px var(--display); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
     .r { opacity: 0; transform: translateY(14px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
@@ -112,6 +112,7 @@
     .demo-mail .meta b { color: var(--ink); font-weight: 500; }
     .demo-mail .body { font-size: 14px; line-height: 1.6; white-space: pre-line; color: var(--ink); border-top: 1px solid var(--line); padding-top: 14px; }
     .demo-act { display: flex; gap: 8px; align-items: center; margin-top: auto; padding-top: 10px; }
+    .demo-act { flex-wrap: wrap; }
     .demo-act .note { margin-left: auto; font-size: 12px; color: var(--muted); }
     .demo-empty { padding: 60px 24px; text-align: center; color: var(--muted); }
     .kbd { font: 500 10px/14px var(--mono); padding: 1px 5px; border-radius: 5px; border: 1px solid var(--line-2); color: var(--ink-2); }
@@ -130,22 +131,63 @@
     .screens img { border-radius: 10px; border: 1px solid var(--line); }
     .screens figcaption { font-size: 13px; color: var(--muted); padding: 10px 6px 2px; }
 
-    /* keys panel: the one dark-green block */
-    .keys { background: #19352a; color: #f5f4ee; border-radius: 28px; padding: clamp(28px, 5vw, 56px); display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
-    .keys h2 { color: #fff; }
-    .keys p { color: #b9c7bd; margin: 10px 0 0; }
-    .keys ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-    .keys li { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 12px; padding: 12px 14px; font-size: 14px; display: flex; gap: 10px; align-items: flex-start; }
-    .keys li i { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); margin-top: 7px; flex-shrink: 0; }
+    /* self-hosted panel: the one dark-green block, with a slice of the Connections screen on it */
+    .keys { background: #19352a; color: #f5f4ee; border-radius: 28px; padding: clamp(24px, 5vw, 56px); overflow: hidden; }
+    .keys__top { display: grid; grid-template-columns: .85fr 1.15fr; gap: clamp(28px, 5vw, 64px); align-items: center; }
+    .keys .label { color: #9fb8a8; }
+    .keys h2 { color: #fff; margin-top: 8px; }
+    .keys__copy p { color: #b9c7bd; margin: 14px 0 0; max-width: 40ch; font-size: 16.5px; }
+    .vault { background: var(--paper); color: var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 40px 70px -30px rgba(0,0,0,.55); }
+    .vault__hd { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--line); }
+    .vault__hd b { font: 600 14px/1 var(--display); letter-spacing: -.01em; }
+    .vault__hd span { display: inline-flex; align-items: center; gap: 6px; font: 500 11.5px/1 var(--body); color: var(--muted); }
+    .vault__hd span svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .vault__row { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 0 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+    .vault__logo { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font: 700 10.5px/1 var(--mono); color: var(--lime); background: var(--ink); }
+    .vault__name { min-width: 0; }
+    .vault__name b { display: block; font: 600 13.5px/1.25 var(--body); }
+    .vault__name span { display: block; font-size: 12px; line-height: 1.4; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .vault__name code { font: 400 11.5px/1 var(--mono); color: var(--ink-2); }
+    .vault__key { display: inline-flex; align-items: center; gap: 8px; font: 400 12px/1 var(--mono); color: var(--ink-2); background: var(--soft); border: 1px solid var(--line); border-radius: 7px; padding: 6px 8px; }
+    .vault__key i { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(48,164,108,.16); }
+    .vault__ft { padding: 11px 16px; background: var(--soft); font-size: 12px; line-height: 1.45; color: var(--muted); }
+    .vault__ft code { font: 400 11.5px/1 var(--mono); color: var(--ink-2); }
+    .vault__to { font-style: normal; }
+    .keys__facts { list-style: none; margin: clamp(32px, 5vw, 52px) 0 0; padding: 26px 0 0; border-top: 1px solid rgba(255,255,255,.12); display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px 32px; }
+    .keys__facts li { display: grid; grid-template-columns: 20px 1fr; gap: 2px 10px; align-content: start; }
+    .keys__facts svg { width: 18px; height: 18px; margin-top: 1px; stroke: var(--lime); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; grid-row: span 2; }
+    .keys__facts b { color: #fff; font: 600 14.5px/1.3 var(--display); letter-spacing: -.01em; }
+    .keys__facts span { color: #a9bcb0; font-size: 13.5px; line-height: 1.45; }
 
     pre { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 18px 20px; font: 400 13.5px/1.8 var(--mono); overflow-x: auto; }
     pre span { color: var(--muted); }
-    .gate { margin-top: 20px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; font-size: 14px; color: var(--ink-2); }
-    .gate summary { cursor: pointer; font-weight: 500; color: var(--ink); list-style: none; }
-    .gate summary::-webkit-details-marker { display: none; }
-    .gate p { margin: 10px 0 0; }
-    .gate code { font: 400 12px/1 var(--mono); background: var(--soft); padding: 2px 6px; border-radius: 6px; }
-    .install { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: center; }
+
+    /* get milo: the app card and a terminal, side by side */
+    .get { display: grid; grid-template-columns: 1.1fr .9fr; gap: 12px; align-items: stretch; }
+    .get__app { background: var(--paper); border: 1px solid var(--line); border-radius: 24px; padding: clamp(24px, 4vw, 40px); display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+    .get__id { display: flex; align-items: center; gap: 14px; }
+    .get__id img { width: 56px; height: 56px; border-radius: 14px; box-shadow: 0 10px 24px -12px rgba(22,22,20,.45); }
+    .get__id b { display: block; font: 600 16px/1.2 var(--display); letter-spacing: -.01em; margin-bottom: 4px; }
+    .get__id span { display: block; font-size: 13px; color: var(--muted); text-wrap: balance; }
+    .get__app h2 { font-size: clamp(26px, 3vw, 34px); max-width: none; }
+    .get__app > p { margin: -6px 0 0; color: var(--ink-2); max-width: 54ch; }
+    .get__btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .get__app > .get__note { max-width: none; margin: auto 0 0; padding-top: 16px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+    .term { background: #161614; color: #ededE6; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+    .term__hd { display: flex; align-items: center; gap: 7px; padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .term__hd > i { width: 11px; height: 11px; border-radius: 50%; background: #3a3a36; }
+    .term__hd > span { font: 500 12.5px/1 var(--body); color: #a3a39b; margin-left: 8px; }
+    .term__copy { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--body); color: #e3e3dc; background: rgba(255,255,255,.08); border: 0; border-radius: 999px; padding: 7px 11px; cursor: pointer; transition: background .15s; }
+    .term__copy:hover { background: rgba(255,255,255,.14); }
+    .term__copy svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .term__copy.ok { background: var(--lime); color: var(--ink); }
+    .term pre { background: transparent; border: 0; border-radius: 0; color: #f1f1ea; padding: 20px 20px 22px; font-size: 13px; line-height: 2; flex: 1; }
+    .term pre span { color: #6f6f68; }
+    .term pre em { font-style: normal; color: var(--lime); }
+    .term__cursor { display: inline-block; width: 8px; height: 15px; vertical-align: -2px; background: #e3e3dc; animation: blink 1.1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .term__cursor { animation: none; } }
+    .term__ft { padding: 14px 20px 18px; font-size: 13px; line-height: 1.5; color: #a3a39b; border-top: 1px solid rgba(255,255,255,.08); }
 
     /* under the hood: an isometric drawing of the process */
     .iso { display: grid; grid-template-columns: 1fr; gap: 14px; }
@@ -184,13 +226,30 @@
     footer { margin-top: 72px; border-top: 1px solid var(--line); padding: 24px 0 56px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; font-size: 13px; color: var(--muted); }
     footer a:hover { color: var(--ink); }
 
+    .grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
     @media (max-width: 900px) {
-      .hero-grid, .keys, .install, .screens { grid-template-columns: 1fr; }
+      .hero-grid, .keys__top, .get, .screens { grid-template-columns: 1fr; }
+      .keys__facts { grid-template-columns: 1fr 1fr; }
       .pipe { grid-template-columns: repeat(2, 1fr); }
-      .grid3 { grid-template-columns: 1fr; }
+      .grid3, .grid2 { grid-template-columns: 1fr; }
       .demo { grid-template-columns: 1fr; } .demo-list { border-right: 0; border-bottom: 1px solid var(--line); }
       .nav .hide-sm { display: none; }
       .hero-card { border-radius: 20px; }
+    }
+    @media (max-width: 520px) {
+      .keys { border-radius: 20px; }
+      .keys__facts { grid-template-columns: 1fr; gap: 18px; }
+      .vault__row { padding: 12px 14px; gap: 0 10px; }
+      .vault__key { padding: 6px 7px; font-size: 11.5px; }
+      .vault__key i { display: none; }
+      .vault__to { font-size: 0; }
+      .vault__to::before { content: '→ '; font-size: 12px; }
+      .get__id img { width: 48px; height: 48px; border-radius: 12px; }
+      .get__app, .term { border-radius: 20px; }
+      .top .btn { display: none; }
+      .cta-row .btn-lg { padding: 0 18px; font-size: 14px; }
+      .cta-row .btn-lg svg { display: none; }
     }
   </style>
 </head>
@@ -202,10 +261,10 @@
         <a class="hide-sm" href="#pipeline">Pipeline</a>
         <a class="hide-sm" href="#inside">Under the hood</a>
         <a class="hide-sm" href="#approve">Approvals</a>
-        <a class="hide-sm" href="#keys">Your keys</a>
+        <a class="hide-sm" href="#keys">Privacy</a>
         <a href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">GitHub</a>
       </nav>
-      <span class="btn btn-lime soon" title="Signed Mac build is on its way">Download for Mac <em>Soon</em></span>
+      <span class="btn btn-lime soon" aria-disabled="true" title="The Mac app isn't out yet">Download for Mac <em>Soon</em></span>
     </div>
   </header>
 
@@ -216,13 +275,13 @@
           <div class="hero-grid">
             <div class="hero-copy">
               <span class="chip r"><i></i>7 agents on · review sends only</span>
-              <h1 class="r d1">Your outbound, run by agents. <mark>Sent by you.</mark></h1>
-              <p class="lede r d2">Milo finds accounts, researches them, writes the email and books the meeting. Every send waits in your inbox first. Open source, your own keys, one Node process.</p>
+              <h1 class="r d1">Sales agents that <mark>ask first.</mark></h1>
+              <p class="lede r d2">Milo runs seven agents that take a company from first search to booked meeting. Nothing gets sent until you approve it.</p>
               <div class="cta-row r d3">
-                <span class="btn btn-ink btn-lg soon" title="Signed Mac build is on its way"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Download for Mac <em>Coming soon</em></span>
+                <span class="btn btn-ink btn-lg soon" aria-disabled="true" title="The Mac app isn't out yet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Download for Mac <em>Coming soon</em></span>
                 <a class="btn btn-line btn-lg" href="#approve">Try the inbox</a>
               </div>
-              <div class="facts r d4"><span><b>macOS 12+</b>, Apple silicon and Intel</span><span><b>Free</b>, MIT</span><span><b>Anthropic, OpenAI or Ollama</b></span></div>
+              <div class="facts r d4"><span><b>Free</b> and open source</span><span>Works with <b>Anthropic, OpenAI or Ollama</b></span></div>
             </div>
             <div class="hero-shot r d2">
               <span class="pill-count">24 waiting for review</span>
@@ -235,22 +294,22 @@
 
     <section id="pipeline">
       <div class="wrap">
-        <div class="head r"><div><span class="label">Pipeline</span><h2>Work moves left to right. Each agent hands off to the next.</h2></div><p class="sub">Turn any of them off, change the schedule, pick a model per agent, or give it standing instructions.</p></div>
+        <div class="head r"><div><span class="label">Pipeline</span><h2>Each agent hands its work to the next one.</h2></div><p class="sub">You can switch any of them off or change how it works on the Agents screen.</p></div>
         <div class="pipe">
-          <div class="agent r"><div class="hd"><span class="mono">Sc</span><b>Scout</b></div><span class="st live"><i></i>Running</span><p>Finds companies that match your ICP</p><small>every 15 min</small></div>
-          <div class="agent r d1"><div class="hd"><span class="mono">Re</span><b>Researcher</b></div><span class="st"><i></i>Idle</span><p>Writes a brief: why now, pains, angles, with sources</p><small>when work arrives</small></div>
-          <div class="agent r d1"><div class="hd"><span class="mono">Pr</span><b>Prospector</b></div><span class="st"><i></i>Idle</span><p>Finds and verifies the right people at each account</p><small>when work arrives</small></div>
-          <div class="agent r d2"><div class="hd"><span class="mono">Qu</span><b>Qualifier</b></div><span class="st"><i></i>Idle</span><p>Scores each lead: outreach, research more, or skip</p><small>when work arrives</small></div>
-          <div class="agent r d2"><div class="hd"><span class="mono">Pe</span><b>Personalizer</b></div><span class="st"><i></i>Idle</span><p>Writes outreach from the brief, not a template</p><small>when work arrives</small></div>
-          <div class="agent r d3"><div class="hd"><span class="mono">SD</span><b>SDR</b></div><span class="st"><i></i>Idle</span><p>Sends what you approved, reads replies, books meetings</p><small>every 10 min</small></div>
-          <div class="agent r d3"><div class="hd"><span class="mono">CR</span><b>CRM Agent</b></div><span class="st"><i></i>Idle</span><p>Keeps the CRM in sync with everything the team does</p><small>when work arrives</small></div>
+          <div class="agent r"><div class="hd"><span class="mono">Sc</span><b>Scout</b></div><span class="st live"><i></i>Running</span><p>Finds companies that match your ICP</p><small>every 4 hours</small></div>
+          <div class="agent r d1"><div class="hd"><span class="mono">Re</span><b>Researcher</b></div><span class="st"><i></i>Idle</span><p>Writes a short brief on each company, with sources</p><small>when work arrives</small></div>
+          <div class="agent r d1"><div class="hd"><span class="mono">Pr</span><b>Prospector</b></div><span class="st"><i></i>Idle</span><p>Finds the right people and checks their emails</p><small>when work arrives</small></div>
+          <div class="agent r d2"><div class="hd"><span class="mono">Qu</span><b>Qualifier</b></div><span class="st"><i></i>Idle</span><p>Scores each lead and decides what happens next</p><small>when work arrives</small></div>
+          <div class="agent r d2"><div class="hd"><span class="mono">Pe</span><b>Personalizer</b></div><span class="st"><i></i>Idle</span><p>Writes the email from the brief, not a template</p><small>when work arrives</small></div>
+          <div class="agent r d3"><div class="hd"><span class="mono">SD</span><b>SDR</b></div><span class="st"><i></i>Idle</span><p>Sends what you approved and handles replies</p><small>every 10 min</small></div>
+          <div class="agent r d3"><div class="hd"><span class="mono">CR</span><b>CRM Agent</b></div><span class="st"><i></i>Idle</span><p>Logs everything to your CRM</p><small>when work arrives</small></div>
         </div>
       </div>
     </section>
 
     <section id="inside">
       <div class="wrap">
-        <div class="head r"><div><span class="label">Under the hood</span><h2>One Node process. Here's what's in it.</h2></div><p class="sub">Work enters on the left and leaves on the right. Click any block; what you read is lifted from the source, not a diagram I drew first and built second.</p></div>
+        <div class="head r"><div><span class="label">Under the hood</span><h2>What's inside the one Node process</h2></div><p class="sub">Click a block to see what it does. The code snippets are taken from the source.</p></div>
         <div class="iso r d1">
           <div class="iso__stage"><svg id="isoSvg" viewBox="0 0 1100 600" role="group" aria-label="How Milo is put together"></svg></div>
           <aside class="iso__panel" id="isoPanel" aria-live="polite"></aside>
@@ -260,7 +319,7 @@
 
     <section id="approve">
       <div class="wrap">
-        <div class="head r"><div><span class="label">Approvals</span><h2>Nothing is sent until you press the button. Try it.</h2></div><p class="sub">Drafts wait here with the brief they came from. Approve, edit, or reject with a note the writer learns from. Keys: <span class="kbd">J</span> <span class="kbd">K</span> move, <span class="kbd">A</span> approve, <span class="kbd">R</span> reject.</p></div>
+        <div class="head r"><div><span class="label">Approvals</span><h2>Nothing gets sent until you approve it.</h2></div><p class="sub">Each draft waits here next to the brief it came from. If you reject one, leave a note and the writer will use it next time. <span class="kbd">J</span> <span class="kbd">K</span> to move, <span class="kbd">A</span> to approve, <span class="kbd">R</span> to reject.</p></div>
         <div class="demo r d1" id="demo">
           <div class="demo-list"><span class="label"><span id="pending">3</span> pending</span><div id="rows"></div></div>
           <div class="demo-mail" id="mail"></div>
@@ -270,23 +329,22 @@
 
     <section>
       <div class="wrap">
-        <div class="head r"><div><span class="label">Why it's trustworthy</span><h2>Every run, tool call, token and dollar is visible.</h2></div></div>
-        <div class="grid3">
-          <div class="feat r"><span class="ic"><svg viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg></span><h3>An inbox, not a firehose</h3><p>Emails, replies and meeting invites queue up for you. Raise the autonomy level only when you trust it.</p></div>
-          <div class="feat r d1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg></span><h3>Your connections</h3><p>Agents ask for an action, like "find people". You choose which connection does it: Apollo, Hunter, Tavily, HubSpot, Cal.com, your inbox.</p></div>
-          <div class="feat r d2"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 4 4 5-5"/></svg></span><h3>Receipts for everything</h3><p>Duration, tokens and cost per run. Status code and latency per tool call. A feed you can watch instead of guessing.</p></div>
+        <div class="head r"><div><span class="label">Logs</span><h2>You can see what every agent did and what it cost.</h2></div></div>
+        <div class="grid2">
+          <div class="feat r"><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"/></svg></span><h3>Use the services you already have</h3><p>Agents ask for an action like “find people” and you pick which service does it, such as Apollo, Hunter, Tavily, HubSpot or Cal.com.</p></div>
+          <div class="feat r d1"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 4 4 5-5"/></svg></span><h3>A log for every run</h3><p>Each run shows how long it took, how many tokens it used and what it cost. Each tool call shows its status code and latency.</p></div>
         </div>
       </div>
     </section>
 
     <section>
       <div class="wrap">
-        <div class="head r"><div><span class="label">The screens</span><h2>One control room.</h2></div></div>
+        <div class="head r"><div><span class="label">Screens</span><h2>What it looks like</h2></div></div>
         <div class="screens">
-          <figure class="r"><img src="/projects/milo/approvals.jpg" alt="The approvals inbox: the draft, the brief it came from, the lead score" /><figcaption>Approvals — the draft, the brief, the score</figcaption></figure>
-          <figure class="r d1"><img src="/projects/milo/accounts.jpg" alt="The accounts table" /><figcaption>Accounts — ICP match, stage, last activity</figcaption></figure>
-          <figure class="r d2"><img src="/projects/milo/agents.jpg" alt="An agent's page" /><figcaption>Agents — schedule, model, what it needs, recent runs</figcaption></figure>
-          <figure class="r d3"><img src="/projects/milo/control-room.jpg" alt="The control room" /><figcaption>Control room — today, the pipeline, the live feed</figcaption></figure>
+          <figure class="r"><img src="/projects/milo/approvals.jpg" alt="The approvals inbox: a draft email next to the research brief it came from" /><figcaption>Approvals: each draft next to its brief and lead score</figcaption></figure>
+          <figure class="r d1"><img src="/projects/milo/accounts.jpg" alt="The accounts table" /><figcaption>Accounts: every company the Scout has found</figcaption></figure>
+          <figure class="r d2"><img src="/projects/milo/agents.jpg" alt="An agent's settings page" /><figcaption>Agents: settings and recent runs for each one</figcaption></figure>
+          <figure class="r d3"><img src="/projects/milo/control-room.jpg" alt="The control room" /><figcaption>Control room: today's numbers and a live feed</figcaption></figure>
         </div>
       </div>
     </section>
@@ -294,12 +352,26 @@
     <section id="keys">
       <div class="wrap">
         <div class="keys r">
-          <div><span class="label" style="color:#b9c7bd">Your keys, your server</span><h2>There is no Milo cloud in the middle.</h2><p>Milo is one process you run. API keys are stored on your server, sent only to the service they belong to, and never returned to the browser in full.</p></div>
-          <ul>
-            <li><i></i>Each account gets its own workspace. Email + password, or plug in Supabase Auth.</li>
-            <li><i></i>Export everything as JSON at any time. Keys are left out.</li>
-            <li><i></i>Try the whole pipeline on sample data first. No keys needed.</li>
-            <li><i></i>MIT. Read every line before it touches your inbox.</li>
+          <div class="keys__top">
+            <div class="keys__copy">
+              <span class="label">Self-hosted</span>
+              <h2>There's no Milo cloud.</h2>
+              <p>Milo runs on your laptop or your own server, and your API keys stay there. Each key only goes to the service it's for. The browser only ever sees the last four characters.</p>
+            </div>
+            <div class="vault" role="img" aria-label="Milo's Connections screen: each API key is masked to its last four characters and only sent to its own service">
+              <div class="vault__hd"><b>Connections</b><span><svg viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Stored on this machine</span></div>
+              <div class="vault__row"><span class="vault__logo">An</span><span class="vault__name"><b>Anthropic</b><span><i class="vault__to">only sent to </i><code>api.anthropic.com</code></span></span><span class="vault__key"><i></i>••••7Qx2</span></div>
+              <div class="vault__row"><span class="vault__logo">Ap</span><span class="vault__name"><b>Apollo</b><span><i class="vault__to">only sent to </i><code>api.apollo.io</code></span></span><span class="vault__key"><i></i>••••c81d</span></div>
+              <div class="vault__row"><span class="vault__logo">Hu</span><span class="vault__name"><b>Hunter</b><span><i class="vault__to">only sent to </i><code>api.hunter.io</code></span></span><span class="vault__key"><i></i>••••4be0</span></div>
+              <div class="vault__row"><span class="vault__logo">@</span><span class="vault__name"><b>Email</b><span><i class="vault__to">only sent to </i><code>smtp.gmail.com</code></span></span><span class="vault__key"><i></i>••••tqrm</span></div>
+              <div class="vault__ft"><code>milo.json</code> · readable by your user account only</div>
+            </div>
+          </div>
+          <ul class="keys__facts">
+            <li><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><b>Separate workspaces</b><span>On a shared server, everyone gets their own.</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><b>JSON export</b><span>Download everything whenever you want. Keys stay masked.</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M10 2v7.31"/><path d="M14 9.3V2"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg><b>Sample data</b><span>Run the whole pipeline before adding any keys.</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg><b>MIT licensed</b><span>Read the code before you give it your inbox.</span></li>
           </ul>
         </div>
       </div>
@@ -307,22 +379,34 @@
 
     <section id="install">
       <div class="wrap">
-        <div class="install">
-          <div class="r"><span class="label">Get Milo</span><h2>Download, drag to Applications, open.</h2><p class="sub">Milo for Mac runs the whole thing in one app: the agents, the control room, your workspace. First launch walks you through naming a workspace, connecting a model and describing what you sell. Or start with sample data and connect keys later.</p>
-            <p style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"><span class="btn btn-lime soon">Download for Mac <em>Coming soon</em></span><a class="btn btn-line" href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">Source on GitHub</a></p>
-            <p class="sub" style="font-size:14px;margin-top:14px">The Mac app is signed and notarized by Apple, so it opens like any other download. macOS 12 or later, Apple silicon and Intel.</p>
+        <div class="get">
+          <div class="get__app r">
+            <div class="get__id"><img src="/projects/milo/icon-512.png" alt="" /><div><b>Milo for Mac</b><span>macOS 12 or later · Apple silicon and Intel</span></div></div>
+            <h2>The Mac app is almost ready.</h2>
+            <p>It runs the agents and the dashboard in one window. Setup takes about a minute, or you can skip it and start on sample data.</p>
+            <div class="get__btns">
+              <span class="btn btn-lime soon" aria-disabled="true" title="The Mac app isn't out yet">Download for Mac <em>Coming soon</em></span>
+              <a class="btn btn-line" href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">Source on GitHub</a>
+            </div>
+            <p class="get__note">It'll be signed and notarized by Apple before release, so it opens like any other app.</p>
           </div>
-          <div class="r d1"><span class="label" style="display:block;margin-bottom:10px">Or run it yourself</span><pre><span>$</span> git clone https://github.com/kumarannathan/Milo.git
+          <div class="term r d1">
+            <div class="term__hd"><i></i><i></i><i></i><span>Run it from source</span><button class="term__copy" type="button" id="copyCmds"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span>Copy</span></button></div>
+            <pre id="cmds"><span>$</span> git clone https://github.com/kumarannathan/Milo.git
 <span>$</span> cd Milo &amp;&amp; npm install
 <span>$</span> npm run build
-<span>$</span> npm start   <span># then open localhost:4400</span></pre><p class="sub" style="font-size:14px;margin-top:10px">The server version adds accounts, so a team can share one deployment. Node 20 or later.</p></div>
+<span>$</span> npm start
+<em>Milo is running at http://127.0.0.1:4400</em>
+<span>$</span> <b class="term__cursor"></b></pre>
+            <div class="term__ft">Needs Node 20 or later. The server version has accounts, so a team can share one install.</div>
+          </div>
         </div>
       </div>
     </section>
 
     <div class="wrap">
       <footer>
-        <span>Milo is open source under MIT. Built by <a href="/">Kumaran Nathan</a> after one too many CRMs that needed a full-time babysitter. 2026.</span>
+        <span>Milo is open source (MIT). Made by <a href="/">Kumaran Nathan</a> in 2026.</span>
         <span><a href="https://github.com/kumarannathan/Milo" target="_blank" rel="noopener">Source</a> · <a href="https://github.com/kumarannathan/Milo/blob/main/docs/architecture.md" target="_blank" rel="noopener">Architecture</a> · <a href="/">kmrnn.dev</a></span>
       </footer>
     </div>
@@ -342,42 +426,42 @@
     var LANE = 3.2, BACK = 0.5, W = 1.6, GAP = 2.05;
     var STAGES = [
       { id: 'scout', name: 'Scout', tag: 'Sc', sub: 'agents/scout.js · cron, every 4h', when: 'every 4 hours',
-        body: 'Starts the whole thing. Runs on a cron, asks the accounts provider for companies that match your ICP, skips anything your CRM already calls a customer, and emits one research_account task per company, up to the daily cap. The only agent that creates work out of nothing; everyone else waits for a task.',
+        body: 'Every four hours it asks your accounts provider for companies that match your ICP and queues a research task for each new one, up to a daily cap. It’s the only agent that starts work on its own. The rest wait for tasks.',
         code: "schedule: { type: 'cron', cron: '0 */4 * * *' },\ncapabilities: [{ key: 'accounts.search', required: true },\n               { key: 'crm.read', required: false }],\n// per match:\nctx.<b>emit</b>('research_account', { accountId });" },
       { id: 'researcher', name: 'Researcher', tag: 'Re', sub: 'agents/researcher.js · event', when: 'when work arrives',
-        body: 'Picks up research_account, runs up to eight searches (news, hiring, funding, the company’s own site), and has the model write a brief: why now, likely pains, two or three angles, every claim with a source. That brief is what the Personalizer writes from later, which is the whole reason the emails don’t read like a template.',
+        body: 'Runs up to eight web searches per company and has the model write a brief with a source for every claim. The Personalizer writes from this brief later, which is why the emails don’t read like a template.',
         code: "consumes: ['research_account'],\nproduces: ['find_contacts'],\nconst hits = await ctx.<b>call</b>('web.search', { q, max: ctx.config.sourcesPerBrief });\nconst brief = await ctx.llm({ system: BRIEF, prompt: sources });" },
       { id: 'prospector', name: 'Prospector', tag: 'Pr', sub: 'agents/prospector.js · event', when: 'when work arrives',
-        body: 'Finds the people. Searches contacts at the seniority you set, optionally enriches them, then finds and verifies an email for each. Counts what it got back (verified, likely, catch-all, nothing) and that status becomes part of the lead score. Nothing is guessed; an unverified address is marked unverified.',
+        body: 'Looks for people at the seniority you set, then finds and checks an email address for each one. If an address can’t be verified it’s marked unverified, never guessed, and that counts against the lead score.',
         code: "capabilities: [{ key: 'contacts.search', required: true },\n               { key: 'email.find',  required: false },\n               { key: 'email.verify', required: false }],\nconst v = await ctx.call('email.verify', { email });\ncounts[v.status]++;" },
       { id: 'qualifier', name: 'Qualifier', tag: 'Qu', sub: 'agents/qualifier.js · event', when: 'when work arrives',
-        body: 'Scores each lead out of 100 from five parts: ICP fit, growth signals, role relevance, buying signal, contact quality. Then it decides: 91 and up goes to outreach, 70 to 90 goes back to the Researcher for another pass, below that is parked. Both thresholds are yours to move on the Agents screen.',
+        body: 'Scores each lead out of 100. Leads at 91 or higher go to outreach, 70 to 90 go back for more research, and anything lower is parked. You can move both cutoffs on the Agents screen.',
         code: "produces: ['write_outreach', 'research_account'],\nif (score >= ctx.config.outreachAt) ctx.emit('write_outreach', lead);\nelse if (score >= ctx.config.researchAt) ctx.emit('research_account', lead);" },
       { id: 'personalizer', name: 'Personalizer', tag: 'Pe', sub: 'agents/personalizer.js · event', when: 'when work arrives',
-        body: 'Writes the email from the brief, under the word limit you set, plus the follow-ups for the sequence. Your recent rejection notes ride along in the prompt, so if you told it last week to stop opening with a compliment, it stops. The draft doesn’t go anywhere yet. It goes to you.',
+        body: 'Writes the email and follow-ups from the brief, under your word limit. Your last few rejection notes go into the prompt, so if you told it to stop opening with a compliment, it stops. The draft goes to you, not the prospect.',
         code: "const notes = store.recentNotes('personalizer', 5);\nconst draft = await ctx.llm({ system: WRITE, prompt: { brief, lead, notes } });\nctx.emit('send_outreach', { draft, sequence });   // lands in Approvals first" },
       { id: 'you', name: 'You', tag: 'Yo', sub: 'playbooks/sales/approvals.js', when: 'whenever you open the inbox', you: true,
-        body: 'The gate. Anything that leaves your machine on your behalf becomes an approval first. Approve runs the playbook’s approve hook and queues the real send. Edit changes the draft before it goes. Reject stores your note, and the Personalizer reads it next time. You can raise the autonomy level under Account when you trust it. Default is nothing goes out without you.',
+        body: 'Anything that would leave the machine on your behalf becomes an approval first. Approving queues the real send. Rejecting saves your note for the Personalizer. By default nothing goes out without you, and you can loosen that under Account.',
         code: "if (needsApproval('email', workspace.autonomy))\n  store.insert('approvals', { kind: 'email', draft, brief, leadId });\n// on reject:\nstore.insert('notes', { agent: 'personalizer', text: note });" },
       { id: 'sdr', name: 'SDR', tag: 'SD', sub: 'agents/sdr.js · cron, every 10 min', when: 'every 10 minutes',
-        body: 'Sends what you approved, inside a sending window in the contact’s own time zone (inferred from their location). Reads the inbox over IMAP, matches replies to threads by header, and sorts them: interested, not now, out of office, wrong person. Interested gets a calendar slot offered and a meeting booked. Anything it isn’t sure about comes back to you.',
+        body: 'Sends approved emails during working hours in the contact’s time zone. It reads replies over IMAP and offers a meeting slot to anyone who’s interested. If it can’t tell what a reply means, it asks you.',
         code: "consumes: ['send_outreach', 'handle_reply', 'follow_up'],\nproduces: ['book_meeting', 'sync_crm', 'follow_up'],\nif (now < nextSendTime(lead.tz, windowStart)) return hold();\nawait ctx.call('email.send', { to, subject, text, threadId });" },
       { id: 'crm', name: 'CRM Agent', tag: 'CR', sub: 'agents/crm.js · event', when: 'when work arrives',
-        body: 'Last in line. Everything the team did gets written to your CRM: the company, the contacts, each email as an activity or a note, the meeting. Looks up existing records first so it doesn’t make duplicates. If you have no CRM connected it quietly does nothing and the pipeline still works.',
+        body: 'Writes the companies, contacts, emails and meetings to your CRM, checking for existing records first so it doesn’t make duplicates. If no CRM is connected it does nothing and the pipeline still works.',
         code: "consumes: ['sync_crm'],\nproduces: [],\nconst company = (await ctx.call('crm.read', { domain })) ?? (ctx.config.createCompanies && await ctx.call('crm.write', { company }));\nawait ctx.call('crm.write', { activity: { email, companyId: company.id } });" }
     ];
     var PLUMBING = [
       { id: 'runner', name: 'The runner', sub: 'server/runner/runner.js', base: true,
-        body: 'The slab everything sits on. One loop, every two seconds, for each enabled agent: is it cron and due? event-driven with tasks waiting? did someone press Run now? At most three run at once. A run claims a batch of tasks, calls the agent, records duration, tokens, cost and every tool call. If it throws, the tasks go back on the queue, three strikes, and the agent backs off.',
+        body: 'Every two seconds it checks which agents are due or have tasks waiting, and runs up to three at once. Each run is logged with its tokens and cost. If a run fails, its tasks go back on the queue and the agent backs off.',
         code: "timer = setInterval(tick, <b>2000</b>);\nif (due(agent) || queued(agent) || agent.runNow) start(agent);\nstore.update('tasks', t.id, { status: 'running', attempts: t.attempts + 1 });" },
       { id: 'store', name: 'The store', sub: 'server/store.js', x: 1.6,
-        body: 'No database. Each account’s workspace, connections, tasks, runs and tool calls live in memory and get written to one JSON file: debounced, temp file then rename so a crash can’t half-write it, mode 600 because the API keys are in there. Every write emits the names of the collections that changed.',
+        body: 'There’s no database. Each workspace lives in memory and is saved to one JSON file. It writes to a temp file and renames it, so a crash can’t leave the file half-written. The file is mode 600 because the API keys are in it.',
         code: "fs.writeFileSync(tmp, JSON.stringify(data), { mode: <b>0o600</b> });\nfs.<b>renameSync</b>(tmp, filePath);   // atomic swap\nbus.emit('changed', ['tasks', 'runs']);" },
       { id: 'caps', name: 'Capabilities → providers', sub: 'server/runner/bindings.js · server/providers/', x: 7.3,
-        body: 'Agents never touch a vendor. They ask for a capability like email.verify and the runner routes it: the connection you chose for that agent, else the workspace default, else the first provider that implements it. One file per vendor in providers/, loaded by reading the folder, so Hunter and Apollo are interchangeable from the agent’s side.',
+        body: 'Agents never call a vendor directly. They ask for a capability like email.verify, and the runner sends it to the connection you picked. Each vendor is one file in providers/, so swapping Hunter for Apollo doesn’t touch the agents.',
         code: "const r = await ctx.<b>call</b>('email.verify', { email });\n// bindings.js: 1. the agent's connection  2. workspace default  3. first provider that can" },
       { id: 'events', name: 'Events', sub: 'server/events.js', x: 13,
-        body: 'The browser opens one server-sent-events stream and that’s it. When the store says tasks and runs changed, the UI refetches tasks and runs, nothing else. That’s why the pipeline cards update the moment an agent finishes, without polling.',
+        body: 'The browser keeps one server-sent-events stream open. When the store changes, the UI refetches only what changed, so the pipeline updates as soon as an agent finishes, without polling.',
         code: "res.write('data: ' + JSON.stringify({ changed: ['runs'] }) + '\\n\\n');\nfor (const c of msg.changed) refetch(c);   // src/" }
     ];
     var ALL = STAGES.concat(PLUMBING), byId = {};
@@ -520,6 +604,14 @@
       else if ((k === 'a' || k === 'r') && state[cur] === 'pending') { state[cur] = k === 'a' ? 'approved' : 'rejected'; var n = state.indexOf('pending'); if (n !== -1) cur = n; render(); }
     });
     render();
+
+    // Copy the install commands without the prompts and comments.
+    var copyBtn = document.getElementById('copyCmds');
+    copyBtn.addEventListener('click', function () {
+      var text = document.getElementById('cmds').textContent.split('\n').filter(function (l) { return /^\$\s*\S/.test(l); }).map(function (l) { return l.replace(/^\$\s*/, ''); }).join('\n');
+      var done = function () { copyBtn.classList.add('ok'); copyBtn.lastChild.textContent = 'Copied'; setTimeout(function () { copyBtn.classList.remove('ok'); copyBtn.lastChild.textContent = 'Copy'; }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, function () {});
+    });
   })();
   </script>
 </body>
